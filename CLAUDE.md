@@ -63,9 +63,11 @@ npm run equiv -- --ref <commit> --v5 v5.json --wall wall.json
 
 ## State of play (2026-10-05)
 
-- Live in Home Assistant: 0.2.0, installed by HACS from a commit on `main` (no releases yet), as two resources: `house-v5.js` (managed by HACS) and `house-wall.js` (added by hand). Resource ids are not recorded here; list the resources and match the file name. The wall display still needs a visual check after a page reload.
-- On branch `claude/sweet-allen-qq5p8u` (not yet on `main`): phases 0 to 4 of the plan below, version 0.3.0. Rendering is identical to 0.2.0 on every screen (placeholder fixtures; real configs 119/119 and 49/49). New in behaviour: each card checks its config in `setConfig` (both real configs pass with no errors or warnings).
-- **One-off migration to 0.3.0** (needs the branch merged to `main` and Home Assistant reachable): push tag `v0.3.0`, wait for the release, `ha_manage_hacs` `update_information` + `download` 0.3.0, then in the dashboard resources make sure `house-cards.js` is present and delete the old `house-v5.js` and `house-wall.js` resources (both cards would otherwise be defined twice; the second definition is ignored, but the old files 404 after the download). Reload the wall display and check both dashboards.
+- Live in Home Assistant: **0.3.0**, installed by HACS from the GitHub release, as **one** dashboard resource: `/hacsfiles/homeassistant/house-cards.js?hacstag=...` (managed by HACS; it replaced the old `house-v5.js` resource in place). The hand-added `house-wall.js` resource is deleted. Resource ids are not recorded here; list the resources and match the file name.
+- Still to check by eye after a page reload: the phone dashboard, and the wall display (day grid, weather, "Leaving?", "More rooms"). Rendering is identical to 0.2.0 on every screen in the harness (real configs 119/119 and 49/49), and both real configs pass the new config check with no errors or warnings.
+- Dashboard screenshots through the Home Assistant MCP server need its "dashboard screenshot" beta feature, which is off; use `npm run preview` for screenshots.
+- An old inline resource for an earlier card (`house-v3`) is still registered; it is not part of this repo.
+- Releasing from a Claude Code cloud session: tags cannot be pushed through its git proxy, so run the Release workflow on `main` by hand (it creates the tag); see the release skill.
 
 ## Plan status (agreed 2026-10-05)
 
@@ -74,7 +76,7 @@ Goal: smaller edits, fewer tokens per change, checks that run without the real c
 0. Safety net without the real config: done (snapshots, `npm run equiv`, CI, `scrub-check --quiet`).
 1. Tooling: done (esbuild, Biome, `tsc` checkJs, `npm run verify`, SessionStart hook, MIT license).
 2. Mechanical split into `src/v5/` and `src/wall/`: done (see the code map).
-3. Delivery: done in the repo (one bundle, release workflow, release skill); the Home Assistant migration above is still to do.
+3. Delivery: done (one bundle, release workflow, release skill; 0.3.0 released and installed, old resources removed).
 4. Quality: done, including the browser preview (`npm run preview`). Shared helpers (`mergeConfig`, `areaOf`; `esc`, `svg`, the time format and the weather texts differ between the cards on purpose and stay separate) and config validation in `setConfig` (both real configs: no errors, no warnings).
 
 Not now: Lit (needs a DOM-level comparison in the harness first; later, one screen at a time) and a visual card editor (the configs are too large for one).

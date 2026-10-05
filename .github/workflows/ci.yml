@@ -43,5 +43,6 @@ jobs:
         with:
           category: plugin
           comment: false
-          # brands, description, images and topics only matter for the HACS default store, not a custom repository
-          ignore: brands description images topics
+          # brands, description, images and topics only matter for the HACS default store, not a custom repository.
+          # license: the repository has no LICENSE file yet; drop it from this list once one is added.
+          ignore: brands description images license topics

@@ -1,11 +1,11 @@
 # House dashboard cards
 
-Two custom Lovelace cards for a Home Assistant house dashboard, written as plain JavaScript modules with no dependencies:
+Two custom Lovelace cards for a Home Assistant house dashboard, shipped together in one file, `house-cards.js`:
 
-| File | Card | For |
+| Card | For | Source |
 |---|---|---|
-| `dist/house-v5.js` | `custom:house-v5-card` | Phone dashboard: Home, Security, Energy, Climate, one screen per room, one for the robot vacuum |
-| `dist/house-wall.js` | `custom:house-wall-card` | Calm 480×480 screen for a Shelly Wall Display: day, weather, "Leaving?", more rooms, doorbell, night, alarm entry-delay warning |
+| `custom:house-v5-card` | Phone dashboard: Home, Security, Energy, Climate, one screen per room, one for the robot vacuum | `src/v5/` |
+| `custom:house-wall-card` | Calm 480×480 screen for a Shelly Wall Display: day, weather, "Leaving?", more rooms, doorbell, night, alarm entry-delay warning | `src/wall/` |
 
 Rooms and lights are discovered from Home Assistant's floors, areas and entity registry. Everything specific to one house (entity ids, area ids, names) is supplied through the **card config** in the dashboard, so this repo contains no ids. See `config.example.yaml` for every key, with placeholder values.
 
@@ -17,21 +17,27 @@ Rooms and lights are discovered from Home Assistant's floors, areas and entity r
 
 ## Install
 
-Add this repository to HACS as a custom repository (category: Dashboard), install it, then put the real values in the card config of your dashboard. The second card, `house-wall.js`, is added as a resource that points at the same installed folder.
+Add this repository to HACS as a custom repository (category: Dashboard) and download it. HACS installs `house-cards.js` from the latest release and adds it as a dashboard resource; that one resource provides both cards. Then put the real values in the card config of each dashboard (`type: custom:house-v5-card` or `type: custom:house-wall-card`).
 
 ## Develop
 
-No build step and no dependencies; Node 20+ is enough.
+Node 20+. The cards are plain JavaScript ES modules in `src/`, bundled by esbuild; the dev tools (esbuild, Biome, TypeScript for type checks) are dev dependencies only, nothing is added to what the dashboard loads.
 
 ```sh
+npm install
 git config core.hooksPath .githooks   # run the leak check before every commit
-npm run check                         # leak check, see scripts/scrub-check.mjs
-npm test                              # render every screen and compare with test/snapshots/
+npm run verify                        # lint + format check, types, render snapshots, leak check
+npm run build                         # dist/house-cards.js (+ source map)
+npm run format                        # apply Biome formatting and safe lint fixes
 npm run snapshot:update               # after an intended visual change; review the snapshot diff
 npm run equiv -- --ref main           # render equivalence: a git commit vs the working tree
 ```
 
-`npm test` renders both cards against a fake Home Assistant built from the placeholder configs in `test/fixtures/` and compares the HTML of every screen with `test/snapshots/`. It needs no real config, so CI runs it on every push together with the leak check and the HACS validation. `npm run equiv` compares two builds screen by screen; pass `--v5 <json> --wall <json>` to use real card configs, and keep those outside the repo.
+`npm test` builds and renders both cards against a fake Home Assistant built from the placeholder configs in `test/fixtures/`, and compares the HTML of every screen with `test/snapshots/`. It needs no real config, so CI runs it on every push. `npm run equiv` compares two builds screen by screen; pass `--v5 <json> --wall <json>` to use real card configs, and keep those outside the repo.
+
+## Release
+
+Bump `version` in `package.json`, merge to `main`, then push a tag `v<version>`. The release workflow checks, builds and publishes a GitHub release with `house-cards.js` attached; HACS offers it as an update.
 
 ## License
 

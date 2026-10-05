@@ -1,4 +1,5 @@
 {
   "name": "House dashboard cards",
-  "filename": "house-v5.js"
+  "filename": "house-cards.js",
+  "render_readme": true
 }

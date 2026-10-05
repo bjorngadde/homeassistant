@@ -1,0 +1,55 @@
+name: Release
+
+# Push a tag vX.Y.Z (matching "version" in package.json) to publish a release with dist/house-cards.js attached.
+# HACS installs the cards from the latest release. See .claude/skills/release/SKILL.md for the whole flow.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Tag matches package.json
+        run: |
+          want="v$(node -p "require('./package.json').version")"
+          if [ "$GITHUB_REF_NAME" != "$want" ]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match package.json version ($want)"
+            exit 1
+          fi
+      - name: Leak check
+        env:
+          TERMS: ${{ secrets.SCRUB_DENYLIST_TERMS }}
+        run: |
+          if [ -n "$TERMS" ]; then
+            printf '%s\n' "$TERMS" > "$RUNNER_TEMP/denylist.txt"
+            export SCRUB_DENYLIST="$RUNNER_TEMP/denylist.txt"
+          fi
+          node scripts/scrub-check.mjs --quiet
+      - name: Lint, types, render snapshots (builds dist/)
+        run: npm run lint && npm run typecheck && npm test
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/house-cards.js dist/house-cards.js.map --title "$GITHUB_REF_NAME" --generate-notes
+
+  hacs:
+    name: HACS validation
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hacs/action@main
+        with:
+          category: plugin
+          comment: false
+          ignore: brands description images topics

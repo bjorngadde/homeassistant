@@ -42,46 +42,34 @@ npm run equiv -- --ref <commit> --v5 v5.json --wall wall.json
 
 ## Checks that need no real config
 
-- `npm test` renders every screen of both cards against the placeholder configs in `test/fixtures/` (every id starts with `example`) and compares with `test/snapshots/<card>.html` (v5: 77 screens, wall: 49). After an intended visual change run `npm run snapshot:update` and review the snapshot diff: it shows exactly which screens changed.
+- `npm run verify`: Biome (lint and format check), `tsc` type check, render snapshots, leak check. Run it before every commit.
+- `npm test` builds `dist/house-cards.js` and renders every screen of both cards against the placeholder configs in `test/fixtures/` (every id starts with `example`), comparing with `test/snapshots/<card>.html` (v5: 77 screens, wall: 49). After an intended visual change run `npm run snapshot:update` and review the snapshot diff: it shows exactly which screens changed.
 - The fake Home Assistant lives in `test/lib/render.mjs` (DOM stub, states invented from the config, scenarios, and fixed answers for prices, calendars, statistics, logbook and forecasts). Its clock is fixed at 2026-10-05 12:00 UTC.
-- CI (`.github/workflows/ci.yml`) runs the leak check and `npm test` on every push and PR, plus the HACS validation action. The optional repository secret `SCRUB_DENYLIST_TERMS` (the denylist file's content) adds the private denylist; CI runs the check with `--quiet`, which prints only `file:line`, never a term.
+- Types: `tsconfig.json` checks `src/` as JavaScript with JSDoc (not strict). `src/types.d.ts` holds globals; `src/<card>/views.d.ts` tells the checker which methods the views add to the card.
+- CI (`.github/workflows/ci.yml`) runs the leak check, lint, types and snapshots on every push and PR; HACS validation runs on `main` only (a branch has no committed `dist/`, and GitHub detects the license on the default branch). The optional repository secret `SCRUB_DENYLIST_TERMS` (the denylist file's content) adds the private denylist; CI runs the check with `--quiet`, which prints only `file:line`, never a term.
+- Cloud sessions run `.claude/hooks/session-start.sh` (npm install, git hooks) on start.
+
+## Delivery: releases through HACS
+
+- `dist/house-cards.js` registers both cards. It is built by the release workflow (`.github/workflows/release.yml`) when a tag `vX.Y.Z` matching `package.json` is pushed, and attached to the GitHub release. `hacs.json` names it, so HACS installs it from the latest release and manages its one dashboard resource (with `?hacstag=` cache busting for both cards).
+- The whole flow, including the Home Assistant side (HACS refresh, resource check, wall display reload, rollback, emergency inline fallback), is the repo skill `.claude/skills/release/SKILL.md`.
+- HACS polls custom repositories only about every 48 h: use `ha_manage_hacs` `update_information`, then `download`.
+- The wall display needs a page reload to load new code.
 
 ## State of play (2026-10-05)
 
-- Both cards (0.2.0, neutral defaults) are live and served by HACS. The inline resources are deleted. The real values are in the card configs of the two dashboards. Render equivalence against the old inline builds was 119/119 (v5) and 42/42 (wall).
-- The phone card has been checked on the phone. The wall display was switched afterwards and still needs a visual check after a page reload (day grid, weather, "Leaving?", more rooms).
-- There are two dashboard resources: `house-v5.js` (managed by HACS) and `house-wall.js` (added by hand, same folder, same `?hacstag=` format). Resource ids are not recorded here; list the resources and match the file name.
-- HACS tracks commits on `main` (no releases yet), so the "version" it shows is a short commit hash. Rollback: `ha_manage_hacs` `download` with an older commit, or revert on `main` and download again.
-- Inline publishing (a whole file through `ha_config_set_dashboard_resource`) is no longer the normal path. It stays available as an emergency fallback: inline modules must not contain the hash character and should stay under ~128 KB.
+- Live in Home Assistant: 0.2.0, installed by HACS from a commit on `main` (no releases yet), as two resources: `house-v5.js` (managed by HACS) and `house-wall.js` (added by hand). Resource ids are not recorded here; list the resources and match the file name. The wall display still needs a visual check after a page reload.
+- On branch `claude/sweet-allen-qq5p8u` (not yet on `main`): phases 0 to 3 of the plan below, version 0.3.0. Rendering is identical to 0.2.0 on every screen (placeholder fixtures; real configs 119/119 and 49/49).
+- **One-off migration to 0.3.0** (needs the branch merged to `main` and Home Assistant reachable): push tag `v0.3.0`, wait for the release, `ha_manage_hacs` `update_information` + `download` 0.3.0, then in the dashboard resources make sure `house-cards.js` is present and delete the old `house-v5.js` and `house-wall.js` resources (both cards would otherwise be defined twice; the second definition is ignored, but the old files 404 after the download). Reload the wall display and check both dashboards.
 
-## Delivery through HACS
+## Plan status (agreed 2026-10-05)
 
-Verified:
-- HACS downloads the whole of `dist/`, not only the main file named in `hacs.json`. `house-wall.js` is served from the same folder as `house-v5.js`.
+Goal: smaller edits, fewer tokens per change, checks that run without the real config, less risk when changing one screen. Constraint for every step: identical rendering unless a step says so; one commit per step.
 
-Still to verify (do it with the first real release after this one):
-- Refresh flow: `ha_manage_hacs` with `update_information`, then `download` with a version. HACS polls custom repositories only about every 48 h by itself.
-- Cache: HACS bumps the `?hacstag=` only on its own main-file resource. After a download, check whether the hand-added `house-wall.js` resource gets a new tag too. If not, set it by hand to the same tag as the `house-v5.js` resource (`ha_config_set_dashboard_resource` with the new url) or the wall display keeps its cached copy. The wall display also needs a page reload to load new code.
-- Subfolders and split modules: confirm HACS downloads nested folders under `dist/`. Relative `import` URLs do not carry `?hacstag=`, so a split module can be served stale from the browser cache even when the entry file is new. Test this with a tiny change in one module before relying on native ES modules; a single bundled file per card avoids the problem.
+0. Safety net without the real config: done (snapshots, `npm run equiv`, CI, `scrub-check --quiet`).
+1. Tooling: done (esbuild, Biome, `tsc` checkJs, `npm run verify`, SessionStart hook, MIT license).
+2. Mechanical split into `src/v5/` and `src/wall/`: done (see the code map).
+3. Delivery: done in the repo (one bundle, release workflow, release skill); the Home Assistant migration above is still to do.
+4. Quality: merge duplicated helpers where the output is identical (the two `esc` functions differ: the wall card also escapes `'`); validate the config in `setConfig`; later a local preview page with Playwright screenshots of every screen (Chromium is pre-installed in cloud sessions).
 
-## Next task: improve DX and code quality (agreed plan, 2026-10-05)
-
-Goal: smaller edits, fewer tokens per change, checks that run without the real config, less risk when changing one screen. Hard constraint for every step: identical rendering (harness above, 119/119 and 42/42), no behavior change unless a step says so. One commit per step.
-
-Decisions taken:
-- **One combined bundle**, `house-cards.js`, registers both cards. HACS manages the only resource, so `?hacstag=` cache busting covers the wall display too (replaces the hand-added `house-wall.js` resource and the open "Cache" item above).
-- **Tagged releases built by CI**: GitHub Actions builds the bundle on a tag and attaches it to the release; `dist/` is no longer committed. HACS then shows versions, update notices and rollback by version.
-- **Build step with dev-only tools**: the npm registry was reachable on 2026-10-05 (esbuild, Biome, TypeScript all resolved). Nothing is added at runtime.
-- **Formatter pass** (Biome, about 120 columns) in its own output-neutral commit.
-- Not now: Lit (needs a DOM-level comparison in the harness first; later, one screen at a time) and a visual card editor (configs are too large for one).
-
-Phases:
-0. **Safety net without the real config.** Done 2026-10-05 (see "Checks that need no real config"). Commit a fixture made only of placeholder ids (from `config.example.yaml`), record golden snapshots of every screen of the current build, and compare against them in `npm test`. Add `npm run equiv -- --ref <commit>` that builds the reference from git by itself. GitHub Actions on push and PR: leak check, snapshot test, build, HACS validation action. If the denylist goes into a GitHub secret, first give `scrub-check.mjs` a quiet mode that prints only `file:line` (CI logs must never show a term).
-1. **Tooling.** `src/` plus esbuild (bundle, source maps; version injected from `package.json`, so no version constants in the code), Biome (lint and format), `tsc --noEmit --checkJs` over JSDoc types (a small own type file for `hass` and both configs; not `custom-card-helpers`, it is unmaintained). One command, `npm run verify` (lint, typecheck, tests, build), and a SessionStart hook that runs `npm ci` in cloud sessions.
-2. **Mechanical split.** `src/shared/`, `src/v5/` (shell, CSS, constants, one file per screen) and `src/wall/` (shell, CSS, one file per mode). View methods move as they are into per-screen objects that are attached to the class prototype (`Object.assign(HouseV5Card.prototype, homeView)`), so `this._s(...)` and every other body stay unchanged. Seams, by name:
-   - `house-v5.js`: constants and helpers (`V5C`, `V5I`, `V5W`, `V5WMAP`, `V5WTEXT`, `v5`), `V5_CSS`, the card shell (`HouseV5Card`: config, hass setter, timers, click and hold handling, routing), and one group of view methods per screen: home (`_homeView`, `_alarmBanner`, `_todayCard`, `_energyGlance`, `_floorsHtml`, `_activeNow`), room (`_roomView`), vacuum (`_vacuumView`), security (`_securityView`, `_alarmBlock`), energy (`_energyView`, `_carCard`), climate (`_climateView`, `_tempChart`, `_weatherCard`, `_heatPumpCard`).
-   - `house-wall.js`: helpers (`W`, `ICON`, `WX_ICON`, `WX_TEXT`), `CSS`, and the card class with one view method per mode (day, weather, leave, rooms, door, night, alarm).
-3. **Delivery.** Entry `src/index.js` builds `house-cards.js`; `hacs.json` `filename` points to it. Release workflow on tags. One-off migration in Home Assistant: download the release through HACS, delete the old `house-v5.js` and `house-wall.js` resources (match by file name), check the new resource, reload the wall display. Update README, `config.example.yaml` comments and this file.
-4. **Quality.** Merge duplicated helpers only where the output is identical (the two `esc` functions differ: the wall card also escapes `'`). Validate the config in `setConfig`: throw on wrong types (Home Assistant shows an error card), warn on unknown keys (catches YAML typos). Later: a local preview page with a fake Home Assistant and Playwright screenshots of every screen (Chromium is pre-installed in cloud sessions), so changes can be seen without touching the live house.
-
-For agents: keep a file map in this file ("to change the energy screen, edit `src/v5/energy.js`") and add a repo skill for the release flow (build, tag, HACS download, check resources, reload the wall display).
+Not now: Lit (needs a DOM-level comparison in the harness first; later, one screen at a time) and a visual card editor (the configs are too large for one).

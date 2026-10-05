@@ -1,6 +1,7 @@
 # Example card configs. Every id below is a placeholder (object ids start with "example").
 # The real values live in the card config of the Home Assistant dashboard, never in this repo.
-# Anything left out falls back to the defaults at the top of each card file.
+# Anything left out falls back to the defaults in src/v5/constants.js and src/wall/constants.js.
+# Both cards come from the one dashboard resource house-cards.js.
 
 # ---------------------------------------------------------------------------------------------
 # Phone card: house-v5-card (one panel view)

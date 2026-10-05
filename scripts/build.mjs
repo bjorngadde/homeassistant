@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * Builds the cards from src/ into dist/ (one minified ES module per entry, with a source map).
+ * Builds the cards from src/ into dist/house-cards.js: one minified ES module with both cards, plus a source map.
  * The version comes from package.json and replaces __VERSION__ in the sources.
  *
  *   node scripts/build.mjs [--outdir <dir>]      (npm run build)
@@ -16,8 +16,8 @@ const outdir = argv.includes('--outdir') ? path.resolve(argv[argv.indexOf('--out
 const { version } = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 
 export const ENTRIES = {
-  'house-v5': 'src/v5/index.js',
-  'house-wall': 'src/wall/index.js',
+  // both cards in one file: the file named in hacs.json and attached to every release
+  'house-cards': 'src/index.js',
 };
 
 await esbuild.build({

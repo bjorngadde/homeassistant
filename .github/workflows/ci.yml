@@ -37,8 +37,11 @@ jobs:
       - name: Lint, types, render snapshots
         run: npm run lint && npm run typecheck && npm test
 
+  # HACS installs releases from main: validating a feature branch only reports that its dist/ is not committed.
+  # (The license check reads GitHub's license detection, which looks at the default branch.)
   hacs:
     name: HACS validation
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: hacs/action@main

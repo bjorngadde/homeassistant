@@ -14,12 +14,17 @@ A release is a git tag `vX.Y.Z` on `main`. The release workflow (`.github/workfl
 3. Bump `version` in `package.json` (patch: fixes; minor: new screens or config keys; major: config keys renamed or removed) and run `npm install` so `package-lock.json` follows.
 4. Merge to `main` (ask the user before merging if they have not said so).
 
-## 2. Tag
+## 2. Tag and publish
 
-```sh
-git fetch origin main && git checkout main && git pull
-git tag v$(node -p "require('./package.json').version") && git push origin --tags
-```
+Either way works; the Release workflow then checks, builds and publishes:
+
+- Run the Release workflow by hand on `main` (GitHub "Actions" tab, "Run workflow"; or the GitHub MCP tool `actions_run_trigger` with `workflow_id: release.yml`, `ref: main`). It creates the tag `v<package.json version>` itself and stops if that tag exists. Use this from Claude Code cloud sessions: their git proxy does not let tags through (`git push origin <tag>` ends in "unexpected disconnect").
+- Or push the tag from a normal clone:
+
+  ```sh
+  git fetch origin main && git checkout main && git pull
+  git tag v$(node -p "require('./package.json').version") && git push origin --tags
+  ```
 
 Wait for the Release workflow to finish green; the release page must list `house-cards.js`.
 

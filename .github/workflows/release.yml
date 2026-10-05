@@ -1,10 +1,13 @@
 name: Release
 
-# Push a tag vX.Y.Z (matching "version" in package.json) to publish a release with dist/house-cards.js attached.
-# HACS installs the cards from the latest release. See .claude/skills/release/SKILL.md for the whole flow.
+# Publishes a release with dist/house-cards.js attached; HACS installs the cards from the latest release.
+# Two ways to start it (see .claude/skills/release/SKILL.md):
+#   - push a tag vX.Y.Z that matches "version" in package.json, or
+#   - run it by hand on main ("Run workflow", or the API): it creates the tag v<package.json version> itself.
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -20,13 +23,25 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Tag matches package.json
+      - name: Decide the tag
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           want="v$(node -p "require('./package.json').version")"
-          if [ "$GITHUB_REF_NAME" != "$want" ]; then
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+              echo "::error::run the release on main (got $GITHUB_REF)"
+              exit 1
+            fi
+            if gh api "repos/$GITHUB_REPOSITORY/git/refs/tags/$want" >/dev/null 2>&1; then
+              echo "::error::$want already exists: bump version in package.json first"
+              exit 1
+            fi
+          elif [ "$GITHUB_REF_NAME" != "$want" ]; then
             echo "::error::tag $GITHUB_REF_NAME does not match package.json version ($want)"
             exit 1
           fi
+          echo "TAG=$want" >> "$GITHUB_ENV"
       - name: Leak check
         env:
           TERMS: ${{ secrets.SCRUB_DENYLIST_TERMS }}
@@ -38,10 +53,10 @@ jobs:
           node scripts/scrub-check.mjs --quiet
       - name: Lint, types, render snapshots (builds dist/)
         run: npm run lint && npm run typecheck && npm test
-      - name: Publish the release
+      - name: Publish the release (creates the tag on this commit if it does not exist yet)
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/house-cards.js dist/house-cards.js.map --title "$GITHUB_REF_NAME" --generate-notes
+        run: gh release create "$TAG" dist/house-cards.js dist/house-cards.js.map --target "$GITHUB_SHA" --title "$TAG" --generate-notes
 
   hacs:
     name: HACS validation

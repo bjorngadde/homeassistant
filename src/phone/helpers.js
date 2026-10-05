@@ -1,9 +1,9 @@
-/* house-v5: small pure helpers (escaping, time formats, SVG icons, entity registry checks). */
+/* house-phone: small pure helpers (escaping, time formats, SVG icons, entity registry checks). */
 
 import { areaOf } from '../shared/hass.js';
-import { V5_DNO, V5C, V5W, V5WMAP } from './constants.js';
+import { DNO, COLOR, WX_PATHS, WX_KIND } from './constants.js';
 
-export const v5 = {
+export const P = {
   esc(s) {
     return String(s == null ? '' : s).replace(
       /[&<>"]/g,
@@ -15,10 +15,10 @@ export const v5 = {
   },
   hm(d) {
     d = new Date(d);
-    return v5.pad(d.getHours()) + ':' + v5.pad(d.getMinutes());
+    return P.pad(d.getHours()) + ':' + P.pad(d.getMinutes());
   },
   localStamp(d) {
-    return `${d.getFullYear()}-${v5.pad(d.getMonth() + 1)}-${v5.pad(d.getDate())} ${v5.pad(d.getHours())}:${v5.pad(d.getMinutes())}:00`;
+    return `${d.getFullYear()}-${P.pad(d.getMonth() + 1)}-${P.pad(d.getDate())} ${P.pad(d.getHours())}:${P.pad(d.getMinutes())}:00`;
   },
   dayStart(t) {
     const d = new Date(t);
@@ -33,20 +33,20 @@ export const v5 = {
     return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${fill}" stroke="${stroke}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths.map((d) => `<path d="${d}"></path>`).join('')}</svg>`;
   },
   wsvg(condition, size = 22, width = 1.8) {
-    const set = V5W[V5WMAP[condition] || 'cloudy'];
-    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${set.map(([d, c]) => `<path d="${d}" stroke="${V5C[c]}"></path>`).join('')}</svg>`;
+    const set = WX_PATHS[WX_KIND[condition] || 'cloudy'];
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${set.map(([d, c]) => `<path d="${d}" stroke="${COLOR[c]}"></path>`).join('')}</svg>`;
   },
   areaOf, // shared with the wall card, see ../shared/hass.js
   usable(hass, id) {
     const e = hass.entities && hass.entities[id];
     if (!e || e.hidden || e.entity_category) return false;
-    if ((e.labels || []).includes(V5_DNO)) return false;
+    if ((e.labels || []).includes(DNO)) return false;
     return !!hass.states[id];
   },
   safe(hass, id) {
     /* explicit config entity: only the do_not_operate label disqualifies it */
     const e = hass.entities && hass.entities[id];
-    return !!hass.states[id] && !(e && (e.labels || []).includes(V5_DNO));
+    return !!hass.states[id] && !(e && (e.labels || []).includes(DNO));
   },
   isGroup(s) {
     return !!s && Array.isArray(s.attributes.entity_id);
@@ -77,7 +77,7 @@ export const v5 = {
   when(t) {
     const d = new Date(t);
     if (isNaN(d.getTime())) return '';
-    const days = Math.round((v5.dayStart(Date.now()) - v5.dayStart(d)) / 86400000);
+    const days = Math.round((P.dayStart(Date.now()) - P.dayStart(d)) / 86400000);
     const day =
       days === 0
         ? 'today'
@@ -86,15 +86,15 @@ export const v5 = {
           : days < 7
             ? d.toLocaleDateString('en-GB', { weekday: 'short' })
             : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-    return day + ' ' + v5.hm(d);
+    return day + ' ' + P.hm(d);
   },
   /* compact form for tight rows: "16:32" today, else "yesterday" / "Mon" / "3 Oct" */
   whenShort(t) {
     const d = new Date(t);
     if (isNaN(d.getTime())) return '';
-    const days = Math.round((v5.dayStart(Date.now()) - v5.dayStart(d)) / 86400000);
+    const days = Math.round((P.dayStart(Date.now()) - P.dayStart(d)) / 86400000);
     return days === 0
-      ? v5.hm(d)
+      ? P.hm(d)
       : days === 1
         ? 'yesterday'
         : days < 7
@@ -103,7 +103,7 @@ export const v5 = {
   },
   mins(sec) {
     const m = Math.round(sec / 60);
-    return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + v5.pad(m % 60) + ' min';
+    return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + P.pad(m % 60) + ' min';
   },
   median(arr) {
     if (!arr.length) return null;

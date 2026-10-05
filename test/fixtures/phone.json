@@ -1,5 +1,5 @@
 {
-  "type": "custom:house-v5-card",
+  "type": "custom:house-phone-card",
   "people": ["person.example_one", "person.example_two"],
   "headlines": {
     "person.example_one": "input_text.example_headline_one",

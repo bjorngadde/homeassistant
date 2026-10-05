@@ -1,10 +1,10 @@
-/* house-v5: the Security tab and the alarm block (arm, disarm, clean then arm).
- * Methods of HouseV5Card, mixed into its prototype in ../card.js; `this` is the card. */
+/* house-phone: the Security tab and the alarm block (arm, disarm, clean then arm).
+ * Methods of HousePhoneCard, mixed into its prototype in ../card.js; `this` is the card. */
 
-import { V5C, V5I } from '../constants.js';
-import { v5 } from '../helpers.js';
+import { COLOR, ICON } from '../constants.js';
+import { P } from '../helpers.js';
 
-/** @satisfies {ThisType<import('../card.js').HouseV5Card>} */
+/** @satisfies {ThisType<import('../card.js').HousePhoneCard>} */
 export const securityView = {
   _alarmBlock() {
     const s = this._s(this._config.alarm);
@@ -34,7 +34,7 @@ export const securityView = {
       }[state] || state;
     const feat = s.attributes.supported_features || 0;
     const btn = (svc, text, color) =>
-      `<button class="hold" data-hold="${svc}"><span class="fill" style="background:${color}"></span><span class="tx"><span class="s15 b7">${text}</span><small class="s12" style="color:${V5C.sub};font-size:11px">Hold to confirm</small></span></button>`;
+      `<button class="hold" data-hold="${svc}"><span class="fill" style="background:${color}"></span><span class="tx"><span class="s15 b7">${text}</span><small class="s12" style="color:${COLOR.sub};font-size:11px">Hold to confirm</small></span></button>`;
     const ct = this._config.clean_then_arm;
     const vac = this._s(this._config.vacuum);
     const canClean = state === 'disarmed' && ct && this._s(ct.script) && vac && vac.state !== 'unavailable';
@@ -67,15 +67,15 @@ export const securityView = {
         const home = ps.state === 'home';
         const initial = (ps.attributes.friendly_name || p.split('.')[1]).charAt(0).toUpperCase();
         const where = home ? 'Home' : ps.state === 'not_home' ? 'Away' : ps.state;
-        return `<div class="person"><b style="background:${home ? 'rgba(61,214,196,0.18)' : V5C.card2};color:${home ? V5C.teal : V5C.dim}">${v5.esc(initial)}</b><span style="font-size:10px;font-weight:700;color:${home ? V5C.teal : V5C.dim}">${v5.esc(where)}</span></div>`;
+        return `<div class="person"><b style="background:${home ? 'rgba(61,214,196,0.18)' : COLOR.card2};color:${home ? COLOR.teal : COLOR.dim}">${P.esc(initial)}</b><span style="font-size:10px;font-weight:700;color:${home ? COLOR.teal : COLOR.dim}">${P.esc(where)}</span></div>`;
       })
       .join('');
     const hot = armed || state === 'triggered';
-    return `<div class="card" style="padding:16px;display:flex;flex-direction:column;gap:14px;border-color:${hot ? 'rgba(255,107,107,0.45)' : V5C.line}">
+    return `<div class="card" style="padding:16px;display:flex;flex-direction:column;gap:14px;border-color:${hot ? 'rgba(255,107,107,0.45)' : COLOR.line}">
       <div class="row" style="gap:12px">
-        <span class="ic" style="background:${hot ? V5C.red : 'rgba(61,214,196,0.18)'};color:${hot ? V5C.bg : V5C.teal}">${v5.svg(V5I.shield)}</span>
-        <div class="col grow" style="gap:1px"><div class="lbl">Alarm</div><div style="font-size:16px;font-weight:800">${v5.esc(label)}</div>
-          ${!armed && open.length ? `<div class="s12 b7" style="color:${V5C.redSoft}">${v5.esc(open.join(', '))} ${open.length > 1 ? 'are' : 'is'} open</div>` : ''}${note ? `<div class="s12" style="color:${V5C.orange}">${v5.esc(note)}</div>` : ''}</div>
+        <span class="ic" style="background:${hot ? COLOR.red : 'rgba(61,214,196,0.18)'};color:${hot ? COLOR.bg : COLOR.teal}">${P.svg(ICON.shield)}</span>
+        <div class="col grow" style="gap:1px"><div class="lbl">Alarm</div><div style="font-size:16px;font-weight:800">${P.esc(label)}</div>
+          ${!armed && open.length ? `<div class="s12 b7" style="color:${COLOR.redSoft}">${P.esc(open.join(', '))} ${open.length > 1 ? 'are' : 'is'} open</div>` : ''}${note ? `<div class="s12" style="color:${COLOR.orange}">${P.esc(note)}</div>` : ''}</div>
         <div class="row" style="gap:6px;flex-shrink:0">${people}</div></div>
       <div class="row" style="gap:10px">${buttons}</div></div>`;
   },
@@ -93,20 +93,20 @@ export const securityView = {
     const main = cams.find((c) => c.entity === this._cam);
     const lastPerson = (c) => {
       const e = this._log.find((x) => x.entity === c.person);
-      return e ? `Person · ${v5.hm(e.t)}` : null;
+      return e ? `Person · ${P.hm(e.t)}` : null;
     };
     let camHtml = '';
     if (main) {
       const ms = this._s(main.entity);
       const rec = cams.filter((c) => ['recording', 'streaming'].includes((h.states[c.entity] || {}).state)).length;
       camHtml = `<div class="sect"><div class="lbl">Cameras</div><div class="s12 b7 mute">${rec} recording</div></div>
-        <button class="cam" data-a="cam-open" data-v="${main.entity}" aria-label="Open ${v5.esc(main.name)} live"><span class="slot" data-slot="${main.entity}"></span>
-          <span class="over col"><span class="s15 b8">${v5.esc(main.name)}</span><span class="s12" style="color:${V5C.sub}">${v5.esc(lastPerson(main) || ms.state)} · tap for live</span></span></button>
+        <button class="cam" data-a="cam-open" data-v="${main.entity}" aria-label="Open ${P.esc(main.name)} live"><span class="slot" data-slot="${main.entity}"></span>
+          <span class="over col"><span class="s15 b8">${P.esc(main.name)}</span><span class="s12" style="color:${COLOR.sub}">${P.esc(lastPerson(main) || ms.state)} · tap for live</span></span></button>
         <div class="thumbs">${cams
           .filter((c) => c !== main)
           .map(
             (c) =>
-              `<button class="col" style="gap:4px;min-width:0" data-a="cam" data-v="${c.entity}"><span class="thumb"><span class="slot" data-slot="${c.entity}"></span></span><span class="ell" style="font-size:11px;font-weight:700;color:${V5C.sub}">${v5.esc(c.name)}</span></button>`,
+              `<button class="col" style="gap:4px;min-width:0" data-a="cam" data-v="${c.entity}"><span class="thumb"><span class="slot" data-slot="${c.entity}"></span></span><span class="ell" style="font-size:11px;font-weight:700;color:${COLOR.sub}">${P.esc(c.name)}</span></button>`,
           )
           .join('')}</div>`;
     }
@@ -118,30 +118,30 @@ export const securityView = {
         const mins = Math.round((Date.now() - new Date(s.last_changed).getTime()) / 60000);
         const since =
           mins < 60 ? `${mins} min` : mins < 1440 ? `${Math.round(mins / 60)} h` : `${Math.round(mins / 1440)} d`;
-        return `<div class="li"><span class="dot" style="background:${open ? V5C.red : V5C.teal}"></span><span class="grow s15 b7 ell">${v5.esc(s.attributes.friendly_name || id)}</span><span class="s13 b7" style="color:${open ? V5C.redSoft : V5C.mute}">${open ? 'Open · ' + since : s.state === 'unavailable' ? 'Unavailable' : 'Closed'}</span></div>`;
+        return `<div class="li"><span class="dot" style="background:${open ? COLOR.red : COLOR.teal}"></span><span class="grow s15 b7 ell">${P.esc(s.attributes.friendly_name || id)}</span><span class="s13 b7" style="color:${open ? COLOR.redSoft : COLOR.mute}">${open ? 'Open · ' + since : s.state === 'unavailable' ? 'Unavailable' : 'Closed'}</span></div>`;
       });
     const smoke = this._config.smoke.map((id) => this._s(id)).filter(Boolean);
     if (smoke.length) {
       const fire = smoke.filter((s) => s.state === 'on'),
         bad = smoke.filter((s) => s.state === 'unavailable');
       doors.push(
-        `<div class="li"><span class="dot" style="background:${fire.length ? V5C.red : bad.length ? V5C.orangeBar : V5C.teal}"></span><span class="grow s15 b7">Smoke detectors</span><span class="s13 b7" style="color:${fire.length ? V5C.redSoft : V5C.mute}">${fire.length ? 'SMOKE · ' + v5.esc(fire.map((s) => s.attributes.friendly_name).join(', ')) : bad.length ? bad.length + ' unavailable' : 'All OK'}</span></div>`,
+        `<div class="li"><span class="dot" style="background:${fire.length ? COLOR.red : bad.length ? COLOR.orangeBar : COLOR.teal}"></span><span class="grow s15 b7">Smoke detectors</span><span class="s13 b7" style="color:${fire.length ? COLOR.redSoft : COLOR.mute}">${fire.length ? 'SMOKE · ' + P.esc(fire.map((s) => s.attributes.friendly_name).join(', ')) : bad.length ? bad.length + ' unavailable' : 'All OK'}</span></div>`,
       );
     }
     const recent = this._log
       .slice(0, 6)
       .map(
         (e) =>
-          `<div class="li"><span class="s13 b7 mute num" style="width:44px">${v5.hm(e.t)}</span><span class="col grow" style="gap:1px"><span class="s14 b7">${v5.esc(e.what)}</span><span class="s12 mute">${v5.esc(e.where)}</span></span></div>`,
+          `<div class="li"><span class="s13 b7 mute num" style="width:44px">${P.hm(e.t)}</span><span class="col grow" style="gap:1px"><span class="s14 b7">${P.esc(e.what)}</span><span class="s12 mute">${P.esc(e.where)}</span></span></div>`,
       )
       .join('');
     const toggles = (list) =>
       list
-        .filter((x) => v5.safe(h, x.entity))
+        .filter((x) => P.safe(h, x.entity))
         .map((x) => {
           const s = this._s(x.entity),
             on = s.state === 'on';
-          return `<div class="li"><div class="col grow" style="gap:1px"><span class="s15 b7 ell">${v5.esc(x.name || s.attributes.friendly_name)}</span><span class="s12 mute">${on ? v5.esc(x.on || 'On') : 'Off'}</span></div><button class="swb" data-a="toggle" data-v="${x.entity}" aria-label="Toggle"><span class="sw${on ? ' on' : ''}"><i></i></span></button></div>`;
+          return `<div class="li"><div class="col grow" style="gap:1px"><span class="s15 b7 ell">${P.esc(x.name || s.attributes.friendly_name)}</span><span class="s12 mute">${on ? P.esc(x.on || 'On') : 'Off'}</span></div><button class="swb" data-a="toggle" data-v="${x.entity}" aria-label="Toggle"><span class="sw${on ? ' on' : ''}"><i></i></span></button></div>`;
         })
         .join('');
     const tg1 = toggles(this._config.security_toggles),

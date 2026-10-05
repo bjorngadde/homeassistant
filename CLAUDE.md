@@ -1,11 +1,11 @@
 # CLAUDE.md
 
-Two Home Assistant Lovelace cards (phone card `house-v5`, hall wall display `house-wall`), plain JavaScript ES modules in `src/`, bundled by esbuild, no runtime dependencies. See `README.md` for what they do and `config.example.yaml` for every config key.
+Two Home Assistant Lovelace cards (phone card `house-phone`, hall wall display `house-wall`), plain JavaScript ES modules in `src/`, bundled by esbuild, no runtime dependencies. See `README.md` for what they do and `config.example.yaml` for every config key.
 
 ## Hard rules
 
 1. **Nothing that identifies the house goes into this repo**: no real entity ids, area or floor ids, people's names, pet or device names, addresses, account ids. That includes code, comments, tests, docs, commit messages and PR text. The repo is public (HACS cannot install from a private repo), so treat all history as public.
-2. The real values live in the card config of the Home Assistant dashboards (the dashboards `mobile-v5` and `wall-v2`, one card each). Code ships only neutral defaults for anything house-specific.
+2. The real values live in the card config of the Home Assistant dashboards (the dashboards `mobile-v5`, titled "Phone", and `wall-v2`, titled "Hall wall"; one card each. The URLs are leftovers from testing: Home Assistant cannot rename a dashboard URL). Code ships only neutral defaults for anything house-specific.
 3. Run the leak check before every commit: `git config core.hooksPath .githooks` (once per clone), and for the strong version `export SCRUB_DENYLIST=<file outside the repo>` (see below). `npm run check` runs it by hand. New entries in `scripts/scrub-allow.txt` must be reviewed: only property accesses, CSS selectors and public hosts.
 4. Commit with the owner's GitHub noreply identity (`<github-username>@users.noreply.github.com`, set `user.name` / `user.email` locally) so no personal email ends up in history.
 
@@ -15,21 +15,21 @@ Edit `src/`, never `dist/` (build output, not committed). After any change: `npm
 
 | To change | Edit |
 |---|---|
-| Phone card: a tab or screen | `src/v5/views/` — `home.js` (Home tab: greeting, alarm banner, today, energy glance, floors, active now), `room.js` (one room), `vacuum.js` (vacuum screen), `security.js` (Security tab and the alarm block), `energy.js` (Energy tab, car), `climate.js` (Climate tab, chart, weather, heat pump) |
-| Phone card: data, timers, clicks, hold-to-confirm, routing, tab bar | `src/v5/card.js` |
-| Phone card: defaults, palette (`V5C`), icons (`V5I`), weather maps | `src/v5/constants.js` |
-| Phone card: pure helpers (`v5.esc`, time formats, SVG, registry checks) | `src/v5/helpers.js` |
-| Phone card: CSS | `src/v5/styles.js` |
+| Phone card: a tab or screen | `src/phone/views/` — `home.js` (Home tab: greeting, alarm banner, today, energy glance, floors, active now), `room.js` (one room), `vacuum.js` (vacuum screen), `security.js` (Security tab and the alarm block), `energy.js` (Energy tab, car), `climate.js` (Climate tab, chart, weather, heat pump) |
+| Phone card: data, timers, clicks, hold-to-confirm, routing, tab bar | `src/phone/card.js` |
+| Phone card: defaults, palette (`COLOR`), icons (`ICON`), weather icons and texts (`WX_PATHS`, `WX_KIND`, `WX_TEXT`) | `src/phone/constants.js` |
+| Phone card: pure helpers (`P.esc`, time formats, SVG, registry checks) | `src/phone/helpers.js` |
+| Phone card: CSS | `src/phone/styles.js` |
 | Wall card: a mode | `src/wall/views/` — `day.js` (Day screen and the helpers other modes share), `weather.js`, `leave.js` ("Leaving?"), `rooms.js` ("More rooms"), `door.js` (doorbell), `night.js`, `alarm.js` (entry delay / triggered) |
 | Wall card: data, doorbell, fit to screen, clock, actions, mode switch | `src/wall/card.js` |
 | Wall card: defaults and timings / helpers (`W`) / icons and weather maps / CSS | `src/wall/constants.js` / `helpers.js` / `icons.js` / `styles.js` |
-| Card registration and version log line | `src/v5/index.js`, `src/wall/index.js`, both bundled by `src/index.js` |
-| Config schema (checked in `setConfig`) | `src/v5/schema.js`, `src/wall/schema.js`; notation and checker in `src/shared/config.js` |
+| Card registration and version log line | `src/phone/index.js`, `src/wall/index.js`, both bundled by `src/index.js` |
+| Config schema (checked in `setConfig`) | `src/phone/schema.js`, `src/wall/schema.js`; notation and checker in `src/shared/config.js` |
 | Code both cards share | `src/shared/` — `config.js` (merge with defaults, validation), `hass.js` (`areaOf`) |
 
 A new config key goes into four places: the defaults (`constants.js`), the schema (`schema.js`), `config.example.yaml` and the fixture in `test/fixtures/` (a unit test fails if a default is missing from the schema).
 
-How the split works: each file in `views/` exports one object of methods that `card.js` copies onto the card's prototype (`Object.assign(HouseV5Card.prototype, homeView, ...)`), so `this` is the card everywhere and views call each other's methods freely. A new view method needs no registration; a new view file is imported in `card.js` and listed in `views.d.ts` (which tells the type checker about it). A field that only a view sets is declared in `views.d.ts` too.
+How the split works: each file in `views/` exports one object of methods that `card.js` copies onto the card's prototype (`Object.assign(HousePhoneCard.prototype, homeView, ...)`), so `this` is the card everywhere and views call each other's methods freely. A new view method needs no registration; a new view file is imported in `card.js` and listed in `views.d.ts` (which tells the type checker about it). A field that only a view sets is declared in `views.d.ts` too.
 
 ## Getting the real config (outside the repo)
 
@@ -37,22 +37,22 @@ With the Home Assistant MCP server connected, read the card config of each dashb
 
 ```sh
 printf '%s\n' <names that are not ids: people, pets, ...> > extras.txt
-node scripts/make-denylist.mjs v5.json wall.json --extra extras.txt > denylist.txt
+node scripts/make-denylist.mjs phone.json wall.json --extra extras.txt > denylist.txt
 SCRUB_DENYLIST=denylist.txt node scripts/scrub-check.mjs
-npm run equiv -- --ref <commit> --v5 v5.json --wall wall.json
+npm run equiv -- --ref <commit> --phone phone.json --wall wall.json
 ```
 
-`npm run equiv` takes the reference build from a git commit (default `HEAD`) and the candidate from the working tree, and renders both with the same config. For an older build outside git, call `test/render-equivalence.mjs` directly (`--help`). Both cards must stay at 100 % identical screens (with the real configs: v5 119 screens, wall 49; the wall count includes one "styles" entry per scenario since 2026-10-05, it was 42 before). The harness is the safety net for any refactor.
+`npm run equiv` takes the reference build from a git commit (default `HEAD`) and the candidate from the working tree, and renders both with the same config. For an older build outside git, call `test/render-equivalence.mjs` directly (`--help`). Both cards must stay at 100 % identical screens (with the real configs: phone 119 screens, wall 49; the wall count includes one "styles" entry per scenario since 2026-10-05, it was 42 before). The harness is the safety net for any refactor.
 
 ## Checks that need no real config
 
 - `npm run verify`: Biome (lint and format check), `tsc` type check, render snapshots, leak check. Run it before every commit.
-- `npm test` runs the unit tests (`test/*.test.mjs`, node:test: config merge and validation), then builds `dist/house-cards.js` and renders every screen of both cards against the placeholder configs in `test/fixtures/` (every id starts with `example`), comparing with `test/snapshots/<card>.html` (v5: 77 screens, wall: 49). After an intended visual change run `npm run snapshot:update` and review the snapshot diff: it shows exactly which screens changed.
+- `npm test` runs the unit tests (`test/*.test.mjs`, node:test: config merge and validation), then builds `dist/house-cards.js` and renders every screen of both cards against the placeholder configs in `test/fixtures/` (every id starts with `example`), comparing with `test/snapshots/<card>.html` (phone: 77 screens, wall: 49). After an intended visual change run `npm run snapshot:update` and review the snapshot diff: it shows exactly which screens changed.
 - The fake Home Assistant lives in `test/lib/fake-hass.mjs` (states and registries invented from the config, fixed answers for prices, calendars, statistics, logbook and forecasts, the scenarios and the screen list); `test/lib/render.mjs` adds the DOM stub for Node. The clock is fixed at 2026-10-05 12:00 UTC.
 - Types: `tsconfig.json` checks `src/` as JavaScript with JSDoc (not strict). `src/types.d.ts` holds globals; `src/<card>/views.d.ts` tells the checker which methods the views add to the card.
 - CI (`.github/workflows/ci.yml`) runs the leak check, lint, types and snapshots on every push and PR; HACS validation runs on `main` only (a branch has no committed `dist/`, and GitHub detects the license on the default branch). The optional repository secret `SCRUB_DENYLIST_TERMS` (the denylist file's content) adds the private denylist; CI runs the check with `--quiet`, which prints only `file:line`, never a term.
 - Cloud sessions run `.claude/hooks/session-start.sh` (npm install, git hooks) on start.
-- To *see* a change: `npm run preview` (add `--all` for every scenario, `--card v5|wall` for one card) writes a PNG per screen to `.private/preview/<card>/<scenario>/<screen>.png` (git-ignored); open the PNGs with the Read tool. It renders in headless Chromium against the fake Home Assistant in `test/lib/fake-hass.mjs` (the same one the snapshots use), with the clock fixed and the internet blocked (fallback font instead of Manrope, grey placeholders for camera and map images). With `--v5/--wall <real config>` the screenshots show real names: keep them local.
+- To *see* a change: `npm run preview` (add `--all` for every scenario, `--card phone|wall` for one card) writes a PNG per screen to `.private/preview/<card>/<scenario>/<screen>.png` (git-ignored); open the PNGs with the Read tool. It renders in headless Chromium against the fake Home Assistant in `test/lib/fake-hass.mjs` (the same one the snapshots use), with the clock fixed and the internet blocked (fallback font instead of Manrope, grey placeholders for camera and map images). With `--phone/--wall <real config>` the screenshots show real names: keep them local.
 
 ## Delivery: releases through HACS
 
@@ -75,7 +75,7 @@ Goal: smaller edits, fewer tokens per change, checks that run without the real c
 
 0. Safety net without the real config: done (snapshots, `npm run equiv`, CI, `scrub-check --quiet`).
 1. Tooling: done (esbuild, Biome, `tsc` checkJs, `npm run verify`, SessionStart hook, MIT license).
-2. Mechanical split into `src/v5/` and `src/wall/`: done (see the code map).
+2. Mechanical split into `src/phone/` and `src/wall/`: done (see the code map).
 3. Delivery: done (one bundle, release workflow, release skill; 0.3.0 released and installed, old resources removed).
 4. Quality: done, including the browser preview (`npm run preview`). Shared helpers (`mergeConfig`, `areaOf`; `esc`, `svg`, the time format and the weather texts differ between the cards on purpose and stay separate) and config validation in `setConfig` (both real configs: no errors, no warnings).
 

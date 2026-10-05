@@ -1,14 +1,14 @@
 # Example card configs. Every id below is a placeholder (object ids start with "example").
 # The real values live in the card config of the Home Assistant dashboard, never in this repo.
-# Anything left out falls back to the defaults in src/v5/constants.js and src/wall/constants.js.
+# Anything left out falls back to the defaults in src/phone/constants.js and src/wall/constants.js.
 # Both cards come from the one dashboard resource house-cards.js.
 # Each card checks its config on load: a wrong shape (a list where an object belongs, ...) shows an error card,
 # unknown keys and wrong value types are logged as warnings in the browser console.
 
 # ---------------------------------------------------------------------------------------------
-# Phone card: house-v5-card (one panel view)
+# Phone card: house-phone-card (one panel view)
 # ---------------------------------------------------------------------------------------------
-type: custom:house-v5-card
+type: custom:house-phone-card
 people: [person.example_one, person.example_two]
 headlines: # person -> input_text holding that person's short AI headline (optional)
   person.example_one: input_text.example_headline_one

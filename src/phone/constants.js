@@ -1,11 +1,11 @@
-/* house-v5: version, default config, palette, icons and weather maps. */
+/* house-phone: version, default config, palette, icons and weather maps. */
 
-export const V5_VERSION = __VERSION__; // injected by scripts/build.mjs from package.json
-export const V5_DNO = 'do_not_operate';
+export const PHONE_VERSION = __VERSION__; // injected by scripts/build.mjs from package.json
+export const DNO = 'do_not_operate';
 
 // Everything specific to one house (entity ids, area ids, names, vacuum segment ids) comes from the card config;
 // see config.example.yaml. The empty values below only keep the code from tripping over missing keys.
-export const V5_DEFAULTS = {
+export const PHONE_DEFAULTS = {
   headlines: {}, // person entity -> input_text that holds that person's AI headline
   calendars: { default: [] }, // person entity -> calendars; "default" is used for everyone else
   weather: '',
@@ -44,7 +44,7 @@ export const V5_DEFAULTS = {
 };
 
 /* palette (rgb only) */
-export const V5C = {
+export const COLOR = {
   bg: 'rgb(14,19,32)',
   card: 'rgb(24,32,51)',
   card2: 'rgb(34,44,68)',
@@ -72,7 +72,7 @@ export const V5C = {
   violet: 'rgb(185,166,255)',
 };
 
-export const V5I = {
+export const ICON = {
   bulb: ['M9 18h6', 'M10 22h4', 'M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z'],
   chevR: ['m9 18 6-6-6-6'],
   chevL: ['m15 18-6-6 6-6'],
@@ -94,7 +94,7 @@ export const V5I = {
     'M19 17l.6 1.4L21 19l-1.4.6L19 21l-.6-1.4L17 19l1.4-.6z',
   ],
 };
-export const V5W = {
+export const WX_PATHS = {
   sunny: [
     ['M12 7.5a4.5 4.5 0 1 0 0 9a4.5 4.5 0 1 0 0-9z', 'yellow'],
     ['M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4', 'yellow'],
@@ -115,7 +115,7 @@ export const V5W = {
   ],
   night: [['M20 13.5A8 8 0 1 1 10.5 4a6.5 6.5 0 0 0 9.5 9.5z', 'sub']],
 };
-export const V5WMAP = {
+export const WX_KIND = {
   sunny: 'sunny',
   'clear-night': 'night',
   partlycloudy: 'partlycloudy',
@@ -132,7 +132,7 @@ export const V5WMAP = {
   'snowy-rainy': 'snowy',
   exceptional: 'cloudy',
 };
-export const V5WTEXT = {
+export const WX_TEXT = {
   sunny: 'Sunny',
   'clear-night': 'Clear',
   partlycloudy: 'Partly cloudy',

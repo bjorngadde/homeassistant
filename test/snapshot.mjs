@@ -7,7 +7,7 @@
  *   node test/snapshot.mjs            compare (npm test)
  *   node test/snapshot.mjs --update   rewrite the snapshots after an intended change (npm run snapshot:update);
  *                                     review the diff of test/snapshots/ before committing
- *   --card v5|wall                    only one card
+ *   --card phone|wall                    only one card
  *
  * Format: one "<!-- ==== scenario · screen ==== -->" line before each screen's exact HTML. A leading <style>
  * block is stored once and a screen identical to an earlier one is stored as a reference, which keeps the
@@ -22,7 +22,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
 const update = argv.includes('--update');
 const only = argv.includes('--card') ? argv[argv.indexOf('--card') + 1] : '';
-const CARDS = ['v5', 'wall'];
+const CARDS = ['phone', 'wall'];
 
 const SEP = /^<!-- ==== (.+?) ==== (?:same as (.+?) )?-->$/;
 const sepLine = (name, same) => `<!-- ==== ${name} ==== ${same ? `same as ${same} ` : ''}-->`;
@@ -99,7 +99,7 @@ for (const card of CARDS) {
   for (const [sc, r] of Object.entries(res)) {
     for (const [screen, html] of Object.entries(r.out)) {
       entries.push([`${sc} · ${screen}`, html]);
-      const err = html.match(/house-(v5|wall): [^<]*/);
+      const err = html.match(/house-(phone|v5|wall): [^<]*/);
       if (err || !html) errors.push(`${sc} · ${screen}: ${err ? err[0] : 'empty render'}`);
     }
     r.errors.forEach((e) => errors.push(`${sc}: console.error ${e.slice(0, 160)}`));

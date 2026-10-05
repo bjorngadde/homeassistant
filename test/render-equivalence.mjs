@@ -4,7 +4,7 @@
  * and compares the HTML of every screen. No dependencies: the cards only build strings, so a tiny
  * DOM stub is enough.
  *
- *   node test/render-equivalence.mjs --card v5 \
+ *   node test/render-equivalence.mjs --card phone \
  *        --ref  <reference.js>  [--ref-config  <json>] \
  *        --cand <candidate.js>  [--cand-config <json>] \
  *        --fixture <json>        # real card config; used ONLY to invent a matching fake Home Assistant
@@ -21,7 +21,7 @@ if (argv.includes('--help') || argv.length === 0) {
   console.log(`Renders a card twice (reference build vs candidate build) against the same fake Home Assistant
 and compares the HTML of every screen.
 
-  node test/render-equivalence.mjs --card v5|wall \\
+  node test/render-equivalence.mjs --card phone|wall \\
        --ref  <reference.js>  [--ref-config  <json>] \\
        --cand <candidate.js>  [--cand-config <json>] \\
        --fixture <json>   real card config, used only to invent a matching fake Home Assistant
@@ -37,9 +37,9 @@ const arg = (n, d = '') => {
 const flag = (n) => argv.includes('--' + n);
 const readJson = (p) => (p ? JSON.parse(fs.readFileSync(p, 'utf8')) : {});
 
-const CARD = arg('card', 'v5');
+const CARD = arg('card', 'phone');
 if (!TAGS[CARD]) {
-  console.error('--card must be v5 or wall');
+  console.error('--card must be phone or wall');
   process.exit(2);
 }
 
@@ -54,9 +54,9 @@ for (const sc of scenarios(fixture)) {
   if (flag('smoke')) {
     for (const [k, html] of Object.entries(cand.out)) {
       total++;
-      if (html.includes('house-v5:') || html.includes('house-wall:') || !html) {
+      if (html.includes('house-phone:') || html.includes('house-v5:') || html.includes('house-wall:') || !html) {
         smokeErrors++;
-        console.log(`ERROR  ${sc.name} · ${k}: ${(html.match(/house-(v5|wall): [^<]*/) || ['(empty)'])[0]}`);
+        console.log(`ERROR  ${sc.name} · ${k}: ${(html.match(/house-(phone|v5|wall): [^<]*/) || ['(empty)'])[0]}`);
       }
     }
     continue;

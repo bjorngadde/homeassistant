@@ -4,7 +4,7 @@ Two custom Lovelace cards for a Home Assistant house dashboard, shipped together
 
 | Card | For | Source |
 |---|---|---|
-| `custom:house-v5-card` | Phone dashboard: Home, Security, Energy, Climate, one screen per room, one for the robot vacuum | `src/v5/` |
+| `custom:house-phone-card` | Phone dashboard: Home, Security, Energy, Climate, one screen per room, one for the robot vacuum | `src/phone/` |
 | `custom:house-wall-card` | Calm 480×480 screen for a Shelly Wall Display: day, weather, "Leaving?", more rooms, doorbell, night, alarm entry-delay warning | `src/wall/` |
 
 Rooms and lights are discovered from Home Assistant's floors, areas and entity registry. Everything specific to one house (entity ids, area ids, names) is supplied through the **card config** in the dashboard, so this repo contains no ids. See `config.example.yaml` for every key, with placeholder values.
@@ -17,7 +17,7 @@ Rooms and lights are discovered from Home Assistant's floors, areas and entity r
 
 ## Install
 
-Add this repository to HACS as a custom repository (category: Dashboard) and download it. HACS installs `house-cards.js` from the latest release and adds it as a dashboard resource; that one resource provides both cards. Then put the real values in the card config of each dashboard (`type: custom:house-v5-card` or `type: custom:house-wall-card`).
+Add this repository to HACS as a custom repository (category: Dashboard) and download it. HACS installs `house-cards.js` from the latest release and adds it as a dashboard resource; that one resource provides both cards. Then put the real values in the card config of each dashboard (`type: custom:house-phone-card` or `type: custom:house-wall-card`).
 
 ## Develop
 
@@ -34,7 +34,7 @@ npm run equiv -- --ref main           # render equivalence: a git commit vs the 
 npm run preview                       # screenshots of every screen in headless Chromium, .private/preview/index.html
 ```
 
-`npm test` builds and renders both cards against a fake Home Assistant built from the placeholder configs in `test/fixtures/`, and compares the HTML of every screen with `test/snapshots/`. It needs no real config, so CI runs it on every push. `npm run equiv` compares two builds screen by screen; pass `--v5 <json> --wall <json>` to use real card configs, and keep those outside the repo.
+`npm test` builds and renders both cards against a fake Home Assistant built from the placeholder configs in `test/fixtures/`, and compares the HTML of every screen with `test/snapshots/`. It needs no real config, so CI runs it on every push. `npm run equiv` compares two builds screen by screen; pass `--phone <json> --wall <json>` to use real card configs, and keep those outside the repo.
 
 `npm run preview` renders every screen in a real browser against the same fake Home Assistant and saves PNGs plus an `index.html` gallery in `.private/preview/` (git-ignored). Add `--all` for every scenario (alarm armed, entry delay, door open, ...). It uses playwright-core: in Claude Code cloud sessions Chromium is pre-installed; elsewhere run `npx playwright-core install chromium` once or set `CHROME_PATH`.
 

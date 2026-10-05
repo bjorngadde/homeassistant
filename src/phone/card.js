@@ -1,11 +1,11 @@
-/* house-v5: the card shell. Config, hass setter, timers, data fetching, render loop, clicks and hold-to-confirm,
+/* house-phone: the card shell. Config, hass setter, timers, data fetching, render loop, clicks and hold-to-confirm,
  * structure helpers and routing. Each screen lives in views/ and is mixed into the prototype at the end. */
 
-import { V5_DEFAULTS, V5C, V5I } from './constants.js';
+import { PHONE_DEFAULTS, COLOR, ICON } from './constants.js';
 import { checkConfig, mergeConfig } from '../shared/config.js';
-import { v5 } from './helpers.js';
-import { V5_SCHEMA } from './schema.js';
-import { V5_CSS } from './styles.js';
+import { P } from './helpers.js';
+import { PHONE_SCHEMA } from './schema.js';
+import { CSS } from './styles.js';
 import { homeView } from './views/home.js';
 import { roomView } from './views/room.js';
 import { vacuumView } from './views/vacuum.js';
@@ -13,7 +13,7 @@ import { securityView } from './views/security.js';
 import { energyView } from './views/energy.js';
 import { climateView } from './views/climate.js';
 
-export class HouseV5Card extends HTMLElement {
+export class HousePhoneCard extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -40,8 +40,8 @@ export class HouseV5Card extends HTMLElement {
     return {};
   }
   setConfig(config) {
-    checkConfig('house-v5', config || {}, V5_SCHEMA);
-    this._config = mergeConfig(V5_DEFAULTS, config || {});
+    checkConfig('house-phone', config || {}, PHONE_SCHEMA);
+    this._config = mergeConfig(PHONE_DEFAULTS, config || {});
     this._ver++;
   }
   getCardSize() {
@@ -67,11 +67,11 @@ export class HouseV5Card extends HTMLElement {
 
   _start() {
     if (this._timers) return;
-    if (!document.querySelector('link[data-house-v5-font]')) {
+    if (!document.querySelector('link[data-house-phone-font]')) {
       const l = document.createElement('link');
       l.rel = 'stylesheet';
       l.href = 'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap';
-      l.setAttribute('data-house-v5-font', '1');
+      l.setAttribute('data-house-phone-font', '1');
       document.head.appendChild(l);
     }
     if (!this._bound) {
@@ -86,7 +86,7 @@ export class HouseV5Card extends HTMLElement {
         if (t.closest && t.closest('[data-hold]')) ev.preventDefault();
       });
       this._onPop = () => {
-        const r = (history.state && history.state.houseV5Room) || null;
+        const r = (history.state && history.state.housePhoneRoom) || null;
         if (this._room !== r) {
           this._room = r;
           this._ver++;
@@ -147,7 +147,7 @@ export class HouseV5Card extends HTMLElement {
       const res = await h.callService(
         'tibber',
         'get_prices',
-        { start: v5.localStamp(d0), end: v5.localStamp(d2) },
+        { start: P.localStamp(d0), end: P.localStamp(d2) },
         undefined,
         false,
         true,
@@ -347,10 +347,10 @@ export class HouseV5Card extends HTMLElement {
     try {
       body = this._view();
     } catch (e) {
-      body = `<div class="page"><div class="card empty">house-v5: ${v5.esc(e.message)}</div></div>`;
+      body = `<div class="page"><div class="card empty">house-phone: ${P.esc(e.message)}</div></div>`;
       console.error(e);
     }
-    this.shadowRoot.innerHTML = `<style>${V5_CSS}</style><div class="root">${body}${this._tabsHtml()}</div>`;
+    this.shadowRoot.innerHTML = `<style>${CSS}</style><div class="root">${body}${this._tabsHtml()}</div>`;
     this._sig = this._signature();
     this._placeCams();
   }
@@ -380,7 +380,7 @@ export class HouseV5Card extends HTMLElement {
       v = el.getAttribute('data-v'),
       w = el.getAttribute('data-w');
     const h = this._hass;
-    v5.haptic(el, 'light');
+    P.haptic(el, 'light');
     switch (a) {
       case 'tab':
         this._tab = v;
@@ -396,13 +396,13 @@ export class HouseV5Card extends HTMLElement {
         this._render();
         this._top();
         try {
-          history.pushState({ houseV5Room: v }, '', location.href);
+          history.pushState({ housePhoneRoom: v }, '', location.href);
         } catch (_e) {
           /* ignore */
         }
         break;
       case 'back':
-        if (history.state && history.state.houseV5Room) history.back();
+        if (history.state && history.state.housePhoneRoom) history.back();
         else {
           this._room = null;
           this._ver++;
@@ -434,13 +434,13 @@ export class HouseV5Card extends HTMLElement {
         break;
       case 'room-bri': {
         const ids = this._roomLights(v).filter(
-          (id) => h.states[id].state !== 'unavailable' && v5.dimmable(h.states[id]),
+          (id) => h.states[id].state !== 'unavailable' && P.dimmable(h.states[id]),
         );
         if (ids.length) this._call('light', 'turn_on', { entity_id: ids, brightness_pct: parseInt(w, 10) });
         break;
       }
       case 'toggle':
-        if (v5.safe(h, v)) this._call('homeassistant', 'toggle', { entity_id: v });
+        if (P.safe(h, v)) this._call('homeassistant', 'toggle', { entity_id: v });
         break;
       case 'media': {
         const svc = { vd: 'volume_down', vu: 'volume_up', pp: 'media_play_pause', off: 'turn_off' }[w];
@@ -525,13 +525,13 @@ export class HouseV5Card extends HTMLElement {
     void fill.offsetWidth;
     fill.style.transition = `width ${ms}ms linear`;
     fill.style.width = '100%';
-    v5.haptic(el, 'light');
+    P.haptic(el, 'light');
     const service = el.getAttribute('data-hold');
     this._holding = {
       el,
       fill,
       timer: setTimeout(() => {
-        v5.haptic(el, 'medium');
+        P.haptic(el, 'medium');
         if (service === 'press') this._call('button', 'press', { entity_id: el.getAttribute('data-v') });
         else if (service.startsWith('script:'))
           this._call('script', 'turn_on', { entity_id: 'script.' + service.slice(7) });
@@ -597,16 +597,16 @@ export class HouseV5Card extends HTMLElement {
     for (const id of Object.keys(h.entities || {})) {
       if (
         !id.startsWith('light.') ||
-        !v5.usable(h, id) ||
-        v5.isGroup(h.states[id]) ||
+        !P.usable(h, id) ||
+        P.isGroup(h.states[id]) ||
         (this._config.exclude || []).includes(id)
       )
         continue;
-      const a = v5.areaOf(h, id);
+      const a = P.areaOf(h, id);
       if (!a) continue;
       (m[a] = m[a] || []).push(id);
     }
-    const nm = (id, a) => v5.shortName(h.states[id].attributes.friendly_name || id, this._areaName(a));
+    const nm = (id, a) => P.shortName(h.states[id].attributes.friendly_name || id, this._areaName(a));
     for (const a of Object.keys(m)) m[a].sort((x, y) => nm(x, a).localeCompare(nm(y, a)));
     this._bac = { e: h.entities, d: h.devices, s: Object.keys(h.states).length, m };
     return m;
@@ -621,8 +621,8 @@ export class HouseV5Card extends HTMLElement {
     const ids = Object.keys(h.entities || {}).filter(
       (id) =>
         id.startsWith('sensor.') &&
-        v5.usable(h, id) &&
-        v5.areaOf(h, id) === a &&
+        P.usable(h, id) &&
+        P.areaOf(h, id) === a &&
         h.states[id].attributes.device_class === 'temperature',
     );
     const perDev = {};
@@ -638,7 +638,7 @@ export class HouseV5Card extends HTMLElement {
       .filter((id) => !/device_temperature|chamber|nozzle|bed_|_hp_|screen/.test(id))
       .map((id) => parseFloat(h.states[id].state))
       .filter((v) => !isNaN(v) && v > 5 && v < 35);
-    const m = v5.median(vals);
+    const m = P.median(vals);
     return m == null ? null : m.toFixed(1) + '°';
   }
   _openDoors() {
@@ -657,7 +657,7 @@ export class HouseV5Card extends HTMLElement {
     /** @type {{ t: number, p: number, rank?: number }[]} */
     const hours = [...byHour.entries()].map(([t, ps]) => ({ t, p: ps.reduce((a, b) => a + b, 0) / ps.length }));
     const byDay = {};
-    hours.forEach((x) => (byDay[v5.dayStart(x.t)] = byDay[v5.dayStart(x.t)] || []).push(x));
+    hours.forEach((x) => (byDay[P.dayStart(x.t)] = byDay[P.dayStart(x.t)] || []).push(x));
     Object.values(byDay).forEach((list) => {
       const s = [...list].sort((a, b) => a.p - b.p);
       s.forEach((x, i) => {
@@ -667,13 +667,13 @@ export class HouseV5Card extends HTMLElement {
     return hours.sort((a, b) => a.t - b.t);
   }
   _rankColor(r) {
-    return r > 0.75 ? V5C.red : r > 0.5 ? V5C.orangeBar : r > 0.25 ? V5C.yellow : V5C.teal;
+    return r > 0.75 ? COLOR.red : r > 0.5 ? COLOR.orangeBar : r > 0.25 ? COLOR.yellow : COLOR.teal;
   }
   _priceStatus() {
     const q = this._prices;
     if (!q.length) return null;
     const byDay = {};
-    q.forEach((x) => (byDay[v5.dayStart(x.t)] = byDay[v5.dayStart(x.t)] || []).push(x));
+    q.forEach((x) => (byDay[P.dayStart(x.t)] = byDay[P.dayStart(x.t)] || []).push(x));
     const rank = new Map();
     Object.values(byDay).forEach((list) => {
       const s = [...list].sort((a, b) => a.p - b.p);
@@ -694,13 +694,13 @@ export class HouseV5Card extends HTMLElement {
         break;
       }
     }
-    const at = change ? v5.hm(change.t) : null,
+    const at = change ? P.hm(change.t) : null,
       to = change ? cls(change.t) : null;
-    if (c0 === 'high') return { text: at ? `Expensive until ${at}` : 'Expensive', color: V5C.orange };
-    if (c0 === 'low') return { text: at ? `Cheap until ${at}` : 'Cheap', color: V5C.teal };
-    if (to === 'high') return { text: `Expensive from ${at}`, color: V5C.sub };
-    if (to === 'low') return { text: `Cheap from ${at}`, color: V5C.sub };
-    return { text: 'Normal price', color: V5C.sub };
+    if (c0 === 'high') return { text: at ? `Expensive until ${at}` : 'Expensive', color: COLOR.orange };
+    if (c0 === 'low') return { text: at ? `Cheap until ${at}` : 'Cheap', color: COLOR.teal };
+    if (to === 'high') return { text: `Expensive from ${at}`, color: COLOR.sub };
+    if (to === 'low') return { text: `Cheap from ${at}`, color: COLOR.sub };
+    return { text: 'Normal price', color: COLOR.sub };
   }
   _priceNow() {
     const s = this._s(this._config.price);
@@ -723,21 +723,21 @@ export class HouseV5Card extends HTMLElement {
 
   _header(title, sub) {
     const now = new Date();
-    return `<div class="head"><div class="col" style="gap:1px"><div class="h1">${v5.esc(title)}</div><div class="s12 mute">${v5.esc(sub)}</div></div><div class="clock num">${v5.hm(now)}</div></div>`;
+    return `<div class="head"><div class="col" style="gap:1px"><div class="h1">${P.esc(title)}</div><div class="s12 mute">${P.esc(sub)}</div></div><div class="clock num">${P.hm(now)}</div></div>`;
   }
 
   _tabsHtml() {
     const alert =
       this._openDoors().length > 0 || ['triggered', 'pending'].includes((this._s(this._config.alarm) || {}).state);
     const tabs = [
-      ['home', 'Home', V5I.home],
-      ['security', 'Security', V5I.shieldOk],
-      ['energy', 'Energy', V5I.bolt],
-      ['climate', 'Climate', V5I.therm],
+      ['home', 'Home', ICON.home],
+      ['security', 'Security', ICON.shieldOk],
+      ['energy', 'Energy', ICON.bolt],
+      ['climate', 'Climate', ICON.therm],
     ];
-    return `<nav class="tabs"><div class="in">${tabs.map(([k, label, ic]) => `<button data-a="tab" data-v="${k}" class="${this._tab === k ? 'sel' : ''}" aria-label="${label}"><span class="pill">${v5.svg(ic)}${k === 'security' && alert && this._tab !== 'security' ? '<span class="badge"></span>' : ''}</span><span class="t">${label}</span></button>`).join('')}</div></nav>`;
+    return `<nav class="tabs"><div class="in">${tabs.map(([k, label, ic]) => `<button data-a="tab" data-v="${k}" class="${this._tab === k ? 'sel' : ''}" aria-label="${label}"><span class="pill">${P.svg(ic)}${k === 'security' && alert && this._tab !== 'security' ? '<span class="badge"></span>' : ''}</span><span class="t">${label}</span></button>`).join('')}</div></nav>`;
   }
 }
 
 // the screens: one object of methods per file, see views/
-Object.assign(HouseV5Card.prototype, homeView, roomView, vacuumView, securityView, energyView, climateView);
+Object.assign(HousePhoneCard.prototype, homeView, roomView, vacuumView, securityView, energyView, climateView);

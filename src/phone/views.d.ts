@@ -1,4 +1,4 @@
-// Tells the type checker that the screen methods in views/ are part of HouseV5Card (card.js mixes them in).
+// Tells the type checker that the screen methods in views/ are part of HousePhoneCard (card.js mixes them in).
 import type { climateView } from './views/climate.js';
 import type { energyView } from './views/energy.js';
 import type { homeView } from './views/home.js';
@@ -14,7 +14,7 @@ type Views = typeof homeView &
   typeof climateView;
 
 declare module './card.js' {
-  interface HouseV5Card extends Views {
+  interface HousePhoneCard extends Views {
     /** map image URL being loaded; set only by views/vacuum.js */
     _mapUrl?: string;
   }

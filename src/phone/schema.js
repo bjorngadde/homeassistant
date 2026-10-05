@@ -1,10 +1,10 @@
-/* house-v5: the shape of the card config, checked in setConfig (see ../shared/config.js for the notation).
+/* house-phone: the shape of the card config, checked in setConfig (see ../shared/config.js for the notation).
  * Every key the card reads is listed here; config.example.yaml documents them. */
 
 const S = 'string';
 const N = 'number';
 
-export const V5_SCHEMA = {
+export const PHONE_SCHEMA = {
   people: [S],
   headlines: { '*': S },
   calendars: { '*': [S] },

@@ -5,10 +5,10 @@
  *
  *   npm run equiv                                      HEAD vs working tree, placeholder fixtures
  *   npm run equiv -- --ref main                        another commit, branch or tag
- *   npm run equiv -- --v5 <v5.json> --wall <wall.json> real card configs (kept OUTSIDE the repo); the same
+ *   npm run equiv -- --phone <phone.json> --wall <wall.json> real card configs (kept OUTSIDE the repo); the same
  *                                                      config is used for both builds and to invent the fake
  *                                                      Home Assistant, as in CLAUDE.md
- *   --card v5|wall                                     only one card
+ *   --card phone|wall                                     only one card
  *
  * Old commits that still have the cards committed in dist/ are used as they are; newer ones are built from their
  * own src/ with their own scripts/build.mjs (using this checkout's node_modules).
@@ -56,7 +56,7 @@ try {
     stdio: ['ignore', 'ignore', 'inherit'],
   });
 
-  for (const card of ['v5', 'wall']) {
+  for (const card of ['phone', 'wall']) {
     if (arg('card') && arg('card') !== card) continue;
     const config = arg(card) || path.join(root, `test/fixtures/${card}.json`);
     console.log(`== ${card}: ${rev} vs working tree (${arg(card) ? 'given config' : 'placeholder fixture'})`);

@@ -10,7 +10,7 @@ A release is a git tag `vX.Y.Z` on `main`. The release workflow (`.github/workfl
 ## 1. Prepare (on a branch, merged through a PR)
 
 1. `npm run verify` is green.
-2. For anything that may change rendering, also run the real-config equivalence (CLAUDE.md, "Getting the real config"): `npm run equiv -- --ref <last release tag> --v5 <v5.json> --wall <wall.json>`. Differences must be exactly the intended ones.
+2. For anything that may change rendering, also run the real-config equivalence (CLAUDE.md, "Getting the real config"): `npm run equiv -- --ref <last release tag> --phone <phone.json> --wall <wall.json>`. Differences must be exactly the intended ones.
 3. Bump `version` in `package.json` (patch: fixes; minor: new screens or config keys; major: config keys renamed or removed) and run `npm install` so `package-lock.json` follows.
 4. Merge to `main` (ask the user before merging if they have not said so).
 

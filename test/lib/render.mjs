@@ -13,11 +13,13 @@ export { buildHass, scenarios };
 // The cards format times with the process time zone; pin it so renders match on every machine.
 process.env.TZ = 'UTC';
 
-export const TAGS = { v5: 'house-v5-card', wall: 'house-wall-card' };
+/** Element names per card, current first; older builds (0.3.0 and earlier) registered the phone card as house-v5-card. */
+export const TAGS = { phone: ['house-phone-card', 'house-v5-card'], wall: ['house-wall-card'] };
+const OLD_FILES = { phone: ['house-phone.js', 'house-v5.js'], wall: ['house-wall.js'] };
 
 /** The built file that holds a card inside a dist/ folder: the combined bundle if there is one, else the per-card file. */
 export function buildFile(distDir, card) {
-  for (const name of ['house-cards.js', `house-${card}.js`]) {
+  for (const name of ['house-cards.js', ...OLD_FILES[card]]) {
     const f = path.join(distDir, name);
     if (fs.existsSync(f)) return f;
   }
@@ -122,16 +124,23 @@ export async function renderScenarios(card, file, cfg, fixture) {
   return res;
 }
 
+/** The custom element names a build registers. */
+export function registeredTags(file) {
+  const { ctx, registry } = makeContext([]);
+  vm.runInContext(fs.readFileSync(file, 'utf8'), ctx, { filename: file });
+  return [...registry.keys()].sort();
+}
+
 const settle = () => new Promise((r) => setImmediate(r));
 
 export async function renderAll(card, file, cfg, fixture, over) {
-  const tag = TAGS[card];
-  if (!tag) throw new Error(`unknown card "${card}" (v5 or wall)`);
+  if (!TAGS[card]) throw new Error(`unknown card "${card}" (phone or wall)`);
   const errors = [];
   const { ctx, registry } = makeContext(errors);
   vm.runInContext(fs.readFileSync(file, 'utf8'), ctx, { filename: file });
+  const tag = TAGS[card].find((t) => registry.get(t));
+  if (!tag) throw new Error(`${file} did not register ${TAGS[card][0]}`);
   const Card = registry.get(tag);
-  if (!Card) throw new Error(`${file} did not register ${tag}`);
   const el = new Card();
   el.setConfig(cfg);
   if (card === 'wall') el.connectedCallback();

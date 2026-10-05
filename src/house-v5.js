@@ -4,7 +4,7 @@
  * do_not_operate label. Bulk actions ("All off", room toggles) only ever touch lights.
  * NOTE: this file is served as an inline data: URI, so it must not contain the hash character.
  */
-const V5_VERSION = '0.2.0';
+const V5_VERSION = __VERSION__; // injected by scripts/build.mjs from package.json
 const V5_DNO = 'do_not_operate';
 
 // Everything specific to one house (entity ids, area ids, names, vacuum segment ids) comes from the card config;

@@ -1,17 +1,26 @@
 {
   "name": "homeassistant-cards",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Custom Lovelace cards for a Home Assistant house dashboard (phone card and hall wall display).",
   "license": "MIT",
+  "description": "Custom Lovelace cards for a Home Assistant house dashboard (phone card and hall wall display).",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
+    "build": "node scripts/build.mjs",
     "check": "node scripts/scrub-check.mjs",
+    "pretest": "node scripts/build.mjs",
     "test": "node test/snapshot.mjs",
+    "presnapshot:update": "node scripts/build.mjs",
     "snapshot:update": "node test/snapshot.mjs --update",
     "equiv": "node test/equiv.mjs",
     "test:render": "node test/render-equivalence.mjs"
   },
-  "engines": {
-    "node": ">=20"
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "esbuild": "0.28.2",
+    "typescript": "7.0.2"
   }
 }

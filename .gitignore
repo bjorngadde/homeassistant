@@ -1,3 +1,5 @@
 node_modules/
 .private/
 *.local.json
+# build output: npm run build (releases are built by CI)
+dist/

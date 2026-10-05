@@ -5,11 +5,21 @@
  */
 import vm from 'node:vm';
 import fs from 'node:fs';
+import path from 'node:path';
 
 // The cards format times with the process time zone; pin it so renders match on every machine.
 process.env.TZ = 'UTC';
 
 export const TAGS = { v5: 'house-v5-card', wall: 'house-wall-card' };
+
+/** The built file that holds a card inside a dist/ folder: the combined bundle if there is one, else the per-card file. */
+export function buildFile(distDir, card) {
+  for (const name of ['house-cards.js', `house-${card}.js`]) {
+    const f = path.join(distDir, name);
+    if (fs.existsSync(f)) return f;
+  }
+  throw new Error(`no build for ${card} in ${distDir}; run npm run build`);
+}
 const FIXED = Date.parse('2026-10-05T12:00:00Z');
 
 // ---------------------------------------------------------------- DOM stub

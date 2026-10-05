@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /*
- * Golden snapshots: renders every screen of both cards against the placeholder fixtures in test/fixtures/
- * and compares the HTML with test/snapshots/<card>.html. Needs no real config, so it runs in CI.
+ * Golden snapshots: renders every screen of both cards (the build in dist/, made by npm run build) against the
+ * placeholder fixtures in test/fixtures/ and compares the HTML with test/snapshots/<card>.html. Needs no real
+ * config, so it runs in CI. npm test and npm run snapshot:update build first.
  *
  *   node test/snapshot.mjs            compare (npm test)
  *   node test/snapshot.mjs --update   rewrite the snapshots after an intended change (npm run snapshot:update);
@@ -15,13 +16,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { renderScenarios, firstDiff } from './lib/render.mjs';
+import { renderScenarios, firstDiff, buildFile } from './lib/render.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
 const update = argv.includes('--update');
 const only = argv.includes('--card') ? argv[argv.indexOf('--card') + 1] : '';
-const CARDS = { v5: 'dist/house-v5.js', wall: 'dist/house-wall.js' };
+const CARDS = ['v5', 'wall'];
 
 const SEP = /^<!-- ==== (.+?) ==== (?:same as (.+?) )?-->$/;
 const sepLine = (name, same) => `<!-- ==== ${name} ==== ${same ? `same as ${same} ` : ''}-->`;
@@ -64,10 +65,10 @@ function parse(text) {
 }
 
 let failed = 0;
-for (const [card, file] of Object.entries(CARDS)) {
+for (const card of CARDS) {
   if (only && only !== card) continue;
   const fixture = JSON.parse(fs.readFileSync(path.join(root, `test/fixtures/${card}.json`), 'utf8'));
-  const res = await renderScenarios(card, path.join(root, file), fixture, fixture);
+  const res = await renderScenarios(card, buildFile(path.join(root, 'dist'), card), fixture, fixture);
   const entries = [];
   const errors = [];
   for (const [sc, r] of Object.entries(res)) {

@@ -9,7 +9,7 @@
  * (status bars, leftover header space, pixel density), so it never needs to scroll.
  * Day screen: room tiles get small icons and are taller, except while the school lunch card is showing (it needs the space).
  */
-const WALL_VERSION = '0.2.0';
+const WALL_VERSION = __VERSION__; // injected by scripts/build.mjs from package.json
 // Everything specific to one house (entity ids, area ids, names) comes from the card config; see config.example.yaml.
 // Timings stay here as defaults and can be overridden in the card config.
 const WALL_DEFAULTS = {

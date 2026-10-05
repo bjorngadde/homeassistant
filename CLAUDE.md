@@ -25,15 +25,21 @@ node test/render-equivalence.mjs --card wall --ref <old build> --cand dist/house
 
 ## State of play (2026-10-05)
 
-- The live dashboards still run the old inline versions of both cards (v5 0.1.7, wall 0.1.6) with the house defaults baked in. The dashboards' card configs now carry the real values, identical to those defaults, so the `dist/` versions (0.2.0, neutral defaults, same code otherwise) can replace them with no visible change. Verified: render equivalence 119/119 (v5) and 42/42 (wall).
-- Not done yet, in order: make the repo public (the owner does this), add it to HACS as a custom Dashboard repository, install, switch the dashboard resources from the inline modules to the HACS files, check on the phone and the wall display, then delete the inline resources.
-- Until then, publishing means sending a whole file with `ha_config_set_dashboard_resource` as inline content (find the resource by listing resources and matching the file's header comment). Inline modules must not contain the hash character and should stay under ~128 KB. A listing with `include_content=True` for one resource is large: the result is saved to a file, so extract it with `jq -r '.resources[0]._content'` instead of reading it into context.
+- Both cards (0.2.0, neutral defaults) are live and served by HACS. The inline resources are deleted. The real values are in the card configs of the two dashboards. Render equivalence against the old inline builds was 119/119 (v5) and 42/42 (wall).
+- The phone card has been checked on the phone. The wall display was switched afterwards and still needs a visual check after a page reload (day grid, weather, "Leaving?", more rooms).
+- There are two dashboard resources: `house-v5.js` (managed by HACS) and `house-wall.js` (added by hand, same folder, same `?hacstag=` format). Resource ids are not recorded here; list the resources and match the file name.
+- HACS tracks commits on `main` (no releases yet), so the "version" it shows is a short commit hash. Rollback: `ha_manage_hacs` `download` with an older commit, or revert on `main` and download again.
+- Inline publishing (a whole file through `ha_config_set_dashboard_resource`) is no longer the normal path. It stays available as an emergency fallback: inline modules must not contain the hash character and should stay under ~128 KB.
 
-## Delivery through HACS: assumptions to verify with a tiny first release
+## Delivery through HACS
 
-- `hacs.json` names `house-v5.js` as the main file. Does HACS download everything in `dist/` (needed for `house-wall.js` and for split modules), or only the main file? If only the main file, bundle, or use a second repository.
+Verified:
+- HACS downloads the whole of `dist/`, not only the main file named in `hacs.json`. `house-wall.js` is served from the same folder as `house-v5.js`.
+
+Still to verify (do it with the first real release after this one):
 - Refresh flow: `ha_manage_hacs` with `update_information`, then `download` with a version. HACS polls custom repositories only about every 48 h by itself.
-- Cache: HACS resource URLs carry `?hacstag=<version>`; confirm the phone app and the wall display pick up a new release without a manual cache reset.
+- Cache: HACS bumps the `?hacstag=` only on its own main-file resource. After a download, check whether the hand-added `house-wall.js` resource gets a new tag too. If not, set it by hand to the same tag as the `house-v5.js` resource (`ha_config_set_dashboard_resource` with the new url) or the wall display keeps its cached copy. The wall display also needs a page reload to load new code.
+- Subfolders and split modules: confirm HACS downloads nested folders under `dist/`. Relative `import` URLs do not carry `?hacstag=`, so a split module can be served stale from the browser cache even when the entry file is new. Test this with a tiny change in one module before relying on native ES modules; a single bundled file per card avoids the problem.
 
 ## Next task: split each card into modules
 

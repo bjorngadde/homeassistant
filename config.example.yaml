@@ -1,0 +1,124 @@
+# Example card configs. Every id below is a placeholder (object ids start with "example").
+# The real values live in the card config of the Home Assistant dashboard, never in this repo.
+# Anything left out falls back to the defaults at the top of each card file.
+
+# ---------------------------------------------------------------------------------------------
+# Phone card: house-v5-card (one panel view)
+# ---------------------------------------------------------------------------------------------
+type: custom:house-v5-card
+people: [person.example_one, person.example_two]
+headlines: # person -> input_text holding that person's short AI headline (optional)
+  person.example_one: input_text.example_headline_one
+  person.example_two: input_text.example_headline_two
+calendars:
+  person.example_one: [calendar.example_personal, calendar.example_family]
+  default: [calendar.example_family]
+weather: weather.example_forecast
+price: sensor.example_electricity_price
+alarm: alarm_control_panel.example_alarm
+floors: # rooms are grouped by floor; areas without a floor can be listed explicitly
+  - { floor: example_ground, name: Downstairs }
+  - { floor: example_upper, name: Upstairs }
+  - { name: Outside, areas: [garden] }
+area_order: [kitchen, hall, bedroom, garden]
+others: # non-light entities that belong on a room screen (never touched by "All off")
+  kitchen: [switch.example_plug]
+exclude: [light.example_group_without_member_list]
+media: [media_player.example_tv]
+doors: [binary_sensor.example_front_door, binary_sensor.example_back_door]
+smoke: [binary_sensor.example_smoke_detector]
+cameras:
+  - { entity: camera.example_driveway, name: Driveway, person: binary_sensor.example_driveway_person }
+security_toggles:
+  - { entity: input_boolean.example_passive_alarm, name: Passive alarm system }
+camera_alerts:
+  - { entity: input_boolean.example_driveway_alerts, name: Driveway }
+recent: # "last 24 h" list on the Security tab
+  - { entity: binary_sensor.example_driveway_person, on: Person, where: Driveway }
+  - entity: alarm_control_panel.example_alarm
+    where: Alarm
+    states: { armed_away: Alarm armed, disarmed: Alarm disarmed, triggered: Alarm triggered }
+energy:
+  power: sensor.example_power
+  today_kwh: sensor.example_energy_today
+  today_cost: sensor.example_cost_today
+  month_kwh: sensor.example_energy_month
+  month_cost: sensor.example_cost_month
+  peak: sensor.example_peak_hour_consumption
+  peak_time: sensor.example_peak_hour_time
+car:
+  name: Car
+  soc: sensor.example_car_battery
+  target: sensor.example_car_target
+  range: sensor.example_car_range
+  plug: binary_sensor.example_car_plug
+  charging: binary_sensor.example_car_charging
+  charger_name: Wallbox
+  charger_switch: switch.example_wallbox
+  charger_status: sensor.example_wallbox_status
+  charger_power: sensor.example_wallbox_power
+climate:
+  down: sensor.example_temperature_downstairs
+  up: sensor.example_temperature_upstairs
+  out: sensor.example_temperature_outdoor
+  base: input_number.example_thermostat_base
+  offset: input_number.example_thermostat_offset
+  hot_water_eco: binary_sensor.example_hot_water_eco
+  compressor: sensor.example_compressor_speed
+  supply: sensor.example_supply_temperature
+  return: sensor.example_return_temperature
+  hot_water: sensor.example_hot_water_temperature
+  brine: sensor.example_brine_temperature
+vacuum: vacuum.example_vacuum
+vacuum_name: The vacuum # used in a few texts
+clean_then_arm: # "Clean, then arm": a script plus a flag helper (see README)
+  script: script.example_clean_then_arm
+  pending: input_boolean.example_clean_then_arm_pending
+vac: # the vacuum's own screen
+  map: image.example_vacuum_map
+  room_id: sensor.example_vacuum_room_id
+  last_start: sensor.example_vacuum_last_start
+  last_end: sensor.example_vacuum_last_end
+  last_duration: sensor.example_vacuum_last_duration
+  last_area: sensor.example_vacuum_last_area
+  cur_duration: sensor.example_vacuum_current_duration
+  cur_area: sensor.example_vacuum_current_area
+  rooms: [{ segment: 16, name: Kitchen }, { segment: 17, name: Living room }]
+  parts: # remaining-time sensors in seconds; hours = replacement interval
+    - { name: Main brush, sensor: sensor.example_main_brush_left, reset: button.example_reset_main_brush, hours: 300 }
+
+---
+# ---------------------------------------------------------------------------------------------
+# Wall display card: house-wall-card (480x480, one panel view)
+# ---------------------------------------------------------------------------------------------
+type: custom:house-wall-card
+headline: [input_text.example_headline_home]
+weather: weather.example_forecast
+outdoor: sensor.example_temperature_outdoor
+price: sensor.example_electricity_price
+calendars: [calendar.example_family]
+school: calendar.example_school # all-day event per school day -> "Today's school lunch" card
+alarm: alarm_control_panel.example_alarm # read-only on the wall
+vacuum: vacuum.example_vacuum
+people:
+  - { entity: person.example_one, short: A, name: Alex }
+doors:
+  - { entity: binary_sensor.example_front_door, name: Front door }
+tiles: # exactly 8: they fill a 4x3 grid together with the two wide "Leaving?" and "More rooms" tiles
+  - { name: Entrance, entity: light.example_entrance, icon: sconce }
+  - { name: Kitchen, entity: light.example_kitchen_group, area: kitchen, icon: food }
+  # ... six more
+more_exclude: [hall]
+more_order: [bedroom, garden]
+doorbell:
+  camera: camera.example_doorbell
+  ring: binary_sensor.example_doorbell_button
+  person: binary_sensor.example_doorbell_person
+  light: light.example_entrance
+exclude: [light.example_group_without_member_list]
+all_off_exclude: [light.example_printer_chamber_light]
+# Timings keep their defaults unless set here:
+# lunch: { from: '06:30', to: '08:30' }
+# night: { from: '22:30', to: '06:00', idle: 60 }
+# entry_delay: 30
+# leave_idle: 90

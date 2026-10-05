@@ -1,0 +1,10 @@
+{
+  "name": "homeassistant-cards",
+  "private": true,
+  "type": "module",
+  "description": "Custom Lovelace cards for a Home Assistant house dashboard (phone card and hall wall display).",
+  "scripts": {
+    "check": "node scripts/scrub-check.mjs",
+    "test:render": "node test/render-equivalence.mjs"
+  }
+}

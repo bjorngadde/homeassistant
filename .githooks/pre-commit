@@ -1,0 +1,5 @@
+#!/bin/sh
+# Blocks a commit when the leak check finds anything. Enable once per clone:
+#   git config core.hooksPath .githooks
+# For the strongest check, export SCRUB_DENYLIST=<path to the private denylist outside the repo> first.
+exec node scripts/scrub-check.mjs

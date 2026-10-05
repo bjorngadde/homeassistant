@@ -1,0 +1,14 @@
+# Known harmless hits for scripts/scrub-check.mjs. One entry per line; "host:" entries allow a URL host.
+# Review every entry: it must be a JavaScript property access, a CSS selector or a public host, never a real entity id.
+
+# CSS class selectors (button.on / .sel / .lit) in the card stylesheets
+button.on
+button.sel
+button.lit
+# local variable named "light" inside the wall card (light.state)
+light.state
+# the card calls this script to switch scenes; it is a documented requirement, see README
+script.room_scene
+# public hosts
+host:fonts.googleapis.com
+host:localhost

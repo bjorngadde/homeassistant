@@ -58,6 +58,8 @@ for (const f of files) {
   if (!isText(buf)) continue;
   const lines = buf.toString('utf8').split('\n');
   lines.forEach((line, i) => {
+    // .git-blame-ignore-revs lists commit hashes, one per line: not device ids
+    if (f === '.git-blame-ignore-revs' && /^[0-9a-f]{40}$/.test(line)) return;
     for (const m of line.matchAll(ENTITY)) {
       const tok = m[1];
       if (/^[a-z_]+\.example/.test(tok) || allowTokens.has(tok)) continue;

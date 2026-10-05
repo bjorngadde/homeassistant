@@ -32,3 +32,7 @@ npm run equiv -- --ref main           # render equivalence: a git commit vs the 
 ```
 
 `npm test` renders both cards against a fake Home Assistant built from the placeholder configs in `test/fixtures/` and compares the HTML of every screen with `test/snapshots/`. It needs no real config, so CI runs it on every push together with the leak check and the HACS validation. `npm run equiv` compares two builds screen by screen; pass `--v5 <json> --wall <json>` to use real card configs, and keep those outside the repo.
+
+## License
+
+MIT, see `LICENSE`.

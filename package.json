@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "description": "Custom Lovelace cards for a Home Assistant house dashboard (phone card and hall wall display).",
+  "license": "MIT",
   "scripts": {
     "check": "node scripts/scrub-check.mjs",
     "test": "node test/snapshot.mjs",

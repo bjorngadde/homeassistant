@@ -63,6 +63,7 @@ for (const f of files) {
     for (const m of line.matchAll(ENTITY)) {
       const tok = m[1];
       if (/^[a-z_]+\.example/.test(tok) || allowTokens.has(tok)) continue;
+      if (/\.(?:js|mjs|ts|json|css|html|md|yaml|yml)$/.test(tok)) continue; // a file name such as views/vacuum.js
       findings.push([f, i + 1, 'entity-like token', tok]);
     }
     for (const [label, re] of OTHER) for (const m of line.matchAll(re)) findings.push([f, i + 1, label, m[0]]);

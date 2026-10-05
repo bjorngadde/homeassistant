@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Two Home Assistant Lovelace cards (phone card `house-v5`, hall wall display `house-wall`), plain JavaScript, no dependencies. See `README.md` for what they do and `config.example.yaml` for every config key.
+Two Home Assistant Lovelace cards (phone card `house-v5`, hall wall display `house-wall`), plain JavaScript ES modules in `src/`, bundled by esbuild, no runtime dependencies. See `README.md` for what they do and `config.example.yaml` for every config key.
 
 ## Hard rules
 
@@ -8,6 +8,24 @@ Two Home Assistant Lovelace cards (phone card `house-v5`, hall wall display `hou
 2. The real values live in the card config of the Home Assistant dashboards (the dashboards `mobile-v5` and `wall-v2`, one card each). Code ships only neutral defaults for anything house-specific.
 3. Run the leak check before every commit: `git config core.hooksPath .githooks` (once per clone), and for the strong version `export SCRUB_DENYLIST=<file outside the repo>` (see below). `npm run check` runs it by hand. New entries in `scripts/scrub-allow.txt` must be reviewed: only property accesses, CSS selectors and public hosts.
 4. Commit with the owner's GitHub noreply identity (`<github-username>@users.noreply.github.com`, set `user.name` / `user.email` locally) so no personal email ends up in history.
+
+## Code map
+
+Edit `src/`, never `dist/` (build output, not committed). After any change: `npm run verify` (lint, types, render snapshots, leak check).
+
+| To change | Edit |
+|---|---|
+| Phone card: a tab or screen | `src/v5/views/` — `home.js` (Home tab: greeting, alarm banner, today, energy glance, floors, active now), `room.js` (one room), `vacuum.js` (vacuum screen), `security.js` (Security tab and the alarm block), `energy.js` (Energy tab, car), `climate.js` (Climate tab, chart, weather, heat pump) |
+| Phone card: data, timers, clicks, hold-to-confirm, routing, tab bar | `src/v5/card.js` |
+| Phone card: defaults, palette (`V5C`), icons (`V5I`), weather maps | `src/v5/constants.js` |
+| Phone card: pure helpers (`v5.esc`, time formats, SVG, registry checks) | `src/v5/helpers.js` |
+| Phone card: CSS | `src/v5/styles.js` |
+| Wall card: a mode | `src/wall/views/` — `day.js` (Day screen and the helpers other modes share), `weather.js`, `leave.js` ("Leaving?"), `rooms.js` ("More rooms"), `door.js` (doorbell), `night.js`, `alarm.js` (entry delay / triggered) |
+| Wall card: data, doorbell, fit to screen, clock, actions, mode switch | `src/wall/card.js` |
+| Wall card: defaults and timings / helpers (`W`) / icons and weather maps / CSS | `src/wall/constants.js` / `helpers.js` / `icons.js` / `styles.js` |
+| Card registration and version log line | `src/v5/index.js`, `src/wall/index.js` |
+
+How the split works: each file in `views/` exports one object of methods that `card.js` copies onto the card's prototype (`Object.assign(HouseV5Card.prototype, homeView, ...)`), so `this` is the card everywhere and views call each other's methods freely. A new view method needs no registration; a new view file is imported in `card.js` and listed in `views.d.ts` (which tells the type checker about it). A field that only a view sets is declared in `views.d.ts` too.
 
 ## Getting the real config (outside the repo)
 

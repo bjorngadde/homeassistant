@@ -16,8 +16,8 @@ const outdir = argv.includes('--outdir') ? path.resolve(argv[argv.indexOf('--out
 const { version } = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 
 export const ENTRIES = {
-  'house-v5': 'src/house-v5.js',
-  'house-wall': 'src/house-wall.js',
+  'house-v5': 'src/v5/index.js',
+  'house-wall': 'src/wall/index.js',
 };
 
 await esbuild.build({

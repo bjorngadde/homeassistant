@@ -2,7 +2,10 @@
  * screen, clock and idle timers, actions and the mode switch in _render(). Each mode lives in views/. */
 
 import { WALL_DEFAULTS } from './constants.js';
+import { checkConfig, mergeConfig } from '../shared/config.js';
+import { areaOf } from '../shared/hass.js';
 import { W } from './helpers.js';
+import { WALL_SCHEMA } from './schema.js';
 import { CSS } from './styles.js';
 import { dayView } from './views/day.js';
 import { weatherView } from './views/weather.js';
@@ -27,7 +30,8 @@ export class HouseWallCard extends HTMLElement {
   }
 
   setConfig(config) {
-    this._config = W.merge(WALL_DEFAULTS, config || {});
+    checkConfig('house-wall', config || {}, WALL_SCHEMA);
+    this._config = mergeConfig(WALL_DEFAULTS, config || {});
     this._sig = '';
   }
   getCardSize() {
@@ -117,12 +121,7 @@ export class HouseWallCard extends HTMLElement {
   }
 
   _areaOf(id) {
-    const h = this._hass,
-      reg = h.entities && h.entities[id];
-    if (!reg) return null;
-    if (reg.area_id) return reg.area_id;
-    const dev = reg.device_id && h.devices && h.devices[reg.device_id];
-    return (dev && dev.area_id) || null;
+    return areaOf(this._hass, id);
   }
 
   _tileLeaves(t) {

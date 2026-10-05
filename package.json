@@ -15,7 +15,7 @@
     "format": "biome check --write .",
     "typecheck": "tsc -p .",
     "pretest": "node scripts/build.mjs",
-    "test": "node test/snapshot.mjs",
+    "test": "node --test test/*.test.mjs && node test/snapshot.mjs",
     "presnapshot:update": "node scripts/build.mjs",
     "snapshot:update": "node test/snapshot.mjs --update",
     "equiv": "node test/equiv.mjs",

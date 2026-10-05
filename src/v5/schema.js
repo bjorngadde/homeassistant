@@ -1,0 +1,67 @@
+/* house-v5: the shape of the card config, checked in setConfig (see ../shared/config.js for the notation).
+ * Every key the card reads is listed here; config.example.yaml documents them. */
+
+const S = 'string';
+const N = 'number';
+
+export const V5_SCHEMA = {
+  people: [S],
+  headlines: { '*': S },
+  calendars: { '*': [S] },
+  weather: S,
+  price: S,
+  alarm: S,
+  floors: [{ floor: S, name: S, areas: [S] }],
+  area_order: [S],
+  others: { '*': [S] },
+  exclude: [S],
+  media: [S],
+  vacuum: S,
+  vacuum_name: S,
+  clean_then_arm: { script: S, pending: S },
+  vac: {
+    map: S,
+    room_id: S,
+    last_start: S,
+    last_end: S,
+    last_duration: S,
+    last_area: S,
+    cur_duration: S,
+    cur_area: S,
+    rooms: [{ segment: N, name: S }],
+    parts: [{ name: S, sensor: S, reset: S, hours: N }],
+  },
+  doors: [S],
+  smoke: [S],
+  cameras: [{ entity: S, name: S, person: S }],
+  security_toggles: [{ entity: S, name: S, on: S }],
+  camera_alerts: [{ entity: S, name: S, on: S }],
+  energy: { power: S, today_kwh: S, today_cost: S, month_kwh: S, month_cost: S, peak: S, peak_time: S },
+  car: {
+    name: S,
+    soc: S,
+    target: S,
+    range: S,
+    plug: S,
+    charging: S,
+    charger_name: S,
+    charger_switch: S,
+    charger_status: S,
+    charger_power: S,
+  },
+  climate: {
+    down: S,
+    up: S,
+    out: S,
+    base: S,
+    offset: S,
+    hot_water_eco: S,
+    compressor: S,
+    supply: S,
+    return: S,
+    hot_water: S,
+    brine: S,
+  },
+  recent: [{ entity: S, on: S, where: S, states: { '*': S } }],
+  hold_ms: N, // hold-to-confirm duration for alarm actions, default 900
+};

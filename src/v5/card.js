@@ -2,7 +2,9 @@
  * structure helpers and routing. Each screen lives in views/ and is mixed into the prototype at the end. */
 
 import { V5_DEFAULTS, V5C, V5I } from './constants.js';
+import { checkConfig, mergeConfig } from '../shared/config.js';
 import { v5 } from './helpers.js';
+import { V5_SCHEMA } from './schema.js';
 import { V5_CSS } from './styles.js';
 import { homeView } from './views/home.js';
 import { roomView } from './views/room.js';
@@ -38,7 +40,8 @@ export class HouseV5Card extends HTMLElement {
     return {};
   }
   setConfig(config) {
-    this._config = v5.merge(V5_DEFAULTS, config || {});
+    checkConfig('house-v5', config || {}, V5_SCHEMA);
+    this._config = mergeConfig(V5_DEFAULTS, config || {});
     this._ver++;
   }
   getCardSize() {

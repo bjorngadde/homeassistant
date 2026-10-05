@@ -1,5 +1,6 @@
 /* house-v5: small pure helpers (escaping, time formats, SVG icons, entity registry checks). */
 
+import { areaOf } from '../shared/hass.js';
 import { V5_DNO, V5C, V5W, V5WMAP } from './constants.js';
 
 export const v5 = {
@@ -35,13 +36,7 @@ export const v5 = {
     const set = V5W[V5WMAP[condition] || 'cloudy'];
     return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${set.map(([d, c]) => `<path d="${d}" stroke="${V5C[c]}"></path>`).join('')}</svg>`;
   },
-  areaOf(hass, id) {
-    const e = hass.entities && hass.entities[id];
-    if (!e) return null;
-    if (e.area_id) return e.area_id;
-    const d = e.device_id && hass.devices && hass.devices[e.device_id];
-    return (d && d.area_id) || null;
-  },
+  areaOf, // shared with the wall card, see ../shared/hass.js
   usable(hass, id) {
     const e = hass.entities && hass.entities[id];
     if (!e || e.hidden || e.entity_category) return false;
@@ -122,21 +117,5 @@ export const v5 = {
     let n = name;
     if (a && n.toLowerCase().startsWith(a + ' ')) n = n.slice(a.length + 1);
     return n.charAt(0).toUpperCase() + n.slice(1);
-  },
-  merge(base, over) {
-    const out = { ...base };
-    for (const [k, v] of Object.entries(over || {})) {
-      if (
-        v &&
-        typeof v === 'object' &&
-        !Array.isArray(v) &&
-        base[k] &&
-        typeof base[k] === 'object' &&
-        !Array.isArray(base[k])
-      )
-        out[k] = { ...base[k], ...v };
-      else out[k] = v;
-    }
-    return out;
   },
 };

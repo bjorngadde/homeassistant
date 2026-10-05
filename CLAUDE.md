@@ -23,7 +23,11 @@ Edit `src/`, never `dist/` (build output, not committed). After any change: `npm
 | Wall card: a mode | `src/wall/views/` — `day.js` (Day screen and the helpers other modes share), `weather.js`, `leave.js` ("Leaving?"), `rooms.js` ("More rooms"), `door.js` (doorbell), `night.js`, `alarm.js` (entry delay / triggered) |
 | Wall card: data, doorbell, fit to screen, clock, actions, mode switch | `src/wall/card.js` |
 | Wall card: defaults and timings / helpers (`W`) / icons and weather maps / CSS | `src/wall/constants.js` / `helpers.js` / `icons.js` / `styles.js` |
-| Card registration and version log line | `src/v5/index.js`, `src/wall/index.js` |
+| Card registration and version log line | `src/v5/index.js`, `src/wall/index.js`, both bundled by `src/index.js` |
+| Config schema (checked in `setConfig`) | `src/v5/schema.js`, `src/wall/schema.js`; notation and checker in `src/shared/config.js` |
+| Code both cards share | `src/shared/` — `config.js` (merge with defaults, validation), `hass.js` (`areaOf`) |
+
+A new config key goes into four places: the defaults (`constants.js`), the schema (`schema.js`), `config.example.yaml` and the fixture in `test/fixtures/` (a unit test fails if a default is missing from the schema).
 
 How the split works: each file in `views/` exports one object of methods that `card.js` copies onto the card's prototype (`Object.assign(HouseV5Card.prototype, homeView, ...)`), so `this` is the card everywhere and views call each other's methods freely. A new view method needs no registration; a new view file is imported in `card.js` and listed in `views.d.ts` (which tells the type checker about it). A field that only a view sets is declared in `views.d.ts` too.
 
@@ -43,7 +47,7 @@ npm run equiv -- --ref <commit> --v5 v5.json --wall wall.json
 ## Checks that need no real config
 
 - `npm run verify`: Biome (lint and format check), `tsc` type check, render snapshots, leak check. Run it before every commit.
-- `npm test` builds `dist/house-cards.js` and renders every screen of both cards against the placeholder configs in `test/fixtures/` (every id starts with `example`), comparing with `test/snapshots/<card>.html` (v5: 77 screens, wall: 49). After an intended visual change run `npm run snapshot:update` and review the snapshot diff: it shows exactly which screens changed.
+- `npm test` runs the unit tests (`test/*.test.mjs`, node:test: config merge and validation), then builds `dist/house-cards.js` and renders every screen of both cards against the placeholder configs in `test/fixtures/` (every id starts with `example`), comparing with `test/snapshots/<card>.html` (v5: 77 screens, wall: 49). After an intended visual change run `npm run snapshot:update` and review the snapshot diff: it shows exactly which screens changed.
 - The fake Home Assistant lives in `test/lib/render.mjs` (DOM stub, states invented from the config, scenarios, and fixed answers for prices, calendars, statistics, logbook and forecasts). Its clock is fixed at 2026-10-05 12:00 UTC.
 - Types: `tsconfig.json` checks `src/` as JavaScript with JSDoc (not strict). `src/types.d.ts` holds globals; `src/<card>/views.d.ts` tells the checker which methods the views add to the card.
 - CI (`.github/workflows/ci.yml`) runs the leak check, lint, types and snapshots on every push and PR; HACS validation runs on `main` only (a branch has no committed `dist/`, and GitHub detects the license on the default branch). The optional repository secret `SCRUB_DENYLIST_TERMS` (the denylist file's content) adds the private denylist; CI runs the check with `--quiet`, which prints only `file:line`, never a term.
@@ -70,6 +74,6 @@ Goal: smaller edits, fewer tokens per change, checks that run without the real c
 1. Tooling: done (esbuild, Biome, `tsc` checkJs, `npm run verify`, SessionStart hook, MIT license).
 2. Mechanical split into `src/v5/` and `src/wall/`: done (see the code map).
 3. Delivery: done in the repo (one bundle, release workflow, release skill); the Home Assistant migration above is still to do.
-4. Quality: merge duplicated helpers where the output is identical (the two `esc` functions differ: the wall card also escapes `'`); validate the config in `setConfig`; later a local preview page with Playwright screenshots of every screen (Chromium is pre-installed in cloud sessions).
+4. Quality: done for shared helpers (`mergeConfig`, `areaOf`; `esc`, `svg`, the time format and the weather texts differ between the cards on purpose and stay separate) and config validation in `setConfig` (both real configs: no errors, no warnings).
 
 Not now: Lit (needs a DOM-level comparison in the harness first; later, one screen at a time) and a visual card editor (the configs are too large for one).

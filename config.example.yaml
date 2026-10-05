@@ -2,6 +2,8 @@
 # The real values live in the card config of the Home Assistant dashboard, never in this repo.
 # Anything left out falls back to the defaults in src/v5/constants.js and src/wall/constants.js.
 # Both cards come from the one dashboard resource house-cards.js.
+# Each card checks its config on load: a wrong shape (a list where an object belongs, ...) shows an error card,
+# unknown keys and wrong value types are logged as warnings in the browser console.
 
 # ---------------------------------------------------------------------------------------------
 # Phone card: house-v5-card (one panel view)
@@ -72,6 +74,7 @@ climate:
   brine: sensor.example_brine_temperature
 vacuum: vacuum.example_vacuum
 vacuum_name: The vacuum # used in a few texts
+# hold_ms: 900 # how long to hold the alarm buttons (milliseconds)
 clean_then_arm: # "Clean, then arm": a script plus a flag helper (see README)
   script: script.example_clean_then_arm
   pending: input_boolean.example_clean_then_arm_pending

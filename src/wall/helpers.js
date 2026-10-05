@@ -1,17 +1,6 @@
-/* house-wall: small pure helpers (config merge, escaping, time windows, SVG icons). */
+/* house-wall: small pure helpers (escaping, time windows, SVG icons). */
 
 export const W = {
-  merge(a, b) {
-    const out = { ...a };
-    for (const k of Object.keys(b || {})) {
-      const v = b[k];
-      out[k] =
-        v && typeof v === 'object' && !Array.isArray(v) && a[k] && typeof a[k] === 'object' && !Array.isArray(a[k])
-          ? W.merge(a[k], v)
-          : v;
-    }
-    return out;
-  },
   esc(s) {
     return String(s == null ? '' : s).replace(
       /[&<>"']/g,

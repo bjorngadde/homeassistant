@@ -63,10 +63,11 @@ npm run equiv -- --ref <commit> --phone phone.json --wall wall.json
 
 ## State of play (2026-10-05)
 
-- Live in Home Assistant: **0.3.0**, installed by HACS from the GitHub release, as **one** dashboard resource: `/hacsfiles/homeassistant/house-cards.js?hacstag=...` (managed by HACS; it replaced the old `house-v5.js` resource in place). The hand-added `house-wall.js` resource is deleted. Resource ids are not recorded here; list the resources and match the file name.
-- Still to check by eye after a page reload: the phone dashboard, and the wall display (day grid, weather, "Leaving?", "More rooms"). Rendering is identical to 0.2.0 on every screen in the harness (real configs 119/119 and 49/49), and both real configs pass the new config check with no errors or warnings.
+- Live in Home Assistant: **0.4.0**, installed by HACS from the GitHub release, as **one** dashboard resource: `/hacsfiles/homeassistant/house-cards.js?hacstag=...` (managed by HACS). Resource ids are not recorded here; list the resources and match the file name.
+- 0.4.0 renamed the phone card from `house-v5-card` to `house-phone-card`; the phone dashboard (`mobile-v5`, title "Phone") already uses the new name, the wall dashboard (`wall-v2`, title "Hall wall") keeps `house-wall-card`. The old name is still registered as an alias (`src/phone/index.js`, pinned by `test/build.test.mjs`): **remove both in the next release**.
+- Still to check by eye after a page reload: the phone dashboard, and the wall display (day grid, weather, "Leaving?", "More rooms"). Rendering is identical to 0.2.0 on every screen in the harness (real configs 119/119 and 49/49), and both real configs pass the config check with no errors or warnings.
 - Dashboard screenshots through the Home Assistant MCP server need its "dashboard screenshot" beta feature, which is off; use `npm run preview` for screenshots.
-- An old inline resource for an earlier card (`house-v3`) is still registered; it is not part of this repo.
+- Older dashboards (Mobile v2, Mobile v3, Mobile dashboard, Wall display) and an inline resource for an earlier card (`house-v3`) still exist; they are not part of this repo and stay as they are for now.
 - Releasing from a Claude Code cloud session: tags cannot be pushed through its git proxy, so run the Release workflow on `main` by hand (it creates the tag); see the release skill.
 
 ## Plan status (agreed 2026-10-05)

@@ -11,6 +11,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "check": "node scripts/scrub-check.mjs",
+    "lint": "biome lint .",
     "pretest": "node scripts/build.mjs",
     "test": "node test/snapshot.mjs",
     "presnapshot:update": "node scripts/build.mjs",

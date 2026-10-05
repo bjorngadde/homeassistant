@@ -357,7 +357,7 @@ class HouseWallCard extends HTMLElement {
       try {
         const evs = await this._hass.callApi('GET', `calendars/${cal}${q}`);
         (evs || []).forEach((e) => out.push(e));
-      } catch (err) { /* calendar unavailable: skip */ }
+      } catch (_err) { /* calendar unavailable: skip */ }
     }
     this._events = out;
     this._sig = ''; this._render();

@@ -119,7 +119,7 @@ const v5 = {
   fnum(v, dec = 1) { return v == null || isNaN(v) ? '–' : Number(v).toFixed(dec); },
   haptic(el, type) {
     el.dispatchEvent(new CustomEvent('haptic', { detail: type, bubbles: true, composed: true }));
-    if (navigator.vibrate) { try { navigator.vibrate(type === 'medium' ? 25 : 10); } catch (e) { /* ignore */ } }
+    if (navigator.vibrate) { try { navigator.vibrate(type === 'medium' ? 25 : 10); } catch (_e) { /* ignore */ } }
   },
   /* "today 16:32" / "yesterday 16:32" / "Mon 16:32" */
   when(t) {
@@ -322,7 +322,7 @@ class HouseV5Card extends HTMLElement {
       const list = homes[Object.keys(homes)[0]] || [];
       this._prices = list.map((p) => ({ t: new Date(p.start_time).getTime(), p: p.price })).sort((a, b) => a.t - b.t);
       this._ver++; this._schedule();
-    } catch (e) { /* keep previous */ }
+    } catch (_e) { /* keep previous */ }
   }
 
   async _fetchEvents() {
@@ -341,7 +341,7 @@ class HouseV5Card extends HTMLElement {
           const en = allDay ? new Date(ev.end.date + 'T00:00:00') : new Date(ev.end.dateTime || ev.end);
           out.push({ summary: ev.summary || '', start: st.getTime(), end: en.getTime(), allDay, cal });
         }
-      } catch (err) { /* ignore a failing calendar */ }
+      } catch (_err) { /* ignore a failing calendar */ }
     }));
     this._events = out.sort((a, b) => a.start - b.start);
     this._ver++; this._schedule();
@@ -358,7 +358,7 @@ class HouseV5Card extends HTMLElement {
         out[id] = rows.map((r) => ({ t: typeof r.start === 'number' ? r.start : new Date(r.start).getTime(), v: r.mean })).filter((r) => r.v != null);
       }
       this._stats = out; this._ver++; this._schedule();
-    } catch (e) { /* ignore */ }
+    } catch (_e) { /* ignore */ }
   }
 
   async _fetchLog() {
@@ -380,7 +380,7 @@ class HouseV5Card extends HTMLElement {
       }
       out.sort((a, b) => b.t - a.t);
       this._log = out; this._ver++; this._schedule();
-    } catch (e) { /* ignore */ }
+    } catch (_e) { /* ignore */ }
   }
 
   _subscribeForecast() {
@@ -393,7 +393,7 @@ class HouseV5Card extends HTMLElement {
           this._ver++; this._schedule();
         }, { type: 'weather/subscribe_forecast', entity_id: w, forecast_type: type });
         this._subs.push(p);
-      } catch (e) { /* ignore */ }
+      } catch (_e) { /* ignore */ }
     }
   }
 
@@ -458,7 +458,7 @@ class HouseV5Card extends HTMLElement {
     v5.haptic(el, 'light');
     switch (a) {
       case 'tab': this._tab = v; this._room = null; this._ver++; this._render(); this._top(); if (v === 'security') this._refreshCams(); break;
-      case 'room': this._room = v; this._ver++; this._render(); this._top(); try { history.pushState({ houseV5Room: v }, '', location.href); } catch (e) { /* ignore */ } break;
+      case 'room': this._room = v; this._ver++; this._render(); this._top(); try { history.pushState({ houseV5Room: v }, '', location.href); } catch (_e) { /* ignore */ } break;
       case 'back': if (history.state && history.state.houseV5Room) history.back(); else { this._room = null; this._ver++; this._render(); } break;
       case 'room-toggle': {
         const lights = this._roomLights(v).filter((id) => h.states[id].state !== 'unavailable');
@@ -515,7 +515,7 @@ class HouseV5Card extends HTMLElement {
       default: break;
     }
   }
-  _top() { try { this.scrollIntoView({ block: 'start' }); window.scrollTo({ top: 0 }); } catch (e) { /* ignore */ } }
+  _top() { try { this.scrollIntoView({ block: 'start' }); window.scrollTo({ top: 0 }); } catch (_e) { /* ignore */ } }
 
   /* hold-to-confirm for alarm actions */
   _onHoldStart(ev) {
@@ -551,7 +551,7 @@ class HouseV5Card extends HTMLElement {
   _floorAreas(i) {
     const h = this._hass, f = this._config.floors[i]; if (!f) return [];
     const claimed = new Set(this._config.floors.flatMap((x) => x.areas || []));
-    let list = f.areas ? [...f.areas] : Object.values(h.areas || {}).filter((a) => a.floor_id === f.floor && !claimed.has(a.area_id)).map((a) => a.area_id);
+    const list = f.areas ? [...f.areas] : Object.values(h.areas || {}).filter((a) => a.floor_id === f.floor && !claimed.has(a.area_id)).map((a) => a.area_id);
     const order = this._config.area_order || [];
     list.sort((a, b) => {
       const ia = order.indexOf(a), ib = order.indexOf(b);
@@ -851,7 +851,7 @@ class HouseV5Card extends HTMLElement {
     const h = this._hass, name = this._areaName(ar);
     const ids = this._roomLights(ar);
     const { n, t, total } = this._roomSummary(ar);
-    const fi = this._config.floors.findIndex((f, i) => this._floorAreas(i).includes(ar));
+    const fi = this._config.floors.findIndex((_f, i) => this._floorAreas(i).includes(ar));
     const floor = fi >= 0 ? this._config.floors[fi].name : '';
     const temp = this._roomTemp(ar);
     const sub = [floor, t ? (n ? `${n} of ${t} on` : 'all off') : 'no lights', temp].filter(Boolean).join(' · ');
@@ -1095,7 +1095,7 @@ class HouseV5Card extends HTMLElement {
 
   /* CLIMATE */
   _climateView() {
-    const c = this._config.climate, h = this._hass;
+    const c = this._config.climate;
     const series = (id) => (this._stats[id] || []).slice(-24);
     const zones = [['Downstairs', c.down, V5C.teal], ['Upstairs', c.up, 'rgb(126,230,218)'], ['Outdoors', c.out, V5C.orange]].filter(([, id]) => this._s(id)).map(([name, id, col]) => {
       const v = this._n(id), ser = series(id).map((r) => r.v).concat(v == null ? [] : [v]);
@@ -1152,7 +1152,7 @@ class HouseV5Card extends HTMLElement {
     const gust = a.wind_gust_speed != null ? (a.wind_speed_unit === 'km/h' ? a.wind_gust_speed / 3.6 : a.wind_gust_speed) : null;
     const dir = a.wind_bearing != null ? ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(a.wind_bearing / 45) % 8] : '';
     const now = Date.now();
-    const hourly = this._fcH.filter((f) => new Date(f.datetime).getTime() > now).filter((f, i) => i % 2 === 0).slice(0, 6).map((f) => `
+    const hourly = this._fcH.filter((f) => new Date(f.datetime).getTime() > now).filter((_f, i) => i % 2 === 0).slice(0, 6).map((f) => `
       <div class="col" style="align-items:center;gap:4px;padding:8px 0;border-radius:12px;background:${V5C.chip}"><div class="num" style="font-size:11px;font-weight:700;color:${V5C.mute}">${v5.pad(new Date(f.datetime).getHours())}</div>${v5.wsvg(f.condition)}<div class="s14 b8">${Math.round(f.temperature)}°</div><div style="height:12px;font-size:10px;font-weight:700;color:${V5C.blue}">${(f.precipitation || 0) >= 0.1 ? f.precipitation + ' mm' : ''}</div></div>`).join('');
     const days = this._fcD.slice(0, 5);
     const lo = Math.min(...days.map((d) => d.templow ?? d.temperature)), hi = Math.max(...days.map((d) => d.temperature));

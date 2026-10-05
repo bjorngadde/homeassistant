@@ -65,10 +65,11 @@ npm run equiv -- --ref <commit> --phone phone.json --wall wall.json
 
 ## State of play (2026-10-05)
 
-- Live in Home Assistant: **0.6.0**, installed by HACS from the GitHub release, as **one** dashboard resource: `/hacsfiles/homeassistant/house-cards.js?hacstag=...` (managed by HACS). Resource ids are not recorded here; list the resources and match the file name.
+- Live in Home Assistant: **0.6.1**, installed by HACS from the GitHub release, as **one** dashboard resource: `/hacsfiles/homeassistant/house-cards.js?hacstag=...` (managed by HACS). Resource ids are not recorded here; list the resources and match the file name.
 - Dashboards using these cards: `mobile-v5` (title "Phone", `house-phone-card`), `house-desktop` (title "House", `house-desktop-card`, created 2026-10-05 as the first version of the big-screen dashboard) and `wall-v2` (title "Hall wall", `house-wall-card`). The URLs `mobile-v5` and `wall-v2` are leftovers from testing; Home Assistant cannot rename a dashboard URL.
 - The House dashboard's card config is a **copy** of the phone dashboard's (only `type` differs). A change to one (a new camera, a room setting) must be made in both until the desktop card can read the phone dashboard's config itself (an open idea).
 - The phone card's old name `house-v5-card` is no longer registered (since 0.5.0).
+- Cameras stay snapshots (refreshed every 10 s while Security is open; a tap on the main camera opens Home Assistant's live popup). Live video inside the card was considered on 2026-10-05 and left out for now: the older dashboards use a dedicated camera card for live feeds, and an in-card player would need to survive the card's full re-renders.
 - Still to check by eye: the phone dashboard, the House dashboard in a browser, and the wall display after a page reload (day grid, weather, "Leaving?", "More rooms"). Phone and wall render identically to 0.2.0 in the harness (real configs 119/119 and 49/49); the desktop card renders all 119 screens of the real phone config without errors.
 - Dashboard screenshots through the Home Assistant MCP server need its "dashboard screenshot" beta feature, which is off; use `npm run preview` (`--card desktop --width <px>` for the big-screen card).
 - Older dashboards (Mobile v2, Mobile v3, Mobile dashboard, Wall display), the Overview dashboard and an inline resource for an earlier card (`house-v3`) are not part of this repo and stay as they are for now.

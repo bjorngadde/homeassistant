@@ -22,7 +22,10 @@ import { buildFile } from './lib/render.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
-const arg = (n, d = '') => { const i = argv.indexOf('--' + n); return i >= 0 && argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[i + 1] : d; };
+const arg = (n, d = '') => {
+  const i = argv.indexOf('--' + n);
+  return i >= 0 && argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[i + 1] : d;
+};
 const rev = arg('ref', 'HEAD');
 
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'house-equiv-'));
@@ -32,25 +35,50 @@ try {
   const refDir = path.join(tmp, 'ref');
   fs.mkdirSync(refDir);
   try {
-    execSync(`git archive ${JSON.stringify(rev)} | tar -x -C ${JSON.stringify(refDir)}`, { cwd: root, stdio: ['ignore', 'ignore', 'pipe'] });
+    execSync(`git archive ${JSON.stringify(rev)} | tar -x -C ${JSON.stringify(refDir)}`, {
+      cwd: root,
+      stdio: ['ignore', 'ignore', 'pipe'],
+    });
   } catch (e) {
     console.error(`cannot read ${rev}: ${String(e.stderr || e.message).trim()}`);
     process.exit(1);
   }
   if (fs.existsSync(path.join(refDir, 'scripts/build.mjs'))) {
     fs.symlinkSync(path.join(root, 'node_modules'), path.join(refDir, 'node_modules'), 'dir');
-    execFileSync(process.execPath, [path.join(refDir, 'scripts/build.mjs')], { cwd: refDir, stdio: ['ignore', 'ignore', 'inherit'] });
+    execFileSync(process.execPath, [path.join(refDir, 'scripts/build.mjs')], {
+      cwd: refDir,
+      stdio: ['ignore', 'ignore', 'inherit'],
+    });
   }
   // candidate: the working tree
-  execFileSync(process.execPath, [path.join(root, 'scripts/build.mjs')], { cwd: root, stdio: ['ignore', 'ignore', 'inherit'] });
+  execFileSync(process.execPath, [path.join(root, 'scripts/build.mjs')], {
+    cwd: root,
+    stdio: ['ignore', 'ignore', 'inherit'],
+  });
 
   for (const card of ['v5', 'wall']) {
     if (arg('card') && arg('card') !== card) continue;
     const config = arg(card) || path.join(root, `test/fixtures/${card}.json`);
     console.log(`== ${card}: ${rev} vs working tree (${arg(card) ? 'given config' : 'placeholder fixture'})`);
-    const r = spawnSync(process.execPath, [path.join(root, 'test/render-equivalence.mjs'), '--card', card,
-      '--ref', buildFile(path.join(refDir, 'dist'), card), '--ref-config', config,
-      '--cand', buildFile(path.join(root, 'dist'), card), '--cand-config', config, '--fixture', config], { stdio: 'inherit' });
+    const r = spawnSync(
+      process.execPath,
+      [
+        path.join(root, 'test/render-equivalence.mjs'),
+        '--card',
+        card,
+        '--ref',
+        buildFile(path.join(refDir, 'dist'), card),
+        '--ref-config',
+        config,
+        '--cand',
+        buildFile(path.join(root, 'dist'), card),
+        '--cand-config',
+        config,
+        '--fixture',
+        config,
+      ],
+      { stdio: 'inherit' },
+    );
     if (r.status !== 0) failed++;
   }
 } finally {

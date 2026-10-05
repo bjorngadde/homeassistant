@@ -30,32 +30,51 @@ and compares the HTML of every screen.
 Config and fixture files hold real ids: keep them outside the repo.`);
   process.exit(0);
 }
-const arg = (n, d = '') => { const i = argv.indexOf('--' + n); return i >= 0 && argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[i + 1] : d; };
+const arg = (n, d = '') => {
+  const i = argv.indexOf('--' + n);
+  return i >= 0 && argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[i + 1] : d;
+};
 const flag = (n) => argv.includes('--' + n);
 const readJson = (p) => (p ? JSON.parse(fs.readFileSync(p, 'utf8')) : {});
 
 const CARD = arg('card', 'v5');
-if (!TAGS[CARD]) { console.error('--card must be v5 or wall'); process.exit(2); }
+if (!TAGS[CARD]) {
+  console.error('--card must be v5 or wall');
+  process.exit(2);
+}
 
 const fixture = readJson(arg('fixture'));
-const candCfg = readJson(arg('cand-config')), refCfg = readJson(arg('ref-config'));
-let bad = 0, total = 0, smokeErrors = 0;
+const candCfg = readJson(arg('cand-config')),
+  refCfg = readJson(arg('ref-config'));
+let bad = 0,
+  total = 0,
+  smokeErrors = 0;
 for (const sc of scenarios(fixture)) {
   const cand = await renderAll(CARD, arg('cand'), candCfg, fixture, sc.over);
   if (flag('smoke')) {
-    for (const [k, html] of Object.entries(cand.out)) { total++; if (html.includes('house-v5:') || html.includes('house-wall:') || !html) { smokeErrors++; console.log(`ERROR  ${sc.name} · ${k}: ${(html.match(/house-(v5|wall): [^<]*/) || ['(empty)'])[0]}`); } }
+    for (const [k, html] of Object.entries(cand.out)) {
+      total++;
+      if (html.includes('house-v5:') || html.includes('house-wall:') || !html) {
+        smokeErrors++;
+        console.log(`ERROR  ${sc.name} · ${k}: ${(html.match(/house-(v5|wall): [^<]*/) || ['(empty)'])[0]}`);
+      }
+    }
     continue;
   }
   const ref = await renderAll(CARD, arg('ref'), refCfg, fixture, sc.over);
   for (const k of Object.keys(ref.out)) {
     total++;
-    const a = ref.out[k], b = cand.out[k];
+    const a = ref.out[k],
+      b = cand.out[k];
     if (a === b) continue;
     bad++;
     const d = firstDiff(a, b);
     console.log(`DIFF   ${sc.name} · ${k}\n   ref : …${d.a}\n   cand: …${d.b}`);
   }
-  if (cand.errors.length || ref.errors.length) console.log(`note   ${sc.name}: console errors ref=${ref.errors.length} cand=${cand.errors.length} (${[...ref.errors, ...cand.errors][0].slice(0, 120)})`);
+  if (cand.errors.length || ref.errors.length)
+    console.log(
+      `note   ${sc.name}: console errors ref=${ref.errors.length} cand=${cand.errors.length} (${[...ref.errors, ...cand.errors][0].slice(0, 120)})`,
+    );
 }
 const failed = flag('smoke') ? smokeErrors : bad;
 console.log(`${flag('smoke') ? 'smoke' : 'equivalence'}: ${total - failed}/${total} screens ok`);

@@ -20,18 +20,27 @@ import path from 'node:path';
 
 const argv = process.argv.slice(2);
 const quiet = argv.includes('--quiet');
-const denyPath = (argv.includes('--denylist') ? argv[argv.indexOf('--denylist') + 1] : process.env.SCRUB_DENYLIST) || '';
+const denyPath =
+  (argv.includes('--denylist') ? argv[argv.indexOf('--denylist') + 1] : process.env.SCRUB_DENYLIST) || '';
 
 const root = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim();
-const listed = execFileSync('git', ['ls-files', '-z', '--cached', '--others', '--exclude-standard'], { cwd: root }).toString('utf8').split('\0').filter(Boolean);
+const listed = execFileSync('git', ['ls-files', '-z', '--cached', '--others', '--exclude-standard'], { cwd: root })
+  .toString('utf8')
+  .split('\0')
+  .filter(Boolean);
 const SKIP = new Set(['scripts/scrub-allow.txt', 'package-lock.json']);
 const files = listed.filter((f) => !SKIP.has(f) && fs.existsSync(path.join(root, f)));
 
-const allowLines = fs.readFileSync(path.join(root, 'scripts/scrub-allow.txt'), 'utf8').split('\n').map((s) => s.trim()).filter((s) => s && !s.startsWith('#'));
+const allowLines = fs
+  .readFileSync(path.join(root, 'scripts/scrub-allow.txt'), 'utf8')
+  .split('\n')
+  .map((s) => s.trim())
+  .filter((s) => s && !s.startsWith('#'));
 const allowTokens = new Set(allowLines.filter((l) => !l.startsWith('host:')));
 const allowHosts = new Set(allowLines.filter((l) => l.startsWith('host:')).map((l) => l.slice(5)));
 
-const DOMAINS = 'light|switch|sensor|binary_sensor|vacuum|camera|image|button|input_boolean|input_select|input_text|input_number|input_datetime|script|automation|alarm_control_panel|person|weather|media_player|climate|calendar|water_heater|lock|cover|fan|scene|device_tracker|todo|siren|rest_command';
+const DOMAINS =
+  'light|switch|sensor|binary_sensor|vacuum|camera|image|button|input_boolean|input_select|input_text|input_number|input_datetime|script|automation|alarm_control_panel|person|weather|media_player|climate|calendar|water_heater|lock|cover|fan|scene|device_tracker|todo|siren|rest_command';
 const ENTITY = new RegExp(`(?<![\\w.$-])((?:${DOMAINS})\\.[a-z0-9_]+)\\b(?!\\()`, 'g');
 const OTHER = [
   ['e-mail address', /\b[\w.+-]+@(?!users\.noreply\.github\.com)[\w-]+\.[\w.-]+\b/g],
@@ -55,22 +64,34 @@ for (const f of files) {
       findings.push([f, i + 1, 'entity-like token', tok]);
     }
     for (const [label, re] of OTHER) for (const m of line.matchAll(re)) findings.push([f, i + 1, label, m[0]]);
-    for (const m of line.matchAll(URL)) if (!allowHosts.has(m[1].toLowerCase())) findings.push([f, i + 1, 'URL host not allowed', m[1]]);
+    for (const m of line.matchAll(URL))
+      if (!allowHosts.has(m[1].toLowerCase())) findings.push([f, i + 1, 'URL host not allowed', m[1]]);
   });
 }
 
 if (denyPath) {
-  const terms = fs.readFileSync(denyPath, 'utf8').split('\n').map((s) => s.trim()).filter(Boolean);
+  const terms = fs
+    .readFileSync(denyPath, 'utf8')
+    .split('\n')
+    .map((s) => s.trim())
+    .filter(Boolean);
   for (const f of files) {
     const buf = fs.readFileSync(path.join(root, f));
     if (!isText(buf)) continue;
     const lines = buf.toString('utf8').toLowerCase().split('\n');
-    lines.forEach((line, i) => { for (const t of terms) if (line.includes(t.toLowerCase())) findings.push([f, i + 1, 'denylist term', t]); });
+    lines.forEach((line, i) => {
+      for (const t of terms) if (line.includes(t.toLowerCase())) findings.push([f, i + 1, 'denylist term', t]);
+    });
   }
 } else {
   console.error('note: no denylist given (--denylist or SCRUB_DENYLIST); only the generic checks ran.');
 }
 
-for (const [f, line, what, text] of findings) console.log(quiet ? `${f}:${line}  ${what}` : `${f}:${line}  ${what}: ${text}`);
-console.log(findings.length ? `scrub-check: ${findings.length} finding(s) in ${files.length} files` : `scrub-check: clean (${files.length} files${denyPath ? ', denylist applied' : ''})`);
+for (const [f, line, what, text] of findings)
+  console.log(quiet ? `${f}:${line}  ${what}` : `${f}:${line}  ${what}: ${text}`);
+console.log(
+  findings.length
+    ? `scrub-check: ${findings.length} finding(s) in ${files.length} files`
+    : `scrub-check: clean (${files.length} files${denyPath ? ', denylist applied' : ''})`,
+);
 process.exit(findings.length ? 1 : 0);

@@ -29,16 +29,26 @@ const sepLine = (name, same) => `<!-- ==== ${name} ==== ${same ? `same as ${same
 
 /** Ordered [name, html] pairs -> snapshot text. */
 function serialize(card, entries) {
-  const lines = [`<!-- house-${card} render snapshot from test/fixtures/${card}.json. Regenerate with: npm run snapshot:update -->`];
-  const styles = new Map(), seen = new Map();
+  const lines = [
+    `<!-- house-${card} render snapshot from test/fixtures/${card}.json. Regenerate with: npm run snapshot:update -->`,
+  ];
+  const styles = new Map(),
+    seen = new Map();
   for (const [name, html] of entries) {
     const m = html.match(/^<style>([\s\S]*?)<\/style>/);
     let body = html;
     if (m) {
-      if (!styles.has(m[1])) { const id = `style ${styles.size + 1}`; styles.set(m[1], id); lines.push(sepLine(id), m[1]); }
+      if (!styles.has(m[1])) {
+        const id = `style ${styles.size + 1}`;
+        styles.set(m[1], id);
+        lines.push(sepLine(id), m[1]);
+      }
       body = `<style>{{${styles.get(m[1])}}}</style>` + html.slice(m[0].length);
     }
-    if (seen.has(body)) { lines.push(sepLine(name, seen.get(body))); continue; }
+    if (seen.has(body)) {
+      lines.push(sepLine(name, seen.get(body)));
+      continue;
+    }
     seen.set(body, name);
     lines.push(sepLine(name), body);
   }
@@ -47,19 +57,34 @@ function serialize(card, entries) {
 
 /** Snapshot text -> Map(name -> exact html). */
 function parse(text) {
-  const blocks = new Map(), order = [];
-  let cur = null, buf = [];
-  const flush = () => { if (cur) blocks.set(cur.name, cur.same ? { same: cur.same } : { body: buf.join('\n') }); buf = []; };
+  const blocks = new Map(),
+    order = [];
+  let cur = null,
+    buf = [];
+  const flush = () => {
+    if (cur) blocks.set(cur.name, cur.same ? { same: cur.same } : { body: buf.join('\n') });
+    buf = [];
+  };
   for (const line of text.replace(/\n$/, '').split('\n').slice(1)) {
     const m = line.match(SEP);
-    if (m) { flush(); cur = { name: m[1], same: m[2] }; order.push(m[1]); } else buf.push(line);
+    if (m) {
+      flush();
+      cur = { name: m[1], same: m[2] };
+      order.push(m[1]);
+    } else buf.push(line);
   }
   flush();
-  const resolve = (name) => { const b = blocks.get(name); return b.same ? resolve(b.same) : b.body; };
+  const resolve = (name) => {
+    const b = blocks.get(name);
+    return b.same ? resolve(b.same) : b.body;
+  };
   const out = new Map();
   for (const name of order) {
     if (name.startsWith('style ')) continue;
-    out.set(name, resolve(name).replace(/\{\{(style \d+)\}\}/, (_, id) => resolve(id)));
+    out.set(
+      name,
+      resolve(name).replace(/\{\{(style \d+)\}\}/, (_, id) => resolve(id)),
+    );
   }
   return out;
 }
@@ -79,7 +104,11 @@ for (const card of CARDS) {
     }
     r.errors.forEach((e) => errors.push(`${sc}: console.error ${e.slice(0, 160)}`));
   }
-  if (errors.length) { failed++; console.log(`FAIL   ${card}: render errors\n` + errors.map((e) => '   ' + e).join('\n')); continue; }
+  if (errors.length) {
+    failed++;
+    console.log(`FAIL   ${card}: render errors\n` + errors.map((e) => '   ' + e).join('\n'));
+    continue;
+  }
 
   const snapFile = path.join(root, `test/snapshots/${card}.html`);
   const text = serialize(card, entries);
@@ -89,7 +118,11 @@ for (const card of CARDS) {
     console.log(`wrote  ${path.relative(root, snapFile)} (${entries.length} screens)`);
     continue;
   }
-  if (!fs.existsSync(snapFile)) { failed++; console.log(`FAIL   ${card}: no snapshot yet, run: npm run snapshot:update`); continue; }
+  if (!fs.existsSync(snapFile)) {
+    failed++;
+    console.log(`FAIL   ${card}: no snapshot yet, run: npm run snapshot:update`);
+    continue;
+  }
   const expected = parse(fs.readFileSync(snapFile, 'utf8'));
   let bad = 0;
   for (const [name, html] of entries) {
@@ -97,14 +130,26 @@ for (const card of CARDS) {
     if (want === html) continue;
     bad++;
     if (bad > 10) continue;
-    if (want === undefined) { console.log(`NEW    ${card} · ${name}`); continue; }
+    if (want === undefined) {
+      console.log(`NEW    ${card} · ${name}`);
+      continue;
+    }
     const d = firstDiff(want, html);
     console.log(`DIFF   ${card} · ${name}\n   snapshot: …${d.a}\n   now     : …${d.b}`);
   }
   const names = new Set(entries.map(([n]) => n));
-  for (const name of expected.keys()) if (!names.has(name)) { bad++; console.log(`GONE   ${card} · ${name}`); }
+  for (const name of expected.keys())
+    if (!names.has(name)) {
+      bad++;
+      console.log(`GONE   ${card} · ${name}`);
+    }
   if (bad) failed++;
-  console.log(`${bad ? 'FAIL' : 'ok  '}   ${card}: ${entries.length - bad}/${entries.length} screens match test/snapshots/${card}.html`);
+  console.log(
+    `${bad ? 'FAIL' : 'ok  '}   ${card}: ${entries.length - bad}/${entries.length} screens match test/snapshots/${card}.html`,
+  );
 }
-if (failed && !update) console.log('\nIf the change is intended: npm run snapshot:update, then review the diff of test/snapshots/ before committing.');
+if (failed && !update)
+  console.log(
+    '\nIf the change is intended: npm run snapshot:update, then review the diff of test/snapshots/ before committing.',
+  );
 process.exit(failed ? 1 : 0);

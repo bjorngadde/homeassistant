@@ -35,4 +35,8 @@ await esbuild.build({
   define: { __VERSION__: JSON.stringify(version) },
   logLevel: 'warning',
 });
-console.log(`built ${Object.keys(ENTRIES).map((e) => `${e}.js`).join(', ')} ${version} -> ${path.relative(root, outdir) || '.'}/`);
+console.log(
+  `built ${Object.keys(ENTRIES)
+    .map((e) => `${e}.js`)
+    .join(', ')} ${version} -> ${path.relative(root, outdir) || '.'}/`,
+);

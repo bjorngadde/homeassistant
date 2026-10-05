@@ -24,10 +24,23 @@ const out = new Set();
 function walk(o) {
   if (typeof o === 'string') {
     if (ENTITY.test(o) || SNAKE.test(o)) out.add(o);
-    if (/^person\./.test(o)) o.slice(7).split('_').filter((w) => w.length > 2).forEach((w) => out.add(w));
+    if (/^person\./.test(o))
+      o.slice(7)
+        .split('_')
+        .filter((w) => w.length > 2)
+        .forEach((w) => out.add(w));
   } else if (Array.isArray(o)) o.forEach(walk);
-  else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) { if (ENTITY.test(k)) out.add(k); walk(v); }
+  else if (o && typeof o === 'object')
+    for (const [k, v] of Object.entries(o)) {
+      if (ENTITY.test(k)) out.add(k);
+      walk(v);
+    }
 }
 for (const f of inputs) walk(JSON.parse(fs.readFileSync(f, 'utf8')));
-if (extraFile) fs.readFileSync(extraFile, 'utf8').split('\n').map((s) => s.trim()).filter(Boolean).forEach((s) => out.add(s));
+if (extraFile)
+  fs.readFileSync(extraFile, 'utf8')
+    .split('\n')
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .forEach((s) => out.add(s));
 process.stdout.write([...out].sort().join('\n') + '\n');

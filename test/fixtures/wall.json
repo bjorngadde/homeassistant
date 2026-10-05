@@ -17,7 +17,12 @@
     { "entity": "binary_sensor.example_back_door", "name": "Back door" }
   ],
   "tiles": [
-    { "name": "Entrance", "entity": "light.example_entrance", "icon": "sconce", "door": "binary_sensor.example_front_door" },
+    {
+      "name": "Entrance",
+      "entity": "light.example_entrance",
+      "icon": "sconce",
+      "door": "binary_sensor.example_front_door"
+    },
     { "name": "Kitchen", "entity": "light.example_kitchen_group", "area": "example_kitchen", "icon": "food" },
     { "name": "Living", "entity": "light.example_living_group", "area": "example_living", "icon": "sofa" },
     { "name": "Hall", "entity": "light.example_hall_group", "area": "example_hall", "icon": "sconce" },

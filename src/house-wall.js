@@ -22,7 +22,7 @@ const WALL_DEFAULTS = {
   // school lunch card replaces the AI line in this window on school days
   lunch: { from: '06:30', to: '08:30' },
   alarm: '',
-  entry_delay: 30, /* seconds; only used when Alarmo does not report the delay itself */
+  entry_delay: 30 /* seconds; only used when Alarmo does not report the delay itself */,
   vacuum: '',
   people: [], // [{ entity, short, name }]
   doors: [], // [{ entity, name }]
@@ -46,15 +46,30 @@ const W = {
     const out = { ...a };
     for (const k of Object.keys(b || {})) {
       const v = b[k];
-      out[k] = v && typeof v === 'object' && !Array.isArray(v) && a[k] && typeof a[k] === 'object' && !Array.isArray(a[k]) ? W.merge(a[k], v) : v;
+      out[k] =
+        v && typeof v === 'object' && !Array.isArray(v) && a[k] && typeof a[k] === 'object' && !Array.isArray(a[k])
+          ? W.merge(a[k], v)
+          : v;
     }
     return out;
   },
-  esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[c])); },
-  hhmm(d) { return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); },
-  mins(s) { const [h, m] = String(s).split(':').map(Number); return h * 60 + (m || 0); },
+  esc(s) {
+    return String(s == null ? '' : s).replace(
+      /[&<>"']/g,
+      (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' })[c],
+    );
+  },
+  hhmm(d) {
+    return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  },
+  mins(s) {
+    const [h, m] = String(s).split(':').map(Number);
+    return h * 60 + (m || 0);
+  },
   inWindow(d, from, to) {
-    const n = d.getHours() * 60 + d.getMinutes(), a = W.mins(from), b = W.mins(to);
+    const n = d.getHours() * 60 + d.getMinutes(),
+      a = W.mins(from),
+      b = W.mins(to);
     return a <= b ? n >= a && n < b : n >= a || n < b;
   },
   svg(paths, size, stroke, width) {
@@ -66,7 +81,12 @@ const ICON = {
   bulb: ['M9 18h6', 'M10 22h4', 'M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z'],
   sconce: ['M12 2v2', 'M8 7l4-3 4 3', 'M8 7h8v9H8z', 'M12 10v3', 'M12 16v5', 'M9 21h6'],
   door: ['M6 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17', 'M3 21h18', 'M14 12h.01'],
-  sofa: ['M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3', 'M2 11a2 2 0 0 1 4 0v3h12v-3a2 2 0 0 1 4 0v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z', 'M6 19v2', 'M18 19v2'],
+  sofa: [
+    'M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3',
+    'M2 11a2 2 0 0 1 4 0v3h12v-3a2 2 0 0 1 4 0v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z',
+    'M6 19v2',
+    'M18 19v2',
+  ],
   tv: ['M4 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z', 'M17 2l-5 5-5-5'],
   monitor: ['M5 4h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z', 'M8 20h8', 'M12 16v4'],
   stairs: ['M4 20h4v-4h4v-4h4V8h4'],
@@ -78,10 +98,26 @@ const ICON = {
   okCircle: ['M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z', 'M8 12l3 3 5-5'],
   alert: ['M12 3l10 18H2z', 'M12 10v4', 'M12 17.5h.01'],
   food: ['M5 3v7a2 2 0 0 0 4 0V3', 'M7 3v18', 'M17 21V3c-2 1-3 3.5-3 7 0 2 1 3 3 3'],
-  sun: ['M12 7a5 5 0 1 0 0 10a5 5 0 1 0 0-10z', 'M12 1v2', 'M12 21v2', 'M4.2 4.2l1.4 1.4', 'M18.4 18.4l1.4 1.4', 'M1 12h2', 'M21 12h2', 'M4.2 19.8l1.4-1.4', 'M18.4 5.6l1.4-1.4'],
+  sun: [
+    'M12 7a5 5 0 1 0 0 10a5 5 0 1 0 0-10z',
+    'M12 1v2',
+    'M12 21v2',
+    'M4.2 4.2l1.4 1.4',
+    'M18.4 18.4l1.4 1.4',
+    'M1 12h2',
+    'M21 12h2',
+    'M4.2 19.8l1.4-1.4',
+    'M18.4 5.6l1.4-1.4',
+  ],
   moon: ['M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z'],
   cloud: ['M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z'],
-  partly: ['M12 2v2', 'M4.9 4.9l1.4 1.4', 'M20 12h2', 'M15.9 6.3A5 5 0 0 0 8.1 10', 'M16 20H8a5 5 0 1 1 4.6-7h1.9a3.5 3.5 0 1 1 0 7z'],
+  partly: [
+    'M12 2v2',
+    'M4.9 4.9l1.4 1.4',
+    'M20 12h2',
+    'M15.9 6.3A5 5 0 0 0 8.1 10',
+    'M16 20H8a5 5 0 1 1 4.6-7h1.9a3.5 3.5 0 1 1 0 7z',
+  ],
   rain: ['M17.5 15H9a6 6 0 1 1 5.7-8h2.8a4 4 0 1 1 0 8z', 'M8 18l-1 3', 'M12 18l-1 3', 'M16 18l-1 3'],
   snow: ['M17.5 15H9a6 6 0 1 1 5.7-8h2.8a4 4 0 1 1 0 8z', 'M8 19h.01', 'M12 21h.01', 'M16 19h.01'],
   storm: ['M17.5 15H9a6 6 0 1 1 5.7-8h2.8a4 4 0 1 1 0 8z', 'M13 16l-3 4h4l-3 4'],
@@ -89,12 +125,38 @@ const ICON = {
   wind: ['M3 8h11a3 3 0 1 0-3-3', 'M3 16h15a3 3 0 1 1-3 3', 'M3 12h18'],
 };
 const WX_ICON = {
-  'clear-night': 'moon', sunny: 'sun', partlycloudy: 'partly', cloudy: 'cloud', fog: 'fog', rainy: 'rain', pouring: 'rain',
-  snowy: 'snow', 'snowy-rainy': 'snow', hail: 'snow', lightning: 'storm', 'lightning-rainy': 'storm', windy: 'wind', 'windy-variant': 'wind', exceptional: 'alert',
+  'clear-night': 'moon',
+  sunny: 'sun',
+  partlycloudy: 'partly',
+  cloudy: 'cloud',
+  fog: 'fog',
+  rainy: 'rain',
+  pouring: 'rain',
+  snowy: 'snow',
+  'snowy-rainy': 'snow',
+  hail: 'snow',
+  lightning: 'storm',
+  'lightning-rainy': 'storm',
+  windy: 'wind',
+  'windy-variant': 'wind',
+  exceptional: 'alert',
 };
 const WX_TEXT = {
-  'clear-night': 'clear', sunny: 'sunny', partlycloudy: 'partly cloudy', cloudy: 'cloudy', fog: 'fog', rainy: 'rain', pouring: 'heavy rain',
-  snowy: 'snow', 'snowy-rainy': 'sleet', hail: 'hail', lightning: 'thunder', 'lightning-rainy': 'thunder', windy: 'windy', 'windy-variant': 'windy', exceptional: 'unusual weather',
+  'clear-night': 'clear',
+  sunny: 'sunny',
+  partlycloudy: 'partly cloudy',
+  cloudy: 'cloudy',
+  fog: 'fog',
+  rainy: 'rain',
+  pouring: 'heavy rain',
+  snowy: 'snow',
+  'snowy-rainy': 'sleet',
+  hail: 'hail',
+  lightning: 'thunder',
+  'lightning-rainy': 'thunder',
+  windy: 'windy',
+  'windy-variant': 'windy',
+  exceptional: 'unusual weather',
 };
 
 const CSS = `
@@ -225,9 +287,16 @@ class HouseWallCard extends HTMLElement {
     this._doorAt = 0;
   }
 
-  setConfig(config) { this._config = W.merge(WALL_DEFAULTS, config || {}); this._sig = ''; }
-  getCardSize() { return 8; }
-  getGridOptions() { return { columns: 'full', rows: 'auto' }; }
+  setConfig(config) {
+    this._config = W.merge(WALL_DEFAULTS, config || {});
+    this._sig = '';
+  }
+  getCardSize() {
+    return 8;
+  }
+  getGridOptions() {
+    return { columns: 'full', rows: 'auto' };
+  }
 
   connectedCallback() {
     if (!this.shadowRoot) {
@@ -243,12 +312,19 @@ class HouseWallCard extends HTMLElement {
     this._fitTimers = [300, 1500, 5000].map((ms) => setTimeout(() => this._fit(), ms));
     this._tick();
     this._calTimer = setInterval(() => this._loadCalendar(), 15 * 60 * 1000);
-    if (this._hass) { this._subscribeForecast(); this._loadCalendar(); }
+    if (this._hass) {
+      this._subscribeForecast();
+      this._loadCalendar();
+    }
   }
 
   disconnectedCallback() {
-    clearInterval(this._alarmTimer); this._alarmTimer = null;
-    clearTimeout(this._tickTimer); clearInterval(this._calTimer); clearTimeout(this._doorTimer); this._stopCam();
+    clearInterval(this._alarmTimer);
+    this._alarmTimer = null;
+    clearTimeout(this._tickTimer);
+    clearInterval(this._calTimer);
+    clearTimeout(this._doorTimer);
+    this._stopCam();
     window.removeEventListener('resize', this._onResize);
     (this._fitTimers || []).forEach(clearTimeout);
     this._unsubForecasts();
@@ -259,15 +335,27 @@ class HouseWallCard extends HTMLElement {
     const connChanged = this._hass && this._hass.connection !== h.connection;
     this._hass = h;
     if (!this._config) this.setConfig({});
-    if (first || connChanged) { this._subscribeForecast(); this._loadCalendar(); }
+    if (first || connChanged) {
+      this._subscribeForecast();
+      this._loadCalendar();
+    }
     this._watchDoorbell(first);
     const sig = this._signature();
-    if (sig !== this._sig) { this._sig = sig; this._busy = {}; this._render(); }
+    if (sig !== this._sig) {
+      this._sig = sig;
+      this._busy = {};
+      this._render();
+    }
   }
 
   /* ---------- data ---------- */
-  _s(id) { return id && this._hass ? this._hass.states[id] : undefined; }
-  _on(id) { const s = this._s(id); return !!s && s.state === 'on'; }
+  _s(id) {
+    return id && this._hass ? this._hass.states[id] : undefined;
+  }
+  _on(id) {
+    const s = this._s(id);
+    return !!s && s.state === 'on';
+  }
 
   _leaves(id, seen) {
     seen = seen || new Set();
@@ -281,7 +369,8 @@ class HouseWallCard extends HTMLElement {
   }
 
   _usable(id) {
-    const h = this._hass, s = h.states[id];
+    const h = this._hass,
+      s = h.states[id];
     if (!s || !id.startsWith('light.') || Array.isArray(s.attributes.entity_id)) return false;
     if ((this._config.exclude || []).includes(id)) return false;
     const reg = h.entities && h.entities[id];
@@ -289,7 +378,8 @@ class HouseWallCard extends HTMLElement {
   }
 
   _areaOf(id) {
-    const h = this._hass, reg = h.entities && h.entities[id];
+    const h = this._hass,
+      reg = h.entities && h.entities[id];
     if (!reg) return null;
     if (reg.area_id) return reg.area_id;
     const dev = reg.device_id && h.devices && h.devices[reg.device_id];
@@ -299,10 +389,14 @@ class HouseWallCard extends HTMLElement {
   _tileLeaves(t) {
     if (!t.area) return this._leaves(t.entity);
     const h = this._hass;
-    if (this._areaCacheFor !== h.entities) { this._areaCacheFor = h.entities; this._areaCache = {}; }
+    if (this._areaCacheFor !== h.entities) {
+      this._areaCacheFor = h.entities;
+      this._areaCache = {};
+    }
     if (!this._areaCache[t.area]) {
       const out = [];
-      for (const id in h.states) if (id.startsWith('light.') && this._usable(id) && this._areaOf(id) === t.area) out.push(id);
+      for (const id in h.states)
+        if (id.startsWith('light.') && this._usable(id) && this._areaOf(id) === t.area) out.push(id);
       this._areaCache[t.area] = out;
     }
     const out = this._areaCache[t.area];
@@ -311,17 +405,19 @@ class HouseWallCard extends HTMLElement {
 
   /* areas that have lights but no tile on Day (kids' rooms, toilet, basement, outdoors ...) */
   _moreAreas() {
-    const h = this._hass, c = this._config;
+    const h = this._hass,
+      c = this._config;
     const skip = new Set([...c.tiles.map((t) => t.area), ...(c.more_exclude || [])].filter(Boolean));
     const order = c.more_order || [];
     const out = [];
-    for (const id in (h.areas || {})) {
+    for (const id in h.areas || {}) {
       if (skip.has(id)) continue;
       const leaves = this._tileLeaves({ area: id });
       if (leaves.length) out.push({ id, name: (h.areas[id] && h.areas[id].name) || id, leaves });
     }
     out.sort((a, b) => {
-      const ia = order.indexOf(a.id), ib = order.indexOf(b.id);
+      const ia = order.indexOf(a.id),
+        ib = order.indexOf(b.id);
       if (ia !== -1 || ib !== -1) return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
       return a.name.localeCompare(b.name);
     });
@@ -330,10 +426,24 @@ class HouseWallCard extends HTMLElement {
 
   _watched() {
     const c = this._config;
-    const ids = [...c.headline, c.weather, c.outdoor, c.price, c.school, c.alarm, c.vacuum, c.doorbell.ring, c.doorbell.person, c.doorbell.light];
+    const ids = [
+      ...c.headline,
+      c.weather,
+      c.outdoor,
+      c.price,
+      c.school,
+      c.alarm,
+      c.vacuum,
+      c.doorbell.ring,
+      c.doorbell.person,
+      c.doorbell.light,
+    ];
     c.people.forEach((p) => ids.push(p.entity));
     c.doors.forEach((d) => ids.push(d.entity));
-    c.tiles.forEach((t) => { ids.push(t.entity, t.door); this._tileLeaves(t).forEach((l) => ids.push(l)); });
+    c.tiles.forEach((t) => {
+      ids.push(t.entity, t.door);
+      this._tileLeaves(t).forEach((l) => ids.push(l));
+    });
     this._moreAreas().forEach((a) => a.leaves.forEach((l) => ids.push(l)));
     return ids.filter(Boolean);
   }
@@ -343,34 +453,57 @@ class HouseWallCard extends HTMLElement {
     let lightSig = 0;
     const st = this._hass.states;
     for (const id in st) if (id.charCodeAt(0) === 108 && id.startsWith('light.') && st[id].state === 'on') lightSig++;
-    return this._ids.map((id) => { const s = st[id]; return s ? s.last_updated : '-'; }).join('|') + '|' + lightSig;
+    return (
+      this._ids
+        .map((id) => {
+          const s = st[id];
+          return s ? s.last_updated : '-';
+        })
+        .join('|') +
+      '|' +
+      lightSig
+    );
   }
 
   async _loadCalendar() {
     if (!this._hass) return;
     const now = new Date();
-    const end = new Date(now); end.setHours(23, 59, 59, 0);
-    const start = new Date(now); start.setHours(0, 0, 0, 0);
+    const end = new Date(now);
+    end.setHours(23, 59, 59, 0);
+    const start = new Date(now);
+    start.setHours(0, 0, 0, 0);
     const q = `?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`;
     const out = [];
     for (const cal of this._config.calendars) {
       try {
         const evs = await this._hass.callApi('GET', `calendars/${cal}${q}`);
         (evs || []).forEach((e) => out.push(e));
-      } catch (_err) { /* calendar unavailable: skip */ }
+      } catch (_err) {
+        /* calendar unavailable: skip */
+      }
     }
     this._events = out;
-    this._sig = ''; this._render();
+    this._sig = '';
+    this._render();
   }
 
   _subscribeForecast() {
     const h = this._hass;
     if (!h || !h.connection || !this._config.weather) return;
     this._unsubForecasts();
-    const sub = (type, key) => h.connection.subscribeMessage((msg) => {
-      this[key] = (msg && msg.forecast) || [];
-      if (key === '_hourly' || this._mode === 'weather') { this._sig = ''; this._render(); }
-    }, { type: 'weather/subscribe_forecast', forecast_type: type, entity_id: this._config.weather }).catch(() => null);
+    const sub = (type, key) =>
+      h.connection
+        .subscribeMessage(
+          (msg) => {
+            this[key] = (msg && msg.forecast) || [];
+            if (key === '_hourly' || this._mode === 'weather') {
+              this._sig = '';
+              this._render();
+            }
+          },
+          { type: 'weather/subscribe_forecast', forecast_type: type, entity_id: this._config.weather },
+        )
+        .catch(() => null);
     this._unsubFc = [sub('hourly', '_hourly'), sub('daily', '_daily')];
   }
 
@@ -382,24 +515,36 @@ class HouseWallCard extends HTMLElement {
   /* ---------- doorbell ---------- */
   _watchDoorbell(first) {
     const d = this._config.doorbell;
-    const ring = this._on(d.ring), person = this._on(d.person);
+    const ring = this._on(d.ring),
+      person = this._on(d.person);
     const was = this._prev;
     this._prev = { ring, person };
     if (first) return;
     if ((ring && !was.ring) || (person && !was.person)) {
       this._doorAt = Date.now();
-      clearTimeout(this._doorTimer); this._doorTimer = null;
+      clearTimeout(this._doorTimer);
+      this._doorTimer = null;
       this._setMode('door');
       return;
     }
     if (this._mode === 'door' && !ring && !person && !this._doorTimer) {
-      this._doorTimer = setTimeout(() => { this._doorTimer = null; if (this._mode === 'door') this._setMode(this._restMode()); }, (d.close_after || 120) * 1000);
+      this._doorTimer = setTimeout(
+        () => {
+          this._doorTimer = null;
+          if (this._mode === 'door') this._setMode(this._restMode());
+        },
+        (d.close_after || 120) * 1000,
+      );
     }
   }
 
   _restMode() {
     const n = this._config.night;
-    return n && W.inWindow(new Date(), n.from, n.to) && Date.now() - this._lastTouch >= (n.idle == null ? 60 : n.idle) * 1000 ? 'night' : 'day';
+    return n &&
+      W.inWindow(new Date(), n.from, n.to) &&
+      Date.now() - this._lastTouch >= (n.idle == null ? 60 : n.idle) * 1000
+      ? 'night'
+      : 'day';
   }
 
   _setMode(m) {
@@ -421,20 +566,32 @@ class HouseWallCard extends HTMLElement {
       if (!s) return;
       loading = true;
       const next = new Image();
-      next.onload = () => { loading = false; this._camSrc = next.src; const cur = this._root.querySelector('.cam img'); if (cur) cur.src = next.src; };
-      next.onerror = () => { loading = false; };
+      next.onload = () => {
+        loading = false;
+        this._camSrc = next.src;
+        const cur = this._root.querySelector('.cam img');
+        if (cur) cur.src = next.src;
+      };
+      next.onerror = () => {
+        loading = false;
+      };
       next.src = `/api/camera_proxy/${s.entity_id}?token=${s.attributes.access_token}&t=${Date.now()}`;
     };
     pull();
     this._camTimer = setInterval(pull, 1000);
   }
 
-  _stopCam() { clearInterval(this._camTimer); this._camTimer = null; if (this._mode !== 'door') this._camSrc = ''; }
+  _stopCam() {
+    clearInterval(this._camTimer);
+    this._camTimer = null;
+    if (this._mode !== 'door') this._camSrc = '';
+  }
 
   /* ---------- fit to screen ---------- */
   _fit() {
     if (!this._root || !this.isConnected) return;
-    const vw = window.innerWidth, vh = window.innerHeight;
+    const vw = window.innerWidth,
+      vh = window.innerHeight;
     const r = this.getBoundingClientRect();
     const top = Math.max(0, r.top + (window.scrollY || 0));
     const w = Math.max(240, Math.min(r.width || vw, vw));
@@ -445,8 +602,8 @@ class HouseWallCard extends HTMLElement {
     this._fitKey = key;
     this.style.height = h + 'px';
     const st = this._root.style;
-    st.width = (w / s) + 'px';
-    st.height = (h / s) + 'px';
+    st.width = w / s + 'px';
+    st.height = h / s + 'px';
     st.transform = s < 1 ? `scale(${s})` : '';
     if (window.scrollY) window.scrollTo(0, 0);
   }
@@ -457,30 +614,49 @@ class HouseWallCard extends HTMLElement {
     const now = new Date();
     if (this._root) {
       const t = W.hhmm(now);
-      this._root.querySelectorAll('[data-clock]').forEach((el) => { if (el.textContent !== t) el.textContent = t; });
+      this._root.querySelectorAll('[data-clock]').forEach((el) => {
+        if (el.textContent !== t) el.textContent = t;
+      });
       this._fit();
       const idle = Date.now() - this._lastTouch;
       if (this._mode === 'door' && Date.now() - this._doorAt > 10 * 60 * 1000) this._setMode(this._restMode());
-      else if ((this._mode === 'leave' || this._mode === 'weather' || this._mode === 'rooms') && idle > (this._config.leave_idle || 90) * 1000) this._setMode('day');
+      else if (
+        (this._mode === 'leave' || this._mode === 'weather' || this._mode === 'rooms') &&
+        idle > (this._config.leave_idle || 90) * 1000
+      )
+        this._setMode('day');
       else if (this._mode === 'day' && this._restMode() === 'night') this._setMode('night');
       else if (this._mode === 'night' && this._restMode() === 'day') this._setMode('day');
-      if (this._day !== now.getDate()) { this._day = now.getDate(); this._loadCalendar(); }
-      else if (this._mode === 'day' && !!this._lunchDishes() !== !!this._lunchShown) this._render();
+      if (this._day !== now.getDate()) {
+        this._day = now.getDate();
+        this._loadCalendar();
+      } else if (this._mode === 'day' && !!this._lunchDishes() !== !!this._lunchShown) this._render();
     }
-    this._tickTimer = setTimeout(() => this._tick(), 60500 - now.getSeconds() * 1000 - now.getMilliseconds() % 1000);
+    this._tickTimer = setTimeout(() => this._tick(), 60500 - now.getSeconds() * 1000 - (now.getMilliseconds() % 1000));
   }
 
   /* ---------- actions ---------- */
-  _call(domain, service, data) { return this._hass.callService(domain, service, data).catch(() => { this._busy = {}; this._render(); }); }
+  _call(domain, service, data) {
+    return this._hass.callService(domain, service, data).catch(() => {
+      this._busy = {};
+      this._render();
+    });
+  }
 
   _toggleEntity(id, key, leaves) {
     leaves = leaves || this._leaves(id);
     const lit = leaves.filter((l) => this._on(l));
     const anyOn = lit.length > 0 || this._on(id);
     const domain = id.split('.')[0];
-    if (key != null) { this._busy[key] = true; }
-    if (anyOn && domain === 'light') this._call('light', 'turn_off', { entity_id: [...new Set([id, ...lit.filter((l) => l.startsWith('light.'))])] });
-    else this._call(domain === 'light' || domain === 'switch' ? domain : 'homeassistant', anyOn ? 'turn_off' : 'turn_on', { entity_id: id });
+    if (key != null) {
+      this._busy[key] = true;
+    }
+    if (anyOn && domain === 'light')
+      this._call('light', 'turn_off', { entity_id: [...new Set([id, ...lit.filter((l) => l.startsWith('light.'))])] });
+    else
+      this._call(domain === 'light' || domain === 'switch' ? domain : 'homeassistant', anyOn ? 'turn_off' : 'turn_on', {
+        entity_id: id,
+      });
     this._render();
   }
 
@@ -488,7 +664,12 @@ class HouseWallCard extends HTMLElement {
   _toggleArea(area) {
     const leaves = this._tileLeaves({ area });
     const lit = leaves.filter((l) => this._on(l));
-    const ids = lit.length ? lit : leaves.filter((l) => { const s = this._s(l); return s && s.state !== 'unavailable'; });
+    const ids = lit.length
+      ? lit
+      : leaves.filter((l) => {
+          const s = this._s(l);
+          return s && s.state !== 'unavailable';
+        });
     if (!ids.length) return;
     this._busy['a:' + area] = true;
     this._call('light', lit.length ? 'turn_off' : 'turn_on', { entity_id: ids });
@@ -496,7 +677,8 @@ class HouseWallCard extends HTMLElement {
   }
 
   _lightsOn() {
-    const h = this._hass, ex = new Set(this._config.all_off_exclude || []);
+    const h = this._hass,
+      ex = new Set(this._config.all_off_exclude || []);
     const out = [];
     for (const id in h.states) {
       if (!id.startsWith('light.') || ex.has(id) || h.states[id].state !== 'on' || !this._usable(id)) continue;
@@ -506,7 +688,8 @@ class HouseWallCard extends HTMLElement {
   }
 
   _areaName(id) {
-    const h = this._hass, area = this._areaOf(id);
+    const h = this._hass,
+      area = this._areaOf(id);
     return (area && h.areas && h.areas[area] && h.areas[area].name) || 'Other';
   }
 
@@ -514,7 +697,8 @@ class HouseWallCard extends HTMLElement {
     this._lastTouch = Date.now();
     const el = ev.composedPath().find((n) => n.dataset && n.dataset.a);
     if (!el) return;
-    const a = el.dataset.a, v = el.dataset.v;
+    const a = el.dataset.a,
+      v = el.dataset.v;
     const c = this._config;
     if (a === 'wake') this._setMode('day');
     else if (a === 'leave') this._setMode('leave');
@@ -525,10 +709,21 @@ class HouseWallCard extends HTMLElement {
     else if (a === 'area') this._toggleArea(v);
     else if (a === 'alloff') {
       const ids = this._lightsOn();
-      if (ids.length) { this._busy.alloff = true; this._call('light', 'turn_off', { entity_id: ids }); this._render(); }
-    } else if (a === 'vac') { this._busy.vac = true; this._call('vacuum', 'start', { entity_id: c.vacuum }); this._render(); }
-    else if (a === 'doorlight') this._toggleEntity(c.doorbell.light, 'doorlight');
-    else if (a === 'doorclose') { clearTimeout(this._doorTimer); this._doorTimer = null; this._setMode('day'); }
+      if (ids.length) {
+        this._busy.alloff = true;
+        this._call('light', 'turn_off', { entity_id: ids });
+        this._render();
+      }
+    } else if (a === 'vac') {
+      this._busy.vac = true;
+      this._call('vacuum', 'start', { entity_id: c.vacuum });
+      this._render();
+    } else if (a === 'doorlight') this._toggleEntity(c.doorbell.light, 'doorlight');
+    else if (a === 'doorclose') {
+      clearTimeout(this._doorTimer);
+      this._doorTimer = null;
+      this._setMode('day');
+    }
   }
 
   /* ---------- views ---------- */
@@ -540,13 +735,25 @@ class HouseWallCard extends HTMLElement {
     const urgent = al && (al.state === 'pending' || al.state === 'triggered');
     this._alarmTicker(urgent && al.state === 'pending');
     if (urgent) {
-      clearInterval(this._camTimer); this._camTimer = null;
+      clearInterval(this._camTimer);
+      this._camTimer = null;
       this._root.className = 'root';
       this._root.innerHTML = this._alarmView(al);
       return;
     }
     this._root.className = 'root' + (m === 'night' ? ' night' : '');
-    this._root.innerHTML = m === 'leave' ? this._leaveView() : m === 'weather' ? this._weatherView() : m === 'rooms' ? this._roomsView() : m === 'door' ? this._doorView() : m === 'night' ? this._nightView() : this._dayView();
+    this._root.innerHTML =
+      m === 'leave'
+        ? this._leaveView()
+        : m === 'weather'
+          ? this._weatherView()
+          : m === 'rooms'
+            ? this._roomsView()
+            : m === 'door'
+              ? this._doorView()
+              : m === 'night'
+                ? this._nightView()
+                : this._dayView();
     if (m === 'door') this._startCam();
   }
 
@@ -560,18 +767,28 @@ class HouseWallCard extends HTMLElement {
   }
 
   _alarmTicker(on) {
-    if (!on) { clearInterval(this._alarmTimer); this._alarmTimer = null; return; }
+    if (!on) {
+      clearInterval(this._alarmTimer);
+      this._alarmTimer = null;
+      return;
+    }
     if (this._alarmTimer) return;
     this._alarmTimer = setInterval(() => {
-      const al = this._s(this._config.alarm), el = this._root && this._root.querySelector('.an');
-      if (!al || al.state !== 'pending') { clearInterval(this._alarmTimer); this._alarmTimer = null; return; }
+      const al = this._s(this._config.alarm),
+        el = this._root && this._root.querySelector('.an');
+      if (!al || al.state !== 'pending') {
+        clearInterval(this._alarmTimer);
+        this._alarmTimer = null;
+        return;
+      }
       if (el) el.textContent = this._alarmLeft(al);
     }, 250);
   }
 
   _alarmView(al) {
     const open = Object.keys((al.attributes && al.attributes.open_sensors) || {}).map((id) => {
-      const s = this._s(id); return (s && s.attributes.friendly_name) || id;
+      const s = this._s(id);
+      return (s && s.attributes.friendly_name) || id;
     });
     const what = open.length ? open.join(', ') + ' opened' : '';
     if (al.state === 'triggered') {
@@ -585,10 +802,13 @@ class HouseWallCard extends HTMLElement {
       ${what ? `<div class="ao">${W.esc(what)}</div>` : ''}</div>`;
   }
 
-  _dateText(d) { return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }); }
+  _dateText(d) {
+    return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+  }
 
   _outTemp() {
-    const o = this._s(this._config.outdoor), w = this._s(this._config.weather);
+    const o = this._s(this._config.outdoor),
+      w = this._s(this._config.weather);
     const v = o && !isNaN(parseFloat(o.state)) ? parseFloat(o.state) : w && w.attributes.temperature;
     return v == null || isNaN(v) ? '–' : Math.round(v) + '°';
   }
@@ -597,10 +817,15 @@ class HouseWallCard extends HTMLElement {
     const w = this._s(this._config.weather);
     const now = Date.now();
     const next = (this._hourly || []).filter((f) => Date.parse(f.datetime) + 3600000 > now).slice(0, 12);
-    const wet = (f) => (f.precipitation || 0) >= 0.2 || ['rainy', 'pouring', 'snowy', 'snowy-rainy', 'lightning-rainy', 'hail'].includes(f.condition);
+    const wet = (f) =>
+      (f.precipitation || 0) >= 0.2 ||
+      ['rainy', 'pouring', 'snowy', 'snowy-rainy', 'lightning-rainy', 'hail'].includes(f.condition);
     const hr = (f) => String(new Date(f.datetime).getHours()).padStart(2, '0') + ':00';
     if (next.length) {
-      if (wet(next[0])) { const dry = next.find((f) => !wet(f)); return dry ? 'rain until ' + hr(dry) : 'rain all evening'; }
+      if (wet(next[0])) {
+        const dry = next.find((f) => !wet(f));
+        return dry ? 'rain until ' + hr(dry) : 'rain all evening';
+      }
       const r = next.find(wet);
       if (r) return 'rain from ' + hr(r);
     }
@@ -608,21 +833,30 @@ class HouseWallCard extends HTMLElement {
   }
 
   _chips() {
-    const now = new Date(), nowMs = now.getTime();
+    const now = new Date(),
+      nowMs = now.getTime();
     const chips = [];
-    const timed = [], allDay = [];
+    const timed = [],
+      allDay = [];
     for (const e of this._events) {
-      const sd = e.start && (e.start.dateTime || e.start.date), ed = e.end && (e.end.dateTime || e.end.date);
+      const sd = e.start && (e.start.dateTime || e.start.date),
+        ed = e.end && (e.end.dateTime || e.end.date);
       if (!sd) continue;
-      if (e.start.date && !e.start.dateTime) { allDay.push(e); continue; }
+      if (e.start.date && !e.start.dateTime) {
+        allDay.push(e);
+        continue;
+      }
       if (Date.parse(ed || sd) > nowMs) timed.push({ e, t: Date.parse(sd) });
     }
     timed.sort((a, b) => a.t - b.t);
     timed.slice(0, 2).forEach(({ e, t }, i) => {
       const soon = t - nowMs < 2 * 3600000;
-      chips.push(`<div class="chip${soon && i === 0 ? ' soon' : ''}"><b>${t <= nowMs ? 'Now' : W.hhmm(new Date(t))}</b> ${W.esc(e.summary)}</div>`);
+      chips.push(
+        `<div class="chip${soon && i === 0 ? ' soon' : ''}"><b>${t <= nowMs ? 'Now' : W.hhmm(new Date(t))}</b> ${W.esc(e.summary)}</div>`,
+      );
     });
-    if (chips.length < 2 && allDay.length) chips.push(`<div class="chip"><b>Today</b> ${W.esc(allDay[0].summary)}</div>`);
+    if (chips.length < 2 && allDay.length)
+      chips.push(`<div class="chip"><b>Today</b> ${W.esc(allDay[0].summary)}</div>`);
     const p = this._s(this._config.price);
     if (p && !isNaN(parseFloat(p.state))) {
       const ore = Math.round(parseFloat(p.state) * 100);
@@ -635,12 +869,16 @@ class HouseWallCard extends HTMLElement {
   }
 
   _lunchDishes() {
-    const now = new Date(), c = this._config;
+    const now = new Date(),
+      c = this._config;
     const sc = this._s(c.school);
     if (!sc || !sc.attributes.message || !c.lunch || !W.inWindow(now, c.lunch.from, c.lunch.to)) return null;
     const st = sc.attributes.start_time && new Date(String(sc.attributes.start_time).replace(' ', 'T'));
     if (!st || st.toDateString() !== now.toDateString()) return null;
-    return String(sc.attributes.message).split('|').map((d) => d.replace(/\s+serveras\s+/i, ' ').trim()).filter(Boolean);
+    return String(sc.attributes.message)
+      .split('|')
+      .map((d) => d.replace(/\s+serveras\s+/i, ' ').trim())
+      .filter(Boolean);
   }
 
   _lunch(dishes) {
@@ -662,17 +900,34 @@ class HouseWallCard extends HTMLElement {
     const leaves = this._tileLeaves(t);
     const on = leaves.filter((l) => this._on(l)).length;
     const any = on > 0 || (s && s.state === 'on');
-    let sub = !s || s.state === 'unavailable' ? 'Unavailable' : any ? (leaves.length > 1 ? (on === leaves.length ? 'All on' : `${on} of ${leaves.length} on`) : 'On') : 'Off';
+    let sub =
+      !s || s.state === 'unavailable'
+        ? 'Unavailable'
+        : any
+          ? leaves.length > 1
+            ? on === leaves.length
+              ? 'All on'
+              : `${on} of ${leaves.length} on`
+            : 'On'
+          : 'Off';
     let warn = false;
-    if (t.door && this._on(t.door)) { sub = any ? 'On · door open' : 'Door open'; warn = true; }
+    if (t.door && this._on(t.door)) {
+      sub = any ? 'On · door open' : 'Door open';
+      warn = true;
+    }
     return { any, sub, warn };
   }
 
   _people() {
-    return this._config.people.map((p) => { const s = this._s(p.entity); return { ...p, home: !!s && s.state === 'home' }; });
+    return this._config.people.map((p) => {
+      const s = this._s(p.entity);
+      return { ...p, home: !!s && s.state === 'home' };
+    });
   }
 
-  _openDoors() { return this._config.doors.filter((d) => this._on(d.entity)); }
+  _openDoors() {
+    return this._config.doors.filter((d) => this._on(d.entity));
+  }
 
   _litRooms() {
     const ids = this._lightsOn();
@@ -681,7 +936,8 @@ class HouseWallCard extends HTMLElement {
   }
 
   _dayView() {
-    const c = this._config, now = new Date();
+    const c = this._config,
+      now = new Date();
     const w = this._s(c.weather);
     const icon = ICON[WX_ICON[w && w.state] || 'cloud'];
     const alarm = this._s(c.alarm);
@@ -693,21 +949,36 @@ class HouseWallCard extends HTMLElement {
     const people = this._people();
     const doors = this._openDoors();
     const lit = this._litRooms();
-    const leaveSub = [doors.length ? (doors.length === 1 ? doors[0].name + ' open' : doors.length + ' doors open') : '', lit.rooms.length ? lit.rooms.length + (lit.rooms.length === 1 ? ' room lit' : ' rooms lit') : ''].filter(Boolean).join(' · ') || 'All good to go';
-    const ti = (name) => icons ? `<div class="ti">${W.svg(ICON[name] || ICON.bulb, 14)}</div>` : '';
-    const tiles = c.tiles.map((t, i) => {
-      const st = this._tileState(t);
-      return `<button class="tile${st.any ? ' on' : ''}${this._busy[i] ? ' busy' : ''}" data-a="tile" data-v="${i}">
+    const leaveSub =
+      [
+        doors.length ? (doors.length === 1 ? doors[0].name + ' open' : doors.length + ' doors open') : '',
+        lit.rooms.length ? lit.rooms.length + (lit.rooms.length === 1 ? ' room lit' : ' rooms lit') : '',
+      ]
+        .filter(Boolean)
+        .join(' · ') || 'All good to go';
+    const ti = (name) => (icons ? `<div class="ti">${W.svg(ICON[name] || ICON.bulb, 14)}</div>` : '');
+    const tiles = c.tiles
+      .map((t, i) => {
+        const st = this._tileState(t);
+        return `<button class="tile${st.any ? ' on' : ''}${this._busy[i] ? ' busy' : ''}" data-a="tile" data-v="${i}">
         ${ti(t.icon)}<div class="tx"><div class="tn">${W.esc(t.name)}</div><div class="ts${st.warn ? ' warn' : ''}">${W.esc(st.sub)}</div></div></button>`;
-    }).join('');
+      })
+      .join('');
     const more = this._moreAreas();
     const moreLit = more.filter((a) => a.leaves.some((l) => this._on(l)));
-    const moreSub = moreLit.length ? (moreLit.length === 1 ? moreLit[0].name + ' on' : moreLit.length + ' rooms on') : more.map((a) => a.name).join(', ');
-    const moreTile = more.length ? `<button class="tile wide${moreLit.length ? ' on' : ''}" data-a="rooms">
-        ${ti('grid')}<div class="tx"><div class="tn">More rooms ›</div><div class="ts">${W.esc(moreSub)}</div></div></button>` : '';
+    const moreSub = moreLit.length
+      ? moreLit.length === 1
+        ? moreLit[0].name + ' on'
+        : moreLit.length + ' rooms on'
+      : more.map((a) => a.name).join(', ');
+    const moreTile = more.length
+      ? `<button class="tile wide${moreLit.length ? ' on' : ''}" data-a="rooms">
+        ${ti('grid')}<div class="tx"><div class="tn">More rooms ›</div><div class="ts">${W.esc(moreSub)}</div></div></button>`
+      : '';
     const mid = triggered
       ? `<div class="banner">${W.svg(ICON.alert, 22)}Alarm triggered · disarm from your phone</div>`
-      : (lunch ? this._lunch(lunch) : `<div class="head">${W.esc(this._headline())}</div>`) + `<div class="chips">${this._chips()}</div>`;
+      : (lunch ? this._lunch(lunch) : `<div class="head">${W.esc(this._headline())}</div>`) +
+        `<div class="chips">${this._chips()}</div>`;
     return `<div class="pane">
       <div class="top">
         <div><div class="clock" data-clock>${W.hhmm(now)}</div><div class="date">${W.esc(this._dateText(now))}</div></div>
@@ -727,12 +998,20 @@ class HouseWallCard extends HTMLElement {
   }
 
   _roomsView() {
-    const tiles = this._moreAreas().map((a) => {
-      const on = a.leaves.filter((l) => this._on(l)).length;
-      const sub = on ? (a.leaves.length > 1 ? (on === a.leaves.length ? 'All on' : `${on} of ${a.leaves.length} on`) : 'On') : 'Off';
-      return `<button class="tile${on ? ' on' : ''}${this._busy['a:' + a.id] ? ' busy' : ''}" data-a="area" data-v="${W.esc(a.id)}">
+    const tiles = this._moreAreas()
+      .map((a) => {
+        const on = a.leaves.filter((l) => this._on(l)).length;
+        const sub = on
+          ? a.leaves.length > 1
+            ? on === a.leaves.length
+              ? 'All on'
+              : `${on} of ${a.leaves.length} on`
+            : 'On'
+          : 'Off';
+        return `<button class="tile${on ? ' on' : ''}${this._busy['a:' + a.id] ? ' busy' : ''}" data-a="area" data-v="${W.esc(a.id)}">
         <div class="tn">${W.esc(a.name)}</div><div class="ts">${sub}</div></button>`;
-    }).join('');
+      })
+      .join('');
     return `<div class="pane" style="gap:10px">
       <div class="lh"><div class="lt">More rooms</div><button class="link" data-a="day">Done</button></div>
       <div class="grid2">${tiles}</div>
@@ -747,8 +1026,11 @@ class HouseWallCard extends HTMLElement {
   }
 
   _weatherView() {
-    const c = this._config, now = new Date(), nowMs = now.getTime();
-    const w = this._s(c.weather), a = (w && w.attributes) || {};
+    const c = this._config,
+      now = new Date(),
+      nowMs = now.getTime();
+    const w = this._s(c.weather),
+      a = (w && w.attributes) || {};
     const icon = (cond) => ICON[WX_ICON[cond] || 'cloud'];
     const hours = (this._hourly || []).filter((f) => Date.parse(f.datetime) + 3600000 > nowMs);
     const today = hours.filter((f) => new Date(f.datetime).toDateString() === now.toDateString());
@@ -759,28 +1041,39 @@ class HouseWallCard extends HTMLElement {
       temps.length ? `${Math.round(Math.min(...temps))}–${Math.round(Math.max(...temps))}°` : '',
       rain >= 0.1 ? `<b>${rain.toFixed(1)} mm rain</b>` : 'dry',
       gust ? `gusts ${gust} m/s` : '',
-    ].filter(Boolean).join(' · ');
-    const cols = hours.slice(0, 8).map((f) => {
-      const mm = f.precipitation || 0;
-      const hgt = Math.min(24, Math.round((mm / 2) * 24));
-      return `<div class="hr"><div>${String(new Date(f.datetime).getHours()).padStart(2, '0')}</div>
+    ]
+      .filter(Boolean)
+      .join(' · ');
+    const cols = hours
+      .slice(0, 8)
+      .map((f) => {
+        const mm = f.precipitation || 0;
+        const hgt = Math.min(24, Math.round((mm / 2) * 24));
+        return `<div class="hr"><div>${String(new Date(f.datetime).getHours()).padStart(2, '0')}</div>
         ${W.svg(icon(f.condition), 26, 'rgb(154,166,188)', 1.6)}
         <div class="t">${Math.round(f.temperature)}°</div>
         <div class="pb"><i style="height:${mm > 0 && hgt < 2 ? 2 : hgt}px"></i></div>
         <div class="mm">${mm >= 0.1 ? mm.toFixed(1) : ''}</div></div>`;
-    }).join('');
-    const days = (this._daily || []).filter((f) => {
-      const d = new Date(f.datetime); d.setHours(0, 0, 0, 0);
-      const t = new Date(now); t.setHours(0, 0, 0, 0);
-      return d > t;
-    }).slice(0, 3).map((f, i) => {
-      const d = new Date(f.datetime);
-      const name = i === 0 ? 'Tomorrow' : d.toLocaleDateString('en-GB', { weekday: 'long' });
-      const mm = f.precipitation || 0;
-      return `<div class="dayr"><div class="dn">${name}</div>${W.svg(icon(f.condition), 24, 'rgb(154,166,188)', 1.6)}
+      })
+      .join('');
+    const days = (this._daily || [])
+      .filter((f) => {
+        const d = new Date(f.datetime);
+        d.setHours(0, 0, 0, 0);
+        const t = new Date(now);
+        t.setHours(0, 0, 0, 0);
+        return d > t;
+      })
+      .slice(0, 3)
+      .map((f, i) => {
+        const d = new Date(f.datetime);
+        const name = i === 0 ? 'Tomorrow' : d.toLocaleDateString('en-GB', { weekday: 'long' });
+        const mm = f.precipitation || 0;
+        return `<div class="dayr"><div class="dn">${name}</div>${W.svg(icon(f.condition), 24, 'rgb(154,166,188)', 1.6)}
         <div class="dt">${f.templow != null ? Math.round(f.templow) + '° – ' : ''}${Math.round(f.temperature)}°</div>
         <div class="dx">${mm >= 0.1 ? mm.toFixed(1) + ' mm · ' : ''}wind ${this._ms(f.wind_speed)} m/s</div></div>`;
-    }).join('');
+      })
+      .join('');
     const nowBits = [`Wind ${this._ms(a.wind_speed)} m/s`];
     if (a.wind_gust_speed) nowBits[0] += ` (gusts ${this._ms(a.wind_gust_speed)})`;
     if (a.humidity != null) nowBits.push(`${Math.round(a.humidity)}% humidity`);
@@ -809,21 +1102,71 @@ class HouseWallCard extends HTMLElement {
     const vac = this._s(c.vacuum);
     const alarm = this._s(c.alarm);
     const rows = [];
-    rows.push(this._row(!doors.length, 'Doors', doors.length ? doors.map((d) => d.name).join(', ') + (doors.length === 1 ? ' is open' : ' are open') : 'All closed'));
-    rows.push(this._row(!lit.ids.length, 'Lights', lit.ids.length ? `${lit.ids.length} on · ${lit.rooms.join(', ')}` : 'All off'));
+    rows.push(
+      this._row(
+        !doors.length,
+        'Doors',
+        doors.length
+          ? doors.map((d) => d.name).join(', ') + (doors.length === 1 ? ' is open' : ' are open')
+          : 'All closed',
+      ),
+    );
+    rows.push(
+      this._row(
+        !lit.ids.length,
+        'Lights',
+        lit.ids.length ? `${lit.ids.length} on · ${lit.rooms.join(', ')}` : 'All off',
+      ),
+    );
     if (vac) {
       const vs = vac.state;
       const running = ['cleaning', 'returning'].includes(vs);
       const bad = ['error', 'unavailable'].includes(vs);
-      const label = { docked: 'Docked', idle: 'Idle', cleaning: 'Cleaning', returning: 'Going home', paused: 'Paused', error: 'Needs help', unavailable: 'Unavailable' }[vs] || vs;
-      const act = !running && !bad ? `<button class="act" data-a="vac"${this._busy.vac ? ' style="opacity:.55"' : ''}>Start</button>` : '';
-      rows.push(this._row(!bad, vac.attributes.friendly_name || 'Vacuum', label + (vac.attributes.battery_level != null ? ` · ${vac.attributes.battery_level}%` : ''), act));
+      const label =
+        {
+          docked: 'Docked',
+          idle: 'Idle',
+          cleaning: 'Cleaning',
+          returning: 'Going home',
+          paused: 'Paused',
+          error: 'Needs help',
+          unavailable: 'Unavailable',
+        }[vs] || vs;
+      const act =
+        !running && !bad
+          ? `<button class="act" data-a="vac"${this._busy.vac ? ' style="opacity:.55"' : ''}>Start</button>`
+          : '';
+      rows.push(
+        this._row(
+          !bad,
+          vac.attributes.friendly_name || 'Vacuum',
+          label + (vac.attributes.battery_level != null ? ` · ${vac.attributes.battery_level}%` : ''),
+          act,
+        ),
+      );
     }
-    const home = people.filter((p) => p.home).map((p) => p.name), away = people.filter((p) => !p.home).map((p) => p.name);
-    rows.push(this._row(true, 'People', [home.length ? home.join(' & ') + ' home' : '', away.length ? away.join(' & ') + ' away' : ''].filter(Boolean).join(' · ')));
+    const home = people.filter((p) => p.home).map((p) => p.name),
+      away = people.filter((p) => !p.home).map((p) => p.name);
+    rows.push(
+      this._row(
+        true,
+        'People',
+        [home.length ? home.join(' & ') + ' home' : '', away.length ? away.join(' & ') + ' away' : '']
+          .filter(Boolean)
+          .join(' · '),
+      ),
+    );
     if (alarm) {
       const armed = alarm.state.startsWith('armed');
-      rows.push(this._row(true, 'Alarm', (armed ? 'Armed' : alarm.state === 'arming' ? 'Arming' : 'Not armed') + ' · set it from your phone', '', true));
+      rows.push(
+        this._row(
+          true,
+          'Alarm',
+          (armed ? 'Armed' : alarm.state === 'arming' ? 'Arming' : 'Not armed') + ' · set it from your phone',
+          '',
+          true,
+        ),
+      );
     }
     const n = lit.ids.length;
     return `<div class="pane" style="gap:10px">
@@ -855,7 +1198,8 @@ class HouseWallCard extends HTMLElement {
   }
 
   _nightView() {
-    const c = this._config, now = new Date();
+    const c = this._config,
+      now = new Date();
     const w = this._s(c.weather);
     const doors = this._openDoors();
     const lit = this._litRooms();
@@ -874,7 +1218,11 @@ class HouseWallCard extends HTMLElement {
 if (!customElements.get('house-wall-card')) customElements.define('house-wall-card', HouseWallCard);
 window.customCards = window.customCards || [];
 if (!window.customCards.some((c) => c.type === 'house-wall-card')) {
-  window.customCards.push({ type: 'house-wall-card', name: 'House wall', description: 'Calm 480x480 wall display: clock, weather, AI line, room lights, leaving checklist, doorbell. No alarm controls.' });
+  window.customCards.push({
+    type: 'house-wall-card',
+    name: 'House wall',
+    description:
+      'Calm 480x480 wall display: clock, weather, AI line, room lights, leaving checklist, doorbell. No alarm controls.',
+  });
 }
 console.info('house-wall ' + WALL_VERSION);
-

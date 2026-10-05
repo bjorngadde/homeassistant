@@ -1,6 +1,6 @@
 /* house-desktop: the phone card laid out for big screens (a browser, a tablet, the Overview dashboard).
  * It is the phone card with a different layout: same config, same data, same screens and actions. What differs:
- * the stylesheet (styles.js: side navigation, columns), a wrapper class per screen, and the Home screen, which
+ * the stylesheet (styles.js: tabs on top, columns), a wrapper class per screen, and the Home screen, which
  * becomes an overview of the whole house. On a narrow card everything falls back to the phone layout. */
 
 import { HousePhoneCard } from '../phone/card.js';

@@ -1,6 +1,6 @@
 /* house-desktop: layout for big screens, added after the phone card's stylesheet. Everything here sits inside
  * container queries on the card's own width, so a narrow card (a phone opening this dashboard) keeps the phone
- * layout. Breakpoints: 900px (side navigation, two-column overview, tabs in columns), 1300px (three columns). */
+ * layout. Breakpoints: 900px (tab row on top, two-column overview, tabs in columns), 1300px (three columns). */
 
 import { COLOR } from '../phone/constants.js';
 
@@ -8,13 +8,15 @@ export const DESKTOP_CSS = `
 :host { container-type: inline-size; }
 
 @container (min-width: 900px) {
-  .root { display: grid; grid-template-columns: 92px minmax(0, 1fr); align-items: start; }
-  .root > :not(.tabs) { grid-column: 2; grid-row: 1; min-width: 0; }
-
-  /* the bottom tab bar becomes a side rail */
-  .tabs { grid-column: 1; grid-row: 1; position: sticky; top: 0; height: 100vh; border-top: 0; border-right: 1px solid ${COLOR.line}; padding: 20px 8px; }
-  .tabs .in { max-width: none; grid-template-columns: 1fr; gap: 10px; }
-  .tabs button { padding: 6px 0; }
+  /* the bottom tab bar becomes a row of tabs on top (Home Assistant's own sidebar is already on the left) */
+  .root { display: flex; flex-direction: column; }
+  .tabs { order: -1; position: static; border-top: 0; border-bottom: 1px solid ${COLOR.line}; padding: 10px 0; }
+  .tabs .in { max-width: 1680px; padding: 0 28px; display: flex; gap: 6px; }
+  .tabs button { flex-direction: row; gap: 8px; padding: 8px 14px 8px 10px; border-radius: 10px; }
+  .tabs button.sel { background: ${COLOR.tealSoft}; }
+  .tabs button .pill, .tabs button.sel .pill { width: auto; height: auto; background: none; }
+  .tabs .badge { top: -3px; right: -5px; }
+  .tabs .t { font-size: 14px; }
 
   .page { max-width: 1680px; padding: 24px 28px 40px; }
   .grid2 { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }

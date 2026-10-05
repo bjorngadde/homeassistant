@@ -35,7 +35,7 @@ export function buildFile(distDir, card) {
 }
 
 // ---------------------------------------------------------------- DOM stub
-function makeContext(errors) {
+export function makeContext(errors) {
   const registry = new Map();
   class FakeShadow {
     constructor() {

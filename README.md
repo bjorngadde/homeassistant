@@ -5,7 +5,7 @@ Three custom Lovelace cards for a Home Assistant house dashboard, shipped togeth
 | Card | For | Source |
 |---|---|---|
 | `custom:house-phone-card` | Phone dashboard: Home, Security, Energy, Climate, one screen per room, one for the robot vacuum | `src/phone/` |
-| `custom:house-desktop-card` | The phone dashboard for big screens (browser, tablet, Overview): side navigation, an overview of the whole house on Home, the other screens in columns. Same config as the phone card | `src/desktop/` |
+| `custom:house-desktop-card` | The phone dashboard for big screens (browser, tablet, Overview): tabs on top, an overview of the whole house on Home, the other screens in columns. Same config as the phone card | `src/desktop/` |
 | `custom:house-wall-card` | Calm 480×480 screen for a Shelly Wall Display: day, weather, "Leaving?", more rooms, doorbell, night, alarm entry-delay warning | `src/wall/` |
 
 Rooms and lights are discovered from Home Assistant's floors, areas and entity registry. Everything specific to one house (entity ids, area ids, names) is supplied through the **card config** in the dashboard, so this repo contains no ids. See `config.example.yaml` for every key, with placeholder values.

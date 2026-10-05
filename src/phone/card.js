@@ -85,16 +85,20 @@ export class HousePhoneCard extends HTMLElement {
         const t = /** @type {Element} */ (ev.target);
         if (t.closest && t.closest('[data-hold]')) ev.preventDefault();
       });
+      // back / forward (browser button, Android back, iOS swipe): show the tab and room of that history entry
       this._onPop = () => {
-        const r = (history.state && history.state.housePhoneRoom) || null;
-        if (this._room !== r) {
-          this._room = r;
-          this._ver++;
-          this._schedule();
-        }
+        const st = history.state || {};
+        const tab = st.housePhoneTab || 'home',
+          room = st.housePhoneRoom || null;
+        if (this._tab === tab && this._room === room) return;
+        this._tab = tab;
+        this._room = room;
+        this._ver++;
+        this._schedule();
+        if (tab === 'security' && !room) this._refreshCams();
       };
-      window.addEventListener('popstate', this._onPop);
     }
+    window.addEventListener('popstate', this._onPop);
     this._timers = [
       setInterval(() => {
         this._ver++;
@@ -122,10 +126,8 @@ export class HousePhoneCard extends HTMLElement {
         .catch(() => {}),
     );
     this._subs = [];
-    if (this._onPop) {
-      window.removeEventListener('popstate', this._onPop);
-      this._bound = false;
-    }
+    // the shadow root keeps its click listeners (added once in _start); only the window listener comes and goes
+    if (this._onPop) window.removeEventListener('popstate', this._onPop);
   }
 
   /* ---------- data ---------- */
@@ -383,23 +385,12 @@ export class HousePhoneCard extends HTMLElement {
     P.haptic(el, 'light');
     switch (a) {
       case 'tab':
-        this._tab = v;
-        this._room = null;
-        this._ver++;
-        this._render();
-        this._top();
-        if (v === 'security') this._refreshCams();
+        // Home is where back leads: go there through the history if we came from it
+        if (v === 'home' && this._awayFromHome()) history.back();
+        else this._go(v, null);
         break;
       case 'room':
-        this._room = v;
-        this._ver++;
-        this._render();
-        this._top();
-        try {
-          history.pushState({ housePhoneRoom: v }, '', location.href);
-        } catch (_e) {
-          /* ignore */
-        }
+        this._go('home', v);
         break;
       case 'back':
         if (history.state && history.state.housePhoneRoom) history.back();
@@ -503,6 +494,35 @@ export class HousePhoneCard extends HTMLElement {
       default:
         break;
     }
+  }
+  /* Shows a tab or room and records it in the browser history, so back (button, gesture) goes one level up, as in
+   * a phone app: leaving Home or opening a room adds an entry; moving between the other tabs replaces it, so back
+   * from any tab returns to Home instead of walking through every tab visited. The URL stays the same. */
+  _go(tab, room) {
+    if (tab === this._tab && room === this._room) {
+      this._top();
+      return;
+    }
+    const fromHome = this._tab === 'home' && !this._room;
+    const add = fromHome || (room && !this._room);
+    this._tab = tab;
+    this._room = room;
+    this._ver++;
+    this._render();
+    this._top();
+    if (tab === 'security' && !room) this._refreshCams();
+    const state = { ...(history.state || {}), housePhoneTab: tab, housePhoneRoom: room };
+    try {
+      if (add) history.pushState(state, '', location.href);
+      else history.replaceState(state, '', location.href);
+    } catch (_e) {
+      /* ignore */
+    }
+  }
+  /** Whether the current history entry is one _go() added on top of Home (a tab other than Home, or a room). */
+  _awayFromHome() {
+    const st = history.state;
+    return !!st && (!!st.housePhoneRoom || (!!st.housePhoneTab && st.housePhoneTab !== 'home'));
   }
   _top() {
     try {

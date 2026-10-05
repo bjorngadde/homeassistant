@@ -37,6 +37,9 @@ export const DESKTOP_CSS = `
   /* the other screens (Security, Energy, Climate, a room, the vacuum): cards flow into columns */
   .dk-flow .page { display: block; column-width: 400px; column-gap: 20px; }
   .dk-flow .page > * { break-inside: avoid; margin-bottom: 12px; }
+  /* buttons reset with all: unset are inline and, even as blocks, only as wide as their content; the main camera's
+     content is all absolutely positioned, so it collapsed to nothing. The phone's flex page stretched them. */
+  .dk-flow .page > button:not(.row) { display: block; width: 100%; }
   .dk-flow .page > .head { column-span: all; margin-bottom: 16px; }
   .dk-flow .page > .row { column-span: all; } /* a room's back link and title */
   .dk-flow .page > .sect { break-after: avoid; }

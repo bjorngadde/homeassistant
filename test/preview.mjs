@@ -57,6 +57,7 @@ const origin = `http://localhost:${server.address().port}`;
 const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined });
 const safe = (s) => s.replace(/[^\w.-]+/g, '_');
 const shots = [];
+const warnings = new Set();
 try {
   for (const card of CARDS) {
     if (arg('card') && arg('card') !== card) continue;
@@ -98,6 +99,18 @@ try {
           const height = await page.evaluate(() => document.documentElement.scrollHeight);
           await page.setViewportSize({ ...VIEWPORT[card], height: Math.max(VIEWPORT[card].height, height) });
         }
+        // layout guard: an element placed directly on a page that ends up without width or height is invisible
+        // (the desktop card's main camera once collapsed to 0 x 0)
+        const collapsed = await page.evaluate(() =>
+          [...document.querySelector('body > *:last-child').shadowRoot.querySelectorAll('.page > *')]
+            .filter((e) => {
+              if (!e.childElementCount && !e.textContent.trim()) return false; // empty on purpose (no thumbnails)
+              const r = e.getBoundingClientRect();
+              return r.width < 1 || r.height < 1;
+            })
+            .map((e) => `${e.tagName.toLowerCase()}.${e.className}`),
+        );
+        if (collapsed.length) warnings.add(`${card} · ${screen}: no width or height: ${collapsed.join(', ')}`);
         const file = path.join(outDir, card, safe(scenario), `${safe(screen)}.png`);
         fs.mkdirSync(path.dirname(file), { recursive: true });
         await page.screenshot({ path: file });
@@ -124,4 +137,5 @@ fs.writeFileSync(
       .join('') +
     '\n',
 );
+if (warnings.size) console.log(`layout warnings:\n  ${[...warnings].join('\n  ')}`);
 console.log(`preview: ${shots.length} screenshots in ${path.relative(root, outDir) || outDir}/ (open index.html)`);

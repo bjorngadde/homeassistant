@@ -65,7 +65,7 @@ npm run equiv -- --ref <commit> --phone phone.json --wall wall.json
 
 ## State of play (2026-10-05)
 
-- Live in Home Assistant: **0.5.0**, installed by HACS from the GitHub release, as **one** dashboard resource: `/hacsfiles/homeassistant/house-cards.js?hacstag=...` (managed by HACS). Resource ids are not recorded here; list the resources and match the file name.
+- Live in Home Assistant: **0.6.0**, installed by HACS from the GitHub release, as **one** dashboard resource: `/hacsfiles/homeassistant/house-cards.js?hacstag=...` (managed by HACS). Resource ids are not recorded here; list the resources and match the file name.
 - Dashboards using these cards: `mobile-v5` (title "Phone", `house-phone-card`), `house-desktop` (title "House", `house-desktop-card`, created 2026-10-05 as the first version of the big-screen dashboard) and `wall-v2` (title "Hall wall", `house-wall-card`). The URLs `mobile-v5` and `wall-v2` are leftovers from testing; Home Assistant cannot rename a dashboard URL.
 - The House dashboard's card config is a **copy** of the phone dashboard's (only `type` differs). A change to one (a new camera, a room setting) must be made in both until the desktop card can read the phone dashboard's config itself (an open idea).
 - The phone card's old name `house-v5-card` is no longer registered (since 0.5.0).

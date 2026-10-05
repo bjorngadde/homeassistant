@@ -64,7 +64,7 @@ npm run equiv -- --ref <commit> --v5 v5.json --wall wall.json
 ## State of play (2026-10-05)
 
 - Live in Home Assistant: 0.2.0, installed by HACS from a commit on `main` (no releases yet), as two resources: `house-v5.js` (managed by HACS) and `house-wall.js` (added by hand). Resource ids are not recorded here; list the resources and match the file name. The wall display still needs a visual check after a page reload.
-- On branch `claude/sweet-allen-qq5p8u` (not yet on `main`): phases 0 to 3 of the plan below, version 0.3.0. Rendering is identical to 0.2.0 on every screen (placeholder fixtures; real configs 119/119 and 49/49).
+- On branch `claude/sweet-allen-qq5p8u` (not yet on `main`): phases 0 to 4 of the plan below, version 0.3.0. Rendering is identical to 0.2.0 on every screen (placeholder fixtures; real configs 119/119 and 49/49). New in behaviour: each card checks its config in `setConfig` (both real configs pass with no errors or warnings).
 - **One-off migration to 0.3.0** (needs the branch merged to `main` and Home Assistant reachable): push tag `v0.3.0`, wait for the release, `ha_manage_hacs` `update_information` + `download` 0.3.0, then in the dashboard resources make sure `house-cards.js` is present and delete the old `house-v5.js` and `house-wall.js` resources (both cards would otherwise be defined twice; the second definition is ignored, but the old files 404 after the download). Reload the wall display and check both dashboards.
 
 ## Plan status (agreed 2026-10-05)

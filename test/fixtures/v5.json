@@ -1,0 +1,79 @@
+{
+  "type": "custom:house-v5-card",
+  "people": ["person.example_one", "person.example_two"],
+  "headlines": { "person.example_one": "input_text.example_headline_one", "person.example_two": "input_text.example_headline_two" },
+  "calendars": { "person.example_one": ["calendar.example_personal", "calendar.example_family"], "default": ["calendar.example_family"] },
+  "weather": "weather.example_forecast",
+  "price": "sensor.example_electricity_price",
+  "alarm": "alarm_control_panel.example_alarm",
+  "floors": [
+    { "floor": "example_ground", "name": "Downstairs" },
+    { "floor": "example_upper", "name": "Upstairs" },
+    { "name": "Outside", "areas": ["example_garden"] }
+  ],
+  "area_order": ["example_kitchen", "example_hall", "example_living", "example_bedroom", "example_office", "example_garden"],
+  "others": { "example_kitchen": ["switch.example_plug"], "example_office": ["switch.example_desk_fan"] },
+  "exclude": ["light.example_group_without_member_list"],
+  "media": ["media_player.example_tv"],
+  "doors": ["binary_sensor.example_front_door", "binary_sensor.example_back_door"],
+  "smoke": ["binary_sensor.example_smoke_detector"],
+  "cameras": [{ "entity": "camera.example_driveway", "name": "Driveway", "person": "binary_sensor.example_driveway_person" }],
+  "security_toggles": [{ "entity": "input_boolean.example_passive_alarm", "name": "Passive alarm system" }],
+  "camera_alerts": [{ "entity": "input_boolean.example_driveway_alerts", "name": "Driveway" }],
+  "recent": [
+    { "entity": "binary_sensor.example_driveway_person", "on": "Person", "where": "Driveway" },
+    { "entity": "alarm_control_panel.example_alarm", "where": "Alarm", "states": { "armed_away": "Alarm armed", "disarmed": "Alarm disarmed", "triggered": "Alarm triggered" } }
+  ],
+  "energy": {
+    "power": "sensor.example_power",
+    "today_kwh": "sensor.example_energy_today",
+    "today_cost": "sensor.example_cost_today",
+    "month_kwh": "sensor.example_energy_month",
+    "month_cost": "sensor.example_cost_month",
+    "peak": "sensor.example_peak_hour_consumption",
+    "peak_time": "sensor.example_peak_hour_time"
+  },
+  "car": {
+    "name": "Car",
+    "soc": "sensor.example_car_battery",
+    "target": "sensor.example_car_target",
+    "range": "sensor.example_car_range",
+    "plug": "binary_sensor.example_car_plug",
+    "charging": "binary_sensor.example_car_charging",
+    "charger_name": "Wallbox",
+    "charger_switch": "switch.example_wallbox",
+    "charger_status": "sensor.example_wallbox_status",
+    "charger_power": "sensor.example_wallbox_power"
+  },
+  "climate": {
+    "down": "sensor.example_temperature_downstairs",
+    "up": "sensor.example_temperature_upstairs",
+    "out": "sensor.example_temperature_outdoor",
+    "base": "input_number.example_thermostat_base",
+    "offset": "input_number.example_thermostat_offset",
+    "hot_water_eco": "binary_sensor.example_hot_water_eco",
+    "compressor": "sensor.example_compressor_speed",
+    "supply": "sensor.example_supply_temperature",
+    "return": "sensor.example_return_temperature",
+    "hot_water": "sensor.example_hot_water_temperature",
+    "brine": "sensor.example_brine_temperature"
+  },
+  "vacuum": "vacuum.example_vacuum",
+  "vacuum_name": "The vacuum",
+  "clean_then_arm": { "script": "script.example_clean_then_arm", "pending": "input_boolean.example_clean_then_arm_pending" },
+  "vac": {
+    "map": "image.example_vacuum_map",
+    "room_id": "sensor.example_vacuum_room_id",
+    "last_start": "sensor.example_vacuum_last_start",
+    "last_end": "sensor.example_vacuum_last_end",
+    "last_duration": "sensor.example_vacuum_last_duration",
+    "last_area": "sensor.example_vacuum_last_area",
+    "cur_duration": "sensor.example_vacuum_current_duration",
+    "cur_area": "sensor.example_vacuum_current_area",
+    "rooms": [{ "segment": 16, "name": "Kitchen" }, { "segment": 17, "name": "Living room" }],
+    "parts": [
+      { "name": "Main brush", "sensor": "sensor.example_main_brush_left", "reset": "button.example_reset_main_brush", "hours": 300 },
+      { "name": "Filter", "sensor": "sensor.example_filter_left", "reset": "button.example_reset_filter", "hours": 150 }
+    ]
+  }
+}

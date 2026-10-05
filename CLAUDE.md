@@ -4,7 +4,7 @@ Two Home Assistant Lovelace cards (phone card `house-v5`, hall wall display `hou
 
 ## Hard rules
 
-1. **Nothing that identifies the house goes into this repo**: no real entity ids, area or floor ids, people's names, pet or device names, addresses, account ids. That includes code, comments, tests, docs, commit messages and PR text. The repo is private today but is meant to become public (HACS cannot install from a private repo), so treat all history as public.
+1. **Nothing that identifies the house goes into this repo**: no real entity ids, area or floor ids, people's names, pet or device names, addresses, account ids. That includes code, comments, tests, docs, commit messages and PR text. The repo is public (HACS cannot install from a private repo), so treat all history as public.
 2. The real values live in the card config of the Home Assistant dashboards (the dashboards `mobile-v5` and `wall-v2`, one card each). Code ships only neutral defaults for anything house-specific.
 3. Run the leak check before every commit: `git config core.hooksPath .githooks` (once per clone), and for the strong version `export SCRUB_DENYLIST=<file outside the repo>` (see below). `npm run check` runs it by hand. New entries in `scripts/scrub-allow.txt` must be reviewed: only property accesses, CSS selectors and public hosts.
 4. Commit with the owner's GitHub noreply identity (`<github-username>@users.noreply.github.com`, set `user.name` / `user.email` locally) so no personal email ends up in history.
@@ -17,11 +17,16 @@ With the Home Assistant MCP server connected, read the card config of each dashb
 printf '%s\n' <names that are not ids: people, pets, ...> > extras.txt
 node scripts/make-denylist.mjs v5.json wall.json --extra extras.txt > denylist.txt
 SCRUB_DENYLIST=denylist.txt node scripts/scrub-check.mjs
-node test/render-equivalence.mjs --card v5   --ref <old build> --cand dist/house-v5.js   --cand-config v5.json   --fixture v5.json
-node test/render-equivalence.mjs --card wall --ref <old build> --cand dist/house-wall.js --cand-config wall.json --fixture wall.json
+npm run equiv -- --ref <commit> --v5 v5.json --wall wall.json
 ```
 
-`--ref` is a build whose rendering you want to preserve (for a refactor: the build before your change, with no config if it still has the defaults baked in, or with the same config). Both cards must stay at 100 % identical screens (v5: 119 screens, wall: 42, with the current fixture). The harness is the safety net for any refactor.
+`npm run equiv` takes the reference build from a git commit (default `HEAD`) and the candidate from the working tree, and renders both with the same config. For an older build outside git, call `test/render-equivalence.mjs` directly (`--help`). Both cards must stay at 100 % identical screens (with the real configs: v5 119 screens, wall 49; the wall count includes one "styles" entry per scenario since 2026-10-05, it was 42 before). The harness is the safety net for any refactor.
+
+## Checks that need no real config
+
+- `npm test` renders every screen of both cards against the placeholder configs in `test/fixtures/` (every id starts with `example`) and compares with `test/snapshots/<card>.html` (v5: 77 screens, wall: 49). After an intended visual change run `npm run snapshot:update` and review the snapshot diff: it shows exactly which screens changed.
+- The fake Home Assistant lives in `test/lib/render.mjs` (DOM stub, states invented from the config, scenarios, and fixed answers for prices, calendars, statistics, logbook and forecasts). Its clock is fixed at 2026-10-05 12:00 UTC.
+- CI (`.github/workflows/ci.yml`) runs the leak check and `npm test` on every push and PR, plus the HACS validation action. The optional repository secret `SCRUB_DENYLIST_TERMS` (the denylist file's content) adds the private denylist; CI runs the check with `--quiet`, which prints only `file:line`, never a term.
 
 ## State of play (2026-10-05)
 
@@ -53,7 +58,7 @@ Decisions taken:
 - Not now: Lit (needs a DOM-level comparison in the harness first; later, one screen at a time) and a visual card editor (configs are too large for one).
 
 Phases:
-0. **Safety net without the real config.** Commit a fixture made only of placeholder ids (from `config.example.yaml`), record golden snapshots of every screen of the current build, and compare against them in `npm test`. Add `npm run equiv -- --ref <commit>` that builds the reference from git by itself. GitHub Actions on push and PR: leak check, snapshot test, build, HACS validation action. If the denylist goes into a GitHub secret, first give `scrub-check.mjs` a quiet mode that prints only `file:line` (CI logs must never show a term).
+0. **Safety net without the real config.** Done 2026-10-05 (see "Checks that need no real config"). Commit a fixture made only of placeholder ids (from `config.example.yaml`), record golden snapshots of every screen of the current build, and compare against them in `npm test`. Add `npm run equiv -- --ref <commit>` that builds the reference from git by itself. GitHub Actions on push and PR: leak check, snapshot test, build, HACS validation action. If the denylist goes into a GitHub secret, first give `scrub-check.mjs` a quiet mode that prints only `file:line` (CI logs must never show a term).
 1. **Tooling.** `src/` plus esbuild (bundle, source maps; version injected from `package.json`, so no version constants in the code), Biome (lint and format), `tsc --noEmit --checkJs` over JSDoc types (a small own type file for `hass` and both configs; not `custom-card-helpers`, it is unmaintained). One command, `npm run verify` (lint, typecheck, tests, build), and a SessionStart hook that runs `npm ci` in cloud sessions.
 2. **Mechanical split.** `src/shared/`, `src/v5/` (shell, CSS, constants, one file per screen) and `src/wall/` (shell, CSS, one file per mode). View methods move as they are into per-screen objects that are attached to the class prototype (`Object.assign(HouseV5Card.prototype, homeView)`), so `this._s(...)` and every other body stay unchanged. Seams, by name:
    - `house-v5.js`: constants and helpers (`V5C`, `V5I`, `V5W`, `V5WMAP`, `V5WTEXT`, `v5`), `V5_CSS`, the card shell (`HouseV5Card`: config, hass setter, timers, click and hold handling, routing), and one group of view methods per screen: home (`_homeView`, `_alarmBanner`, `_todayCard`, `_energyGlance`, `_floorsHtml`, `_activeNow`), room (`_roomView`), vacuum (`_vacuumView`), security (`_securityView`, `_alarmBlock`), energy (`_energyView`, `_carCard`), climate (`_climateView`, `_tempChart`, `_weatherCard`, `_heatPumpCard`).

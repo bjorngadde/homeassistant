@@ -1,0 +1,39 @@
+{
+  "type": "custom:house-wall-card",
+  "headline": ["input_text.example_headline_home"],
+  "weather": "weather.example_forecast",
+  "outdoor": "sensor.example_temperature_outdoor",
+  "price": "sensor.example_electricity_price",
+  "calendars": ["calendar.example_family"],
+  "school": "calendar.example_school",
+  "alarm": "alarm_control_panel.example_alarm",
+  "vacuum": "vacuum.example_vacuum",
+  "people": [
+    { "entity": "person.example_one", "short": "A", "name": "Alex" },
+    { "entity": "person.example_two", "short": "S", "name": "Sam" }
+  ],
+  "doors": [
+    { "entity": "binary_sensor.example_front_door", "name": "Front door" },
+    { "entity": "binary_sensor.example_back_door", "name": "Back door" }
+  ],
+  "tiles": [
+    { "name": "Entrance", "entity": "light.example_entrance", "icon": "sconce", "door": "binary_sensor.example_front_door" },
+    { "name": "Kitchen", "entity": "light.example_kitchen_group", "area": "example_kitchen", "icon": "food" },
+    { "name": "Living", "entity": "light.example_living_group", "area": "example_living", "icon": "sofa" },
+    { "name": "Hall", "entity": "light.example_hall_group", "area": "example_hall", "icon": "sconce" },
+    { "name": "Bedroom", "entity": "light.example_bedroom_group", "area": "example_bedroom", "icon": "moon" },
+    { "name": "Office", "entity": "light.example_office_group", "area": "example_office", "icon": "monitor" },
+    { "name": "Porch", "entity": "light.example_porch", "icon": "sconce" },
+    { "name": "Garden", "entity": "light.example_garden_group", "area": "example_garden", "icon": "bulb" }
+  ],
+  "more_exclude": ["example_hall"],
+  "more_order": ["example_bath", "example_laundry"],
+  "doorbell": {
+    "camera": "camera.example_doorbell",
+    "ring": "binary_sensor.example_doorbell_button",
+    "person": "binary_sensor.example_doorbell_person",
+    "light": "light.example_entrance"
+  },
+  "exclude": ["light.example_group_without_member_list"],
+  "all_off_exclude": ["light.example_printer_chamber_light"]
+}

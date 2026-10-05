@@ -1,0 +1,319 @@
+<!-- house-wall render snapshot from test/fixtures/wall.json. Regenerate with: npm run snapshot:update -->
+<!-- ==== style 1 ==== -->
+
+:host{display:block;position:relative;overflow:hidden;--bg:rgb(14,19,32);--card:rgb(24,32,51);--card2:rgb(34,44,68);--line:rgba(255,255,255,0.06);--fg:rgb(230,234,242);--mut:rgb(154,166,188);--dim:rgb(111,124,148);
+--teal:rgb(61,214,196);--amber:rgb(246,196,83);--amberbg:rgb(42,36,22);--red:rgb(255,107,107);--redfg:rgb(255,156,156);--orange:rgb(255,178,122);--blue:rgb(143,184,255)}
+*{box-sizing:border-box}
+button{all:unset;cursor:pointer;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+.root{position:absolute;left:0;top:0;width:480px;height:480px;transform-origin:0 0;overflow:hidden;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Roboto,sans-serif;contain:strict;user-select:none;-webkit-user-select:none}
+.root.night{background:rgb(5,7,11)}
+.pane{position:absolute;inset:0;padding:18px 18px 16px;display:flex;flex-direction:column;gap:10px}
+.pane>*{flex-shrink:0}.pane>.grow{flex-shrink:1;min-height:0}
+.top{display:flex;justify-content:space-between;align-items:flex-start}
+.clock{font-size:64px;font-weight:700;line-height:.95;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.date{font-size:15px;font-weight:600;color:var(--mut);margin-top:6px}
+.wx{display:flex;align-items:center;gap:10px;padding-top:4px}
+.wxt{display:flex;flex-direction:column;align-items:flex-end}
+.temp{font-size:34px;font-weight:700;line-height:1}
+.hint{font-size:13px;font-weight:700;color:var(--blue);margin-top:2px;white-space:nowrap}
+.head{font-size:17px;font-weight:600;line-height:1.27;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.chips{display:flex;gap:6px;flex-wrap:nowrap;overflow:hidden;min-height:29px}
+.chip{flex:0 1 auto;min-width:0;background:var(--card2);border-radius:8px;padding:6px 9px;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip b{color:var(--mut)}
+.chip.soon{background:rgba(61,214,196,0.14)}.chip.soon b{color:var(--teal)}
+.chip.cheap{background:rgba(61,214,196,0.14);color:var(--teal)}
+.chip.dear{background:rgba(255,159,67,0.14);color:var(--orange)}
+.banner{display:flex;align-items:center;gap:10px;background:rgba(255,107,107,0.16);border:1px solid rgba(255,107,107,0.5);color:var(--redfg);border-radius:12px;padding:8px 12px;font-size:15px;font-weight:800}
+.grow{flex-grow:1}
+.lunch{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.lunch .ib{background:rgba(61,214,196,0.18);color:var(--teal);flex-shrink:0}
+.ll{font-size:13px;font-weight:700;color:var(--teal)}
+.ld{font-size:20px;font-weight:800;line-height:1.2;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.lv{font-size:13px;color:var(--mut);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.grid2 .tile{height:72px;padding:10px 14px}
+.tile{height:60px;border-radius:14px;background:var(--card);border:1px solid var(--line);padding:8px 10px;display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:0}
+.grid.icons .tile{height:74px;justify-content:space-between}
+.grid.icons .tile.lv{justify-content:center}
+.tile.on{background:var(--amberbg);border-color:rgba(246,196,83,0.35)}
+.tile.busy{opacity:.55}
+.tile.wide{grid-column:span 2;padding:8px 12px}
+.ti{width:22px;height:22px;border-radius:7px;background:var(--card2);color:var(--mut);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tile.on .ti{background:var(--amber);color:var(--amberbg)}
+.tx{min-width:0}
+.ib{width:34px;height:34px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;color:var(--mut)}
+.on .ib{background:var(--amber);color:var(--amberbg)}
+.tn{font-size:14px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile.on .tn{color:var(--amber)}
+.grid2 .tn{font-size:16px}
+.ts{font-size:12px;line-height:1.2;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ts.warn{color:var(--redfg)}
+.wt{display:flex;align-items:center;gap:8px;color:var(--teal)}
+.badges{display:flex;gap:4px}
+.bdg{width:24px;height:24px;border-radius:8px;background:var(--card2);color:var(--dim);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.bdg.home{background:rgba(61,214,196,0.18);color:var(--teal)}
+.wn{font-size:17px;font-weight:800;color:var(--fg);flex-grow:1}
+.ws{font-size:12px;line-height:1.2;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lh{display:flex;justify-content:space-between;align-items:baseline}
+.lt{font-size:30px;font-weight:800}
+.link{font-size:15px;font-weight:700;color:var(--teal);padding:8px 4px}
+.list{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;padding:0 14px;height:52px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.dot{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(61,214,196,0.18);color:var(--teal)}
+.dot.bad{background:rgba(255,107,107,0.18);color:var(--red)}
+.dot.info{background:var(--card2);color:var(--mut)}
+.rt{display:flex;flex-direction:column;flex-grow:1;min-width:0}
+.rn{font-size:16px;font-weight:700}
+.rs{font-size:13px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bad+.rt .rs{color:var(--redfg)}
+.act{flex-shrink:0;background:var(--card2);border-radius:10px;padding:10px 14px;font-size:14px;font-weight:800}
+.big{height:80px;border-radius:18px;background:var(--card);color:var(--teal);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center}
+.big.lit{background:var(--amber);color:var(--amberbg)}
+.big .l1{font-size:22px;font-weight:800}.big .l2{font-size:13px;opacity:.8}
+.alarmv{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:28px;text-align:center;color:rgb(255,255,255);background:rgb(150,24,30);animation:apulse 1s ease-in-out infinite alternate}
+.alarmv.hot{background:rgb(200,28,36);animation-duration:.5s}
+@keyframes apulse{from{background-color:rgb(110,16,22)}to{background-color:rgb(205,30,38)}}
+.alarmv .al{font-size:18px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;display:flex;align-items:center;gap:10px}
+.alarmv .an{font-size:150px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+.alarmv .at{font-size:30px;font-weight:800;line-height:1.15}
+.alarmv .as{font-size:17px;font-weight:600;opacity:.85}
+.alarmv .ao{margin-top:10px;font-size:16px;font-weight:700;background:rgba(0,0,0,0.25);border-radius:10px;padding:8px 14px}
+.door{position:absolute;inset:0;display:flex;flex-direction:column;background:rgb(0,0,0)}
+.cam{position:relative;flex:0 0 74%;background:rgb(30,36,50);overflow:hidden}
+.cam img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.live{position:absolute;top:14px;left:14px;display:flex;align-items:center;gap:6px;background:rgba(14,19,32,0.75);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:800;letter-spacing:.06em}
+.live i{width:8px;height:8px;border-radius:4px;background:var(--red)}
+.cap{position:absolute;left:0;right:0;bottom:0;padding:30px 16px 12px;background:linear-gradient(0deg,rgba(0,0,0,0.7),rgba(0,0,0,0))}
+.cap .t{font-size:24px;font-weight:800}.cap .s{font-size:14px;color:rgb(200,208,222)}
+.dbtn{flex-grow:1;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px;background:var(--bg)}
+.dbtn button{border-radius:16px;background:var(--card2);display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:800}
+.dbtn button.lit{background:var(--amber);color:var(--amberbg)}
+.nightp{position:absolute;inset:0;padding:26px;display:flex;flex-direction:column;justify-content:space-between;color:rgb(92,102,122)}
+.nclock{font-size:104px;font-weight:600;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.nsub{font-size:16px;font-weight:600;color:rgb(62,70,88);margin-top:4px}
+.nst{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700}
+.nst.bad{color:rgb(170,90,90)}
+.nwake{font-size:13px;color:rgb(62,70,88);margin-top:8px}
+.wnow{display:flex;align-items:center;gap:14px;color:var(--mut)}
+.wbig{font-size:44px;font-weight:700;line-height:1;color:var(--fg)}.wbig span{font-size:18px;font-weight:600;color:var(--mut);margin-left:8px}
+.wsub{font-size:13px;color:var(--mut);margin-top:5px}
+.wsum{font-size:14px;font-weight:600;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wsum b{color:var(--blue)}
+.hours{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 6px}
+.hr{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--mut)}
+.hr .t{font-size:16px;font-weight:700;color:var(--fg)}
+.pb{width:14px;height:24px;display:flex;align-items:flex-end;background:rgba(143,184,255,0.08);border-radius:3px;overflow:hidden}
+.pb i{display:block;width:100%;background:var(--blue)}
+.hr .mm{font-size:11px;color:var(--blue);min-height:13px}
+.days{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.dayr{display:flex;align-items:center;gap:12px;height:46px;padding:0 14px;border-top:1px solid var(--line);color:var(--mut)}.dayr:first-child{border-top:0}
+.dayr .dn{width:86px;font-size:15px;font-weight:700;color:var(--fg)}
+.dayr .dt{font-size:15px;font-weight:700;color:var(--fg);min-width:70px}
+.dayr .dx{font-size:13px;margin-left:auto;white-space:nowrap}
+
+<!-- ==== idle house · styles ==== -->
+<style>{{style 1}}</style><div class="root"></div>
+<!-- ==== idle house · day ==== -->
+<div class="pane">
+      <div class="top">
+        <div><div class="clock" data-clock>12:00</div><div class="date">Monday 5 October</div></div>
+        <button class="wx" data-a="wx"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgb(154,166,188)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M4.9 4.9l1.4 1.4"/><path d="M20 12h2"/><path d="M15.9 6.3A5 5 0 0 0 8.1 10"/><path d="M16 20H8a5 5 0 1 1 4.6-7h1.9a3.5 3.5 0 1 1 0 7z"/></svg><div class="wxt"><div class="temp">31°</div><div class="hint">rain from 16:00</div></div></button>
+      </div>
+      <div class="head">on</div><div class="chips"><div class="chip"><b>15:30</b> Example appointment</div><div class="chip"><b>18:00</b> Example evening</div><div class="chip" style="flex-shrink:0">4710 öre</div></div>
+      <div class="grow"></div>
+      <div class="grid icons">
+        <button class="tile wide" data-a="leave" style="justify-content:center">
+          <div class="wt"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h8"/><path d="M10 12h11"/><path d="M18 9l3 3-3 3"/></svg><div class="wn">Leaving?</div><div class="badges"><div class="bdg home">A</div><div class="bdg home">S</div></div></div>
+          <div class="ws">Back door open · 6 rooms lit</div>
+        </button>
+        <button class="tile" data-a="tile" data-v="0">
+        <div class="ti"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M8 7l4-3 4 3"/><path d="M8 7h8v9H8z"/><path d="M12 10v3"/><path d="M12 16v5"/><path d="M9 21h6"/></svg></div><div class="tx"><div class="tn">Entrance</div><div class="ts">Off</div></div></button><button class="tile" data-a="tile" data-v="1">
+        <div class="ti"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v7a2 2 0 0 0 4 0V3"/><path d="M7 3v18"/><path d="M17 21V3c-2 1-3 3.5-3 7 0 2 1 3 3 3"/></svg></div><div class="tx"><div class="tn">Kitchen</div><div class="ts">Off</div></div></button><button class="tile on" data-a="tile" data-v="2">
+        <div class="ti"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11a2 2 0 0 1 4 0v3h12v-3a2 2 0 0 1 4 0v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"/><path d="M6 19v2"/><path d="M18 19v2"/></svg></div><div class="tx"><div class="tn">Living</div><div class="ts">All on</div></div></button><button class="tile on" data-a="tile" data-v="3">
+        <div class="ti"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M8 7l4-3 4 3"/><path d="M8 7h8v9H8z"/><path d="M12 10v3"/><path d="M12 16v5"/><path d="M9 21h6"/></svg></div><div class="tx"><div class="tn">Hall</div><div class="ts">All on</div></div></button><button class="tile" data-a="tile" data-v="4">
+        <div class="ti"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></div><div class="tx"><div class="tn">Bedroom</div><div class="ts">Off</div></div></button><button class="tile" data-a="tile" data-v="5">
+        <div class="ti"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 20h8"/><path d="M12 16v4"/></svg></div><div class="tx"><div class="tn">Office</div><div class="ts">Off</div></div></button><button class="tile" data-a="tile" data-v="6">
+        <div class="ti"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M8 7l4-3 4 3"/><path d="M8 7h8v9H8z"/><path d="M12 10v3"/><path d="M12 16v5"/><path d="M9 21h6"/></svg></div><div class="tx"><div class="tn">Porch</div><div class="ts">Off</div></div></button><button class="tile on" data-a="tile" data-v="7">
+        <div class="ti"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></div><div class="tx"><div class="tn">Garden</div><div class="ts">All on</div></div></button>
+        <button class="tile wide on" data-a="rooms">
+        <div class="ti"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6v6H4z"/><path d="M14 4h6v6h-6z"/><path d="M4 14h6v6H4z"/><path d="M14 14h6v6h-6z"/></svg></div><div class="tx"><div class="tn">More rooms ›</div><div class="ts">2 rooms on</div></div></button>
+      </div>
+    </div>
+<!-- ==== idle house · weather ==== -->
+<div class="pane" style="gap:10px">
+      <div class="lh"><div class="lt">Weather</div><button class="link" data-a="day">Done</button></div>
+      <div class="wnow"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="rgb(154,166,188)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M4.9 4.9l1.4 1.4"/><path d="M20 12h2"/><path d="M15.9 6.3A5 5 0 0 0 8.1 10"/><path d="M16 20H8a5 5 0 1 1 4.6-7h1.9a3.5 3.5 0 1 1 0 7z"/></svg>
+        <div><div class="wbig">31°<span>partly cloudy</span></div>
+        <div class="wsub">Wind 4 m/s (gusts 7) · 71% humidity</div></div></div>
+      <div class="wsum">Rest of today · 6–14° · <b>1.2 mm rain</b> · gusts 7 m/s</div>
+      <div class="hours"><div class="hr"><div>13</div>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgb(154,166,188)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7a5 5 0 1 0 0 10a5 5 0 1 0 0-10z"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.2 4.2l1.4 1.4"/><path d="M18.4 18.4l1.4 1.4"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.2 19.8l1.4-1.4"/><path d="M18.4 5.6l1.4-1.4"/></svg>
+        <div class="t">6°</div>
+        <div class="pb"><i style="height:0px"></i></div>
+        <div class="mm"></div></div><div class="hr"><div>14</div>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgb(154,166,188)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M4.9 4.9l1.4 1.4"/><path d="M20 12h2"/><path d="M15.9 6.3A5 5 0 0 0 8.1 10"/><path d="M16 20H8a5 5 0 1 1 4.6-7h1.9a3.5 3.5 0 1 1 0 7z"/></svg>
+        <div class="t">11°</div>
+        <div class="pb"><i style="height:0px"></i></div>
+        <div class="mm"></div></div><div class="hr"><div>15</div>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgb(154,166,188)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z"/></svg>
+        <div class="t">7°</div>
+        <div class="pb"><i style="height:0px"></i></div>
+        <div class="mm"></div></div><div class="hr"><div>16</div>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgb(154,166,188)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 15H9a6 6 0 1 1 5.7-8h2.8a4 4 0 1 1 0 8z"/><path d="M8 18l-1 3"/><path d="M12 18l-1 3"/><path d="M16 18l-1 3"/></svg>
+        <div class="t">12°</div>
+        <div class="pb"><i style="height:7px"></i></div>
+        <div class="mm">0.6</div></div><div class="hr"><div>17</div>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgb(154,166,188)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M4.9 4.9l1.4 1.4"/><path d="M20 12h2"/><path d="M15.9 6.3A5 5 0 0 0 8.1 10"/><path d="M16 20H8a5 5 0 1 1 4.6-7h1.9a3.5 3.5 0 1 1 0 7z"/></svg>
+        <div class="t">8°</div>
+        <div class="pb"><i style="height:0px"></i></div>
+        <div class="mm"></div></div><div class="hr"><div>18</div>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgb(154,166,188)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7a5 5 0 1 0 0 10a5 5 0 1 0 0-10z"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.2 4.2l1.4 1.4"/><path d="M18.4 18.4l1.4 1.4"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.2 19.8l1.4-1.4"/><path d="M18.4 5.6l1.4-1.4"/></svg>
+        <div class="t">13°</div>
+        <div class="pb"><i style="height:0px"></i></div>
+        <div class="mm"></div></div><div class="hr"><div>19</div>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgb(154,166,188)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7a5 5 0 1 0 0 10a5 5 0 1 0 0-10z"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.2 4.2l1.4 1.4"/><path d="M18.4 18.4l1.4 1.4"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.2 19.8l1.4-1.4"/><path d="M18.4 5.6l1.4-1.4"/></svg>
+        <div class="t">9°</div>
+        <div class="pb"><i style="height:0px"></i></div>
+        <div class="mm"></div></div><div class="hr"><div>20</div>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgb(154,166,188)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M4.9 4.9l1.4 1.4"/><path d="M20 12h2"/><path d="M15.9 6.3A5 5 0 0 0 8.1 10"/><path d="M16 20H8a5 5 0 1 1 4.6-7h1.9a3.5 3.5 0 1 1 0 7z"/></svg>
+        <div class="t">14°</div>
+        <div class="pb"><i style="height:0px"></i></div>
+        <div class="mm"></div></div></div>
+      <div class="grow"></div>
+      <div class="days"><div class="dayr"><div class="dn">Tomorrow</div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgb(154,166,188)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7a5 5 0 1 0 0 10a5 5 0 1 0 0-10z"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.2 4.2l1.4 1.4"/><path d="M18.4 18.4l1.4 1.4"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.2 19.8l1.4-1.4"/><path d="M18.4 5.6l1.4-1.4"/></svg>
+        <div class="dt">2° – 9°</div>
+        <div class="dx">wind 0 m/s</div></div><div class="dayr"><div class="dn">Wednesday</div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgb(154,166,188)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.7-9h1.8a4.5 4.5 0 1 1 0 9z"/></svg>
+        <div class="dt">3° – 10°</div>
+        <div class="dx">2.4 mm · wind 0 m/s</div></div><div class="dayr"><div class="dn">Thursday</div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgb(154,166,188)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M4.9 4.9l1.4 1.4"/><path d="M20 12h2"/><path d="M15.9 6.3A5 5 0 0 0 8.1 10"/><path d="M16 20H8a5 5 0 1 1 4.6-7h1.9a3.5 3.5 0 1 1 0 7z"/></svg>
+        <div class="dt">4° – 11°</div>
+        <div class="dx">wind 0 m/s</div></div></div>
+    </div>
+<!-- ==== idle house · leave ==== -->
+<div class="pane" style="gap:10px">
+      <div class="lh"><div class="lt">Leaving?</div><button class="link" data-a="day">Done</button></div>
+      <div class="list"><div class="row"><div class="dot bad"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6"/><path d="M12 17h.01"/></svg></div>
+      <div class="rt"><div class="rn">Doors</div><div class="rs">Back door is open</div></div></div><div class="row"><div class="dot bad"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6"/><path d="M12 17h.01"/></svg></div>
+      <div class="rt"><div class="rn">Lights</div><div class="rs">13 on · Example bath, Example garden, Example hall, Example laundry, Example living, Other</div></div></div><div class="row"><div class="dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+      <div class="rt"><div class="rn">Example vacuum</div><div class="rs">Docked · 82%</div></div><button class="act" data-a="vac">Start</button></div><div class="row"><div class="dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+      <div class="rt"><div class="rn">People</div><div class="rs">Alex &amp; Sam home</div></div></div><div class="row"><div class="dot info"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="rt"><div class="rn">Alarm</div><div class="rs">Not armed · set it from your phone</div></div></div></div>
+      <div class="grow"></div>
+      <button class="big lit" data-a="alloff">
+        <span class="l1">Turn off all lights</span><span class="l2">6 rooms still lit</span>
+      </button>
+    </div>
+<!-- ==== idle house · rooms ==== -->
+<div class="pane" style="gap:10px">
+      <div class="lh"><div class="lt">More rooms</div><button class="link" data-a="day">Done</button></div>
+      <div class="grid2"><button class="tile on" data-a="area" data-v="example_bath">
+        <div class="tn">Example bath</div><div class="ts">All on</div></button><button class="tile on" data-a="area" data-v="example_laundry">
+        <div class="tn">Example laundry</div><div class="ts">All on</div></button></div>
+    </div>
+<!-- ==== idle house · door ==== -->
+<div class="door">
+      <div class="cam"><img alt="">
+        <div class="live"><i></i>DOORBELL</div>
+        <div class="cap"><div class="t">Someone at the door</div><div class="s">Person seen 12:00 · closes by itself</div></div>
+      </div>
+      <div class="dbtn">
+        <button data-a="doorlight" class=""><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v2"/><path d="M8 7l4-3 4 3"/><path d="M8 7h8v9H8z"/><path d="M12 10v3"/><path d="M12 16v5"/><path d="M9 21h6"/></svg>Entrance light</button>
+        <button data-a="doorclose">Close</button>
+      </div>
+    </div>
+<!-- ==== idle house · night ==== -->
+<button class="nightp" data-a="wake">
+      <div><div class="nclock" data-clock>12:00</div>
+      <div class="nsub">Monday 5 October · 31° partly cloudy</div></div>
+      <div><div class="nst bad"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgb(170,90,90)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"/><path d="M12 10v4"/><path d="M12 17.5h.01"/></svg>Back door open · 13 lights on</div>
+      <div class="nwake">Tap anywhere to wake</div></div>
+    </button>
+<!-- ==== armed away · styles ==== same as idle house · styles -->
+<!-- ==== armed away · day ==== same as idle house · day -->
+<!-- ==== armed away · weather ==== same as idle house · weather -->
+<!-- ==== armed away · leave ==== -->
+<div class="pane" style="gap:10px">
+      <div class="lh"><div class="lt">Leaving?</div><button class="link" data-a="day">Done</button></div>
+      <div class="list"><div class="row"><div class="dot bad"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6"/><path d="M12 17h.01"/></svg></div>
+      <div class="rt"><div class="rn">Doors</div><div class="rs">Back door is open</div></div></div><div class="row"><div class="dot bad"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6"/><path d="M12 17h.01"/></svg></div>
+      <div class="rt"><div class="rn">Lights</div><div class="rs">13 on · Example bath, Example garden, Example hall, Example laundry, Example living, Other</div></div></div><div class="row"><div class="dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+      <div class="rt"><div class="rn">Example vacuum</div><div class="rs">Docked · 82%</div></div><button class="act" data-a="vac">Start</button></div><div class="row"><div class="dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+      <div class="rt"><div class="rn">People</div><div class="rs">Alex &amp; Sam home</div></div></div><div class="row"><div class="dot info"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="rt"><div class="rn">Alarm</div><div class="rs">Armed · set it from your phone</div></div></div></div>
+      <div class="grow"></div>
+      <button class="big lit" data-a="alloff">
+        <span class="l1">Turn off all lights</span><span class="l2">6 rooms still lit</span>
+      </button>
+    </div>
+<!-- ==== armed away · rooms ==== same as idle house · rooms -->
+<!-- ==== armed away · door ==== same as idle house · door -->
+<!-- ==== armed away · night ==== same as idle house · night -->
+<!-- ==== entry delay · styles ==== same as idle house · styles -->
+<!-- ==== entry delay · day ==== -->
+<div class="alarmv"><div class="al"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"/><path d="M12 10v4"/><path d="M12 17.5h.01"/></svg>Alarm is armed</div>
+      <div class="an">20</div>
+      <div class="at">Disarm now</div><div class="as">Use the app on your phone</div>
+      </div>
+<!-- ==== entry delay · weather ==== same as entry delay · day -->
+<!-- ==== entry delay · leave ==== same as entry delay · day -->
+<!-- ==== entry delay · rooms ==== same as entry delay · day -->
+<!-- ==== entry delay · door ==== same as entry delay · day -->
+<!-- ==== entry delay · night ==== same as entry delay · day -->
+<!-- ==== triggered · styles ==== same as idle house · styles -->
+<!-- ==== triggered · day ==== -->
+<div class="alarmv hot"><div class="al"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"/><path d="M12 10v4"/><path d="M12 17.5h.01"/></svg>Alarm</div>
+        <div class="at">The alarm has gone off</div><div class="as">Disarm from your phone</div>
+        </div>
+<!-- ==== triggered · weather ==== same as triggered · day -->
+<!-- ==== triggered · leave ==== same as triggered · day -->
+<!-- ==== triggered · rooms ==== same as triggered · day -->
+<!-- ==== triggered · door ==== same as triggered · day -->
+<!-- ==== triggered · night ==== same as triggered · day -->
+<!-- ==== cleaning mode, vacuum out · styles ==== same as idle house · styles -->
+<!-- ==== cleaning mode, vacuum out · day ==== same as idle house · day -->
+<!-- ==== cleaning mode, vacuum out · weather ==== same as idle house · weather -->
+<!-- ==== cleaning mode, vacuum out · leave ==== -->
+<div class="pane" style="gap:10px">
+      <div class="lh"><div class="lt">Leaving?</div><button class="link" data-a="day">Done</button></div>
+      <div class="list"><div class="row"><div class="dot bad"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6"/><path d="M12 17h.01"/></svg></div>
+      <div class="rt"><div class="rn">Doors</div><div class="rs">Back door is open</div></div></div><div class="row"><div class="dot bad"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6"/><path d="M12 17h.01"/></svg></div>
+      <div class="rt"><div class="rn">Lights</div><div class="rs">13 on · Example bath, Example garden, Example hall, Example laundry, Example living, Other</div></div></div><div class="row"><div class="dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+      <div class="rt"><div class="rn">Example vacuum</div><div class="rs">Cleaning · 82%</div></div></div><div class="row"><div class="dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+      <div class="rt"><div class="rn">People</div><div class="rs">Alex &amp; Sam home</div></div></div><div class="row"><div class="dot info"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="rt"><div class="rn">Alarm</div><div class="rs">Armed · set it from your phone</div></div></div></div>
+      <div class="grow"></div>
+      <button class="big lit" data-a="alloff">
+        <span class="l1">Turn off all lights</span><span class="l2">6 rooms still lit</span>
+      </button>
+    </div>
+<!-- ==== cleaning mode, vacuum out · rooms ==== same as idle house · rooms -->
+<!-- ==== cleaning mode, vacuum out · door ==== same as idle house · door -->
+<!-- ==== cleaning mode, vacuum out · night ==== same as idle house · night -->
+<!-- ==== vacuum cleaning · styles ==== same as idle house · styles -->
+<!-- ==== vacuum cleaning · day ==== same as idle house · day -->
+<!-- ==== vacuum cleaning · weather ==== same as idle house · weather -->
+<!-- ==== vacuum cleaning · leave ==== -->
+<div class="pane" style="gap:10px">
+      <div class="lh"><div class="lt">Leaving?</div><button class="link" data-a="day">Done</button></div>
+      <div class="list"><div class="row"><div class="dot bad"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6"/><path d="M12 17h.01"/></svg></div>
+      <div class="rt"><div class="rn">Doors</div><div class="rs">Back door is open</div></div></div><div class="row"><div class="dot bad"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6"/><path d="M12 17h.01"/></svg></div>
+      <div class="rt"><div class="rn">Lights</div><div class="rs">13 on · Example bath, Example garden, Example hall, Example laundry, Example living, Other</div></div></div><div class="row"><div class="dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+      <div class="rt"><div class="rn">Example vacuum</div><div class="rs">Cleaning · 82%</div></div></div><div class="row"><div class="dot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+      <div class="rt"><div class="rn">People</div><div class="rs">Alex &amp; Sam home</div></div></div><div class="row"><div class="dot info"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="rt"><div class="rn">Alarm</div><div class="rs">Not armed · set it from your phone</div></div></div></div>
+      <div class="grow"></div>
+      <button class="big lit" data-a="alloff">
+        <span class="l1">Turn off all lights</span><span class="l2">6 rooms still lit</span>
+      </button>
+    </div>
+<!-- ==== vacuum cleaning · rooms ==== same as idle house · rooms -->
+<!-- ==== vacuum cleaning · door ==== same as idle house · door -->
+<!-- ==== vacuum cleaning · night ==== same as idle house · night -->
+<!-- ==== door open · styles ==== same as idle house · styles -->
+<!-- ==== door open · day ==== same as idle house · day -->
+<!-- ==== door open · weather ==== same as idle house · weather -->
+<!-- ==== door open · leave ==== same as idle house · leave -->
+<!-- ==== door open · rooms ==== same as idle house · rooms -->
+<!-- ==== door open · door ==== same as idle house · door -->
+<!-- ==== door open · night ==== same as idle house · night -->

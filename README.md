@@ -24,9 +24,11 @@ Add this repository to HACS as a custom repository (category: Dashboard), instal
 No build step and no dependencies; Node 20+ is enough.
 
 ```sh
-git config core.hooksPath .githooks        # run the leak check before every commit
-npm run check                              # leak check, see scripts/scrub-check.mjs
-node test/render-equivalence.mjs --help    # render a reference build and a candidate build and compare
+git config core.hooksPath .githooks   # run the leak check before every commit
+npm run check                         # leak check, see scripts/scrub-check.mjs
+npm test                              # render every screen and compare with test/snapshots/
+npm run snapshot:update               # after an intended visual change; review the snapshot diff
+npm run equiv -- --ref main           # render equivalence: a git commit vs the working tree
 ```
 
-`test/render-equivalence.mjs` renders every screen of a card against a fake Home Assistant built from a real card config and fails if two builds differ. Keep real configs outside the repo.
+`npm test` renders both cards against a fake Home Assistant built from the placeholder configs in `test/fixtures/` and compares the HTML of every screen with `test/snapshots/`. It needs no real config, so CI runs it on every push together with the leak check and the HACS validation. `npm run equiv` compares two builds screen by screen; pass `--v5 <json> --wall <json>` to use real card configs, and keep those outside the repo.

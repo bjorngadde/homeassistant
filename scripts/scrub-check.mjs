@@ -2,7 +2,7 @@
 /*
  * Leak check: fails when the working tree contains anything that identifies one particular house.
  *
- *   node scripts/scrub-check.mjs [--denylist <file>]      (or set SCRUB_DENYLIST)
+ *   node scripts/scrub-check.mjs [--denylist <file>] [--quiet]      (or set SCRUB_DENYLIST)
  *
  * 1. Generic check (always): entity-id-like tokens, e-mail addresses, private IP addresses, MAC / device
  *    hex ids and unknown URL hosts in every file git would commit (tracked, staged or untracked and not
@@ -11,13 +11,15 @@
  * 2. Private denylist (optional): every line of the file is searched for, case-insensitively, in all
  *    files. Build it from the real card config with scripts/make-denylist.mjs and keep it OUTSIDE the repo.
  *
- * Exit code 1 when anything is found. Prints file:line and the offending text (run it locally only).
+ * Exit code 1 when anything is found. Prints file:line and the offending text; with --quiet only file:line and
+ * the kind of finding, never the text (use it wherever the output can be read by others, such as CI logs).
  */
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
 const argv = process.argv.slice(2);
+const quiet = argv.includes('--quiet');
 const denyPath = (argv.includes('--denylist') ? argv[argv.indexOf('--denylist') + 1] : process.env.SCRUB_DENYLIST) || '';
 
 const root = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim();
@@ -69,6 +71,6 @@ if (denyPath) {
   console.error('note: no denylist given (--denylist or SCRUB_DENYLIST); only the generic checks ran.');
 }
 
-for (const [f, line, what, text] of findings) console.log(`${f}:${line}  ${what}: ${text}`);
+for (const [f, line, what, text] of findings) console.log(quiet ? `${f}:${line}  ${what}` : `${f}:${line}  ${what}: ${text}`);
 console.log(findings.length ? `scrub-check: ${findings.length} finding(s) in ${files.length} files` : `scrub-check: clean (${files.length} files${denyPath ? ', denylist applied' : ''})`);
 process.exit(findings.length ? 1 : 0);

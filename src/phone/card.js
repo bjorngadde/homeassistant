@@ -350,7 +350,7 @@ export class HousePhoneCard extends HTMLElement {
       body = `<div class="page"><div class="card empty">house-phone: ${P.esc(e.message)}</div></div>`;
       console.error(e);
     }
-    this.shadowRoot.innerHTML = `<style>${CSS}</style><div class="root">${body}${this._tabsHtml()}</div>`;
+    this.shadowRoot.innerHTML = `<style>${this._styles()}</style><div class="root">${body}${this._tabsHtml()}</div>`;
     this._sig = this._signature();
     this._placeCams();
   }
@@ -709,6 +709,10 @@ export class HousePhoneCard extends HTMLElement {
   }
 
   /* ---------- views ---------- */
+  /** The stylesheet; the desktop card extends it. */
+  _styles() {
+    return CSS;
+  }
   _view() {
     if (this._tab === 'home' && this._room === '@vacuum') return this._vacuumView();
     if (this._tab === 'home' && this._room) return this._roomView(this._room);

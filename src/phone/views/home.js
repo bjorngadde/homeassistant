@@ -8,6 +8,20 @@ import { P } from '../helpers.js';
 export const homeView = {
   /* HOME */
   _homeView() {
+    const [greet, date] = this._greeting();
+    // the alarm card lives on the Security tab; Home only shows a banner while the alarm is not disarmed
+    return [
+      this._header(greet, date),
+      this._alarmBanner(),
+      this._todayCard(),
+      this._energyGlance(),
+      this._floorsHtml(),
+      this._activeNow(),
+    ].join('');
+  },
+
+  /** [greeting for the time of day, long date], the Home header. */
+  _greeting() {
     const hr = new Date().getHours();
     const greet =
       hr < 5
@@ -20,15 +34,7 @@ export const homeView = {
               ? 'Good evening'
               : 'Good night';
     const date = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
-    // the alarm card lives on the Security tab; Home only shows a banner while the alarm is not disarmed
-    return [
-      this._header(greet, date),
-      this._alarmBanner(),
-      this._todayCard(),
-      this._energyGlance(),
-      this._floorsHtml(),
-      this._activeNow(),
-    ].join('');
+    return [greet, date];
   },
 
   _alarmBanner() {

@@ -14,8 +14,16 @@ export { buildHass, scenarios };
 process.env.TZ = 'UTC';
 
 /** Element names per card, current first; older builds (0.3.0 and earlier) registered the phone card as house-v5-card. */
-export const TAGS = { phone: ['house-phone-card', 'house-v5-card'], wall: ['house-wall-card'] };
-const OLD_FILES = { phone: ['house-phone.js', 'house-v5.js'], wall: ['house-wall.js'] };
+export const TAGS = {
+  phone: ['house-phone-card', 'house-v5-card'],
+  desktop: ['house-desktop-card'],
+  wall: ['house-wall-card'],
+};
+const OLD_FILES = { phone: ['house-phone.js', 'house-v5.js'], desktop: [], wall: ['house-wall.js'] };
+
+/** Every card, and the placeholder fixture each one renders with (the desktop card takes the phone card's config). */
+export const CARDS = ['phone', 'desktop', 'wall'];
+export const FIXTURE = { phone: 'phone', desktop: 'phone', wall: 'wall' };
 
 /** The built file that holds a card inside a dist/ folder: the combined bundle if there is one, else the per-card file. */
 export function buildFile(distDir, card) {
@@ -134,7 +142,7 @@ export function registeredTags(file) {
 const settle = () => new Promise((r) => setImmediate(r));
 
 export async function renderAll(card, file, cfg, fixture, over) {
-  if (!TAGS[card]) throw new Error(`unknown card "${card}" (phone or wall)`);
+  if (!TAGS[card]) throw new Error(`unknown card "${card}" (${CARDS.join(', ')})`);
   const errors = [];
   const { ctx, registry } = makeContext(errors);
   vm.runInContext(fs.readFileSync(file, 'utf8'), ctx, { filename: file });

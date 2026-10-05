@@ -7,6 +7,8 @@
 
 # ---------------------------------------------------------------------------------------------
 # Phone card: house-phone-card (one panel view)
+# The desktop card (house-desktop-card, for big screens) takes exactly the same config:
+# copy this block and change only the type.
 # ---------------------------------------------------------------------------------------------
 type: custom:house-phone-card
 people: [person.example_one, person.example_two]

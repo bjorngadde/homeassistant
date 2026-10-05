@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Two Home Assistant Lovelace cards (phone card `house-phone`, hall wall display `house-wall`), plain JavaScript ES modules in `src/`, bundled by esbuild, no runtime dependencies. See `README.md` for what they do and `config.example.yaml` for every config key.
+Three Home Assistant Lovelace cards (phone card `house-phone`, its big-screen layout `house-desktop`, hall wall display `house-wall`), plain JavaScript ES modules in `src/`, bundled by esbuild, no runtime dependencies. See `README.md` for what they do and `config.example.yaml` for every config key.
 
 ## Hard rules
 
@@ -20,6 +20,7 @@ Edit `src/`, never `dist/` (build output, not committed). After any change: `npm
 | Phone card: defaults, palette (`COLOR`), icons (`ICON`), weather icons and texts (`WX_PATHS`, `WX_KIND`, `WX_TEXT`) | `src/phone/constants.js` |
 | Phone card: pure helpers (`P.esc`, time formats, SVG, registry checks) | `src/phone/helpers.js` |
 | Phone card: CSS | `src/phone/styles.js` |
+| Desktop card (big screens): layout, overview on Home | `src/desktop/` — `card.js` (subclass of the phone card: `_styles`, `_view`, `_homeView`), `styles.js` (container queries: side navigation and two columns from 900px, three from 1300px). Same config as the phone card, so screens and data come from `src/phone/`; a change there shows up in both |
 | Wall card: a mode | `src/wall/views/` — `day.js` (Day screen and the helpers other modes share), `weather.js`, `leave.js` ("Leaving?"), `rooms.js` ("More rooms"), `door.js` (doorbell), `night.js`, `alarm.js` (entry delay / triggered) |
 | Wall card: data, doorbell, fit to screen, clock, actions, mode switch | `src/wall/card.js` |
 | Wall card: defaults and timings / helpers (`W`) / icons and weather maps / CSS | `src/wall/constants.js` / `helpers.js` / `icons.js` / `styles.js` |
@@ -42,12 +43,12 @@ SCRUB_DENYLIST=denylist.txt node scripts/scrub-check.mjs
 npm run equiv -- --ref <commit> --phone phone.json --wall wall.json
 ```
 
-`npm run equiv` takes the reference build from a git commit (default `HEAD`) and the candidate from the working tree, and renders both with the same config. For an older build outside git, call `test/render-equivalence.mjs` directly (`--help`). Both cards must stay at 100 % identical screens (with the real configs: phone 119 screens, wall 49; the wall count includes one "styles" entry per scenario since 2026-10-05, it was 42 before). The harness is the safety net for any refactor.
+`npm run equiv` takes the reference build from a git commit (default `HEAD`) and the candidate from the working tree, and renders both with the same config. For an older build outside git, call `test/render-equivalence.mjs` directly (`--help`). Both cards must stay at 100 % identical screens (with the real configs: phone 119 screens, desktop 119 (same config), wall 49; the wall count includes one "styles" entry per scenario since 2026-10-05, it was 42 before). The harness is the safety net for any refactor.
 
 ## Checks that need no real config
 
 - `npm run verify`: Biome (lint and format check), `tsc` type check, render snapshots, leak check. Run it before every commit.
-- `npm test` runs the unit tests (`test/*.test.mjs`, node:test: config merge and validation), then builds `dist/house-cards.js` and renders every screen of both cards against the placeholder configs in `test/fixtures/` (every id starts with `example`), comparing with `test/snapshots/<card>.html` (phone: 77 screens, wall: 49). After an intended visual change run `npm run snapshot:update` and review the snapshot diff: it shows exactly which screens changed.
+- `npm test` runs the unit tests (`test/*.test.mjs`, node:test: config merge and validation), then builds `dist/house-cards.js` and renders every screen of both cards against the placeholder configs in `test/fixtures/` (every id starts with `example`), comparing with `test/snapshots/<card>.html` (phone: 77 screens, desktop: 77 with the phone fixture, wall: 49). After an intended visual change run `npm run snapshot:update` and review the snapshot diff: it shows exactly which screens changed.
 - The fake Home Assistant lives in `test/lib/fake-hass.mjs` (states and registries invented from the config, fixed answers for prices, calendars, statistics, logbook and forecasts, the scenarios and the screen list); `test/lib/render.mjs` adds the DOM stub for Node. The clock is fixed at 2026-10-05 12:00 UTC.
 - Types: `tsconfig.json` checks `src/` as JavaScript with JSDoc (not strict). `src/types.d.ts` holds globals; `src/<card>/views.d.ts` tells the checker which methods the views add to the card.
 - CI (`.github/workflows/ci.yml`) runs the leak check, lint, types and snapshots on every push and PR; HACS validation runs on `main` only (a branch has no committed `dist/`, and GitHub detects the license on the default branch). The optional repository secret `SCRUB_DENYLIST_TERMS` (the denylist file's content) adds the private denylist; CI runs the check with `--quiet`, which prints only `file:line`, never a term.

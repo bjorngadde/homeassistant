@@ -7,7 +7,7 @@
  *   npm run preview                                     placeholder fixtures, "idle house" scenario
  *   npm run preview -- --all                            every scenario (alarm armed, entry delay, door open, ...)
  *   npm run preview -- --phone <phone.json> --wall <wall.json> real card configs (kept OUTSIDE the repo)
- *   --card phone|wall    only one card          --out <dir>   output folder (default .private/preview, git-ignored)
+ *   --card phone|desktop|wall  only one card   --width <px>  desktop viewport width (default 1440)          --out <dir>   output folder (default .private/preview, git-ignored)
  *
  * Writes <out>/<card>/<scenario>/<screen>.png and <out>/index.html (all screenshots on one page).
  * Chromium: the pre-installed one in Claude Code cloud sessions (PLAYWRIGHT_BROWSERS_PATH); elsewhere run
@@ -19,6 +19,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 import { FIXED } from './lib/fake-hass.mjs';
+import { CARDS, FIXTURE } from './lib/render.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
@@ -27,7 +28,11 @@ const arg = (n, d = '') => {
   return i >= 0 && argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[i + 1] : d;
 };
 const outDir = path.resolve(arg('out', path.join(root, '.private/preview')));
-const VIEWPORT = { phone: { width: 390, height: 844 }, wall: { width: 480, height: 480 } };
+const VIEWPORT = {
+  phone: { width: 390, height: 844 },
+  desktop: { width: Number(arg('width')) || 1440, height: 900 },
+  wall: { width: 480, height: 480 },
+};
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.map': 'application/json' };
 // camera snapshots and the vacuum map: a neutral placeholder instead of a broken image
 const PLACEHOLDER = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360"><rect width="640" height="360" fill="rgb(60,70,90)"/><text x="320" y="190" font-family="sans-serif" font-size="28" fill="rgb(200,208,222)" text-anchor="middle">image</text></svg>`;
@@ -53,9 +58,14 @@ const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH 
 const safe = (s) => s.replace(/[^\w.-]+/g, '_');
 const shots = [];
 try {
-  for (const card of ['phone', 'wall']) {
+  for (const card of CARDS) {
     if (arg('card') && arg('card') !== card) continue;
-    const config = JSON.parse(fs.readFileSync(arg(card) || path.join(root, `test/fixtures/${card}.json`), 'utf8'));
+    const config = JSON.parse(
+      fs.readFileSync(
+        arg(card) || arg(FIXTURE[card]) || path.join(root, `test/fixtures/${FIXTURE[card]}.json`),
+        'utf8',
+      ),
+    );
     const context = await browser.newContext({
       viewport: VIEWPORT[card],
       timezoneId: 'UTC',
@@ -82,11 +92,11 @@ try {
       );
       for (const screen of screens) {
         await page.evaluate((s) => window.preview.show(s), screen);
-        if (card === 'phone') {
+        if (card !== 'wall') {
           // a viewport as tall as the page, so the fixed tab bar sits at the bottom as on a phone
-          await page.setViewportSize(VIEWPORT.phone);
+          await page.setViewportSize(VIEWPORT[card]);
           const height = await page.evaluate(() => document.documentElement.scrollHeight);
-          await page.setViewportSize({ ...VIEWPORT.phone, height: Math.max(VIEWPORT.phone.height, height) });
+          await page.setViewportSize({ ...VIEWPORT[card], height: Math.max(VIEWPORT[card].height, height) });
         }
         const file = path.join(outDir, card, safe(scenario), `${safe(screen)}.png`);
         fs.mkdirSync(path.dirname(file), { recursive: true });

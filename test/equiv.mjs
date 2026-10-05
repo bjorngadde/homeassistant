@@ -8,7 +8,7 @@
  *   npm run equiv -- --phone <phone.json> --wall <wall.json> real card configs (kept OUTSIDE the repo); the same
  *                                                      config is used for both builds and to invent the fake
  *                                                      Home Assistant, as in CLAUDE.md
- *   --card phone|wall                                     only one card
+ *   --card phone|desktop|wall                                     only one card
  *
  * Old commits that still have the cards committed in dist/ are used as they are; newer ones are built from their
  * own src/ with their own scripts/build.mjs (using this checkout's node_modules).
@@ -18,7 +18,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildFile } from './lib/render.mjs';
+import { buildFile, CARDS, FIXTURE, registeredTags, TAGS } from './lib/render.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
@@ -56,10 +56,16 @@ try {
     stdio: ['ignore', 'ignore', 'inherit'],
   });
 
-  for (const card of ['phone', 'wall']) {
+  for (const card of CARDS) {
     if (arg('card') && arg('card') !== card) continue;
-    const config = arg(card) || path.join(root, `test/fixtures/${card}.json`);
-    console.log(`== ${card}: ${rev} vs working tree (${arg(card) ? 'given config' : 'placeholder fixture'})`);
+    const given = arg(card) || arg(FIXTURE[card]); // the desktop card takes the phone config
+    const config = given || path.join(root, `test/fixtures/${FIXTURE[card]}.json`);
+    const refFile = buildFile(path.join(refDir, 'dist'), card);
+    if (!TAGS[card].some((t) => registeredTags(refFile).includes(t))) {
+      console.log(`== ${card}: not in ${rev}, nothing to compare`);
+      continue;
+    }
+    console.log(`== ${card}: ${rev} vs working tree (${given ? 'given config' : 'placeholder fixture'})`);
     const r = spawnSync(
       process.execPath,
       [
@@ -67,7 +73,7 @@ try {
         '--card',
         card,
         '--ref',
-        buildFile(path.join(refDir, 'dist'), card),
+        refFile,
         '--ref-config',
         config,
         '--cand',

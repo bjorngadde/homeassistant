@@ -7,7 +7,7 @@
  *   node test/snapshot.mjs            compare (npm test)
  *   node test/snapshot.mjs --update   rewrite the snapshots after an intended change (npm run snapshot:update);
  *                                     review the diff of test/snapshots/ before committing
- *   --card phone|wall                    only one card
+ *   --card phone|desktop|wall                    only one card
  *
  * Format: one "<!-- ==== scenario · screen ==== -->" line before each screen's exact HTML. A leading <style>
  * block is stored once and a screen identical to an earlier one is stored as a reference, which keeps the
@@ -16,13 +16,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { renderScenarios, firstDiff, buildFile } from './lib/render.mjs';
+import { renderScenarios, firstDiff, buildFile, CARDS, FIXTURE } from './lib/render.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
 const update = argv.includes('--update');
 const only = argv.includes('--card') ? argv[argv.indexOf('--card') + 1] : '';
-const CARDS = ['phone', 'wall'];
 
 const SEP = /^<!-- ==== (.+?) ==== (?:same as (.+?) )?-->$/;
 const sepLine = (name, same) => `<!-- ==== ${name} ==== ${same ? `same as ${same} ` : ''}-->`;
@@ -30,7 +29,7 @@ const sepLine = (name, same) => `<!-- ==== ${name} ==== ${same ? `same as ${same
 /** Ordered [name, html] pairs -> snapshot text. */
 function serialize(card, entries) {
   const lines = [
-    `<!-- house-${card} render snapshot from test/fixtures/${card}.json. Regenerate with: npm run snapshot:update -->`,
+    `<!-- house-${card} render snapshot from test/fixtures/${FIXTURE[card]}.json. Regenerate with: npm run snapshot:update -->`,
   ];
   const styles = new Map(),
     seen = new Map();
@@ -92,7 +91,7 @@ function parse(text) {
 let failed = 0;
 for (const card of CARDS) {
   if (only && only !== card) continue;
-  const fixture = JSON.parse(fs.readFileSync(path.join(root, `test/fixtures/${card}.json`), 'utf8'));
+  const fixture = JSON.parse(fs.readFileSync(path.join(root, `test/fixtures/${FIXTURE[card]}.json`), 'utf8'));
   const res = await renderScenarios(card, buildFile(path.join(root, 'dist'), card), fixture, fixture);
   const entries = [];
   const errors = [];

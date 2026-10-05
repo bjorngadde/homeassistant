@@ -21,7 +21,7 @@ if (argv.includes('--help') || argv.length === 0) {
   console.log(`Renders a card twice (reference build vs candidate build) against the same fake Home Assistant
 and compares the HTML of every screen.
 
-  node test/render-equivalence.mjs --card phone|wall \\
+  node test/render-equivalence.mjs --card phone|desktop|wall \\
        --ref  <reference.js>  [--ref-config  <json>] \\
        --cand <candidate.js>  [--cand-config <json>] \\
        --fixture <json>   real card config, used only to invent a matching fake Home Assistant
@@ -39,7 +39,7 @@ const readJson = (p) => (p ? JSON.parse(fs.readFileSync(p, 'utf8')) : {});
 
 const CARD = arg('card', 'phone');
 if (!TAGS[CARD]) {
-  console.error('--card must be phone or wall');
+  console.error('--card must be phone, desktop or wall');
   process.exit(2);
 }
 

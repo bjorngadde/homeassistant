@@ -11,13 +11,16 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "check": "node scripts/scrub-check.mjs",
-    "lint": "biome lint .",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "typecheck": "tsc -p .",
     "pretest": "node scripts/build.mjs",
     "test": "node test/snapshot.mjs",
     "presnapshot:update": "node scripts/build.mjs",
     "snapshot:update": "node test/snapshot.mjs --update",
     "equiv": "node test/equiv.mjs",
-    "test:render": "node test/render-equivalence.mjs"
+    "test:render": "node test/render-equivalence.mjs",
+    "verify": "npm run lint && npm run typecheck && npm test && npm run check"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",

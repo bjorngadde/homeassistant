@@ -233,7 +233,7 @@ const v5 = {
   /* "today 16:32" / "yesterday 16:32" / "Mon 16:32" */
   when(t) {
     const d = new Date(t);
-    if (isNaN(d)) return '';
+    if (isNaN(d.getTime())) return '';
     const days = Math.round((v5.dayStart(Date.now()) - v5.dayStart(d)) / 86400000);
     const day =
       days === 0
@@ -248,7 +248,7 @@ const v5 = {
   /* compact form for tight rows: "16:32" today, else "yesterday" / "Mon" / "3 Oct" */
   whenShort(t) {
     const d = new Date(t);
-    if (isNaN(d)) return '';
+    if (isNaN(d.getTime())) return '';
     const days = Math.round((v5.dayStart(Date.now()) - v5.dayStart(d)) / 86400000);
     return days === 0
       ? v5.hm(d)
@@ -453,7 +453,8 @@ class HouseV5Card extends HTMLElement {
         this.shadowRoot.addEventListener(t, (ev) => this._onHoldEnd(ev), true),
       );
       this.shadowRoot.addEventListener('contextmenu', (ev) => {
-        if (ev.target.closest && ev.target.closest('[data-hold]')) ev.preventDefault();
+        const t = /** @type {Element} */ (ev.target);
+        if (t.closest && t.closest('[data-hold]')) ev.preventDefault();
       });
       this._onPop = () => {
         const r = (history.state && history.state.houseV5Room) || null;
@@ -678,7 +679,8 @@ class HouseV5Card extends HTMLElement {
     this.shadowRoot.querySelectorAll('[data-slot]').forEach((slot) => {
       const img = this._imgs[slot.getAttribute('data-slot')];
       if (!img) return;
-      const clone = slot.firstChild && slot.firstChild.src === img.src ? null : img.cloneNode();
+      const first = /** @type {HTMLImageElement} */ (slot.firstChild);
+      const clone = first && first.src === img.src ? null : img.cloneNode();
       if (clone) {
         slot.innerHTML = '';
         slot.appendChild(clone);
@@ -1023,6 +1025,7 @@ class HouseV5Card extends HTMLElement {
       const k = d.getTime();
       (byHour.get(k) || byHour.set(k, []).get(k)).push(q.p);
     }
+    /** @type {{ t: number, p: number, rank?: number }[]} */
     const hours = [...byHour.entries()].map(([t, ps]) => ({ t, p: ps.reduce((a, b) => a + b, 0) / ps.length }));
     const byDay = {};
     hours.forEach((x) => (byDay[v5.dayStart(x.t)] = byDay[v5.dayStart(x.t)] || []).push(x));
@@ -1816,7 +1819,7 @@ class HouseV5Card extends HTMLElement {
     const e = this._config.energy;
     const pt = this._s(e.peak_time);
     const peakTime =
-      pt && !isNaN(new Date(pt.state))
+      pt && !isNaN(new Date(pt.state).getTime())
         ? new Date(pt.state).toLocaleString('en-GB', {
             day: 'numeric',
             month: 'short',

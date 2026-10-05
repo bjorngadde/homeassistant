@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   test:
-    name: Leak check and render snapshots
+    name: Leak check, lint, types and render snapshots
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,8 +34,8 @@ jobs:
             export SCRUB_DENYLIST="$RUNNER_TEMP/denylist.txt"
           fi
           node scripts/scrub-check.mjs --quiet
-      - name: Render snapshots
-        run: npm test
+      - name: Lint, types, render snapshots
+        run: npm run lint && npm run typecheck && npm test
 
   hacs:
     name: HACS validation

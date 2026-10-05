@@ -302,7 +302,7 @@ class HouseWallCard extends HTMLElement {
     if (!this.shadowRoot) {
       const root = this.attachShadow({ mode: 'open' });
       root.innerHTML = `<style>${CSS}</style><div class="root"></div>`;
-      this._root = root.querySelector('.root');
+      this._root = /** @type {HTMLElement} */ (root.querySelector('.root'));
       root.addEventListener('click', (ev) => this._onClick(ev));
       this._onResize = () => this._fit();
     }
@@ -569,7 +569,7 @@ class HouseWallCard extends HTMLElement {
       next.onload = () => {
         loading = false;
         this._camSrc = next.src;
-        const cur = this._root.querySelector('.cam img');
+        const cur = /** @type {HTMLImageElement} */ (this._root.querySelector('.cam img'));
         if (cur) cur.src = next.src;
       };
       next.onerror = () => {
@@ -781,7 +781,7 @@ class HouseWallCard extends HTMLElement {
         this._alarmTimer = null;
         return;
       }
-      if (el) el.textContent = this._alarmLeft(al);
+      if (el) el.textContent = String(this._alarmLeft(al));
     }, 250);
   }
 

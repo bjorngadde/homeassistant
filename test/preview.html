@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>House cards preview</title>
+    <style>
+      html, body { margin: 0; background: rgb(14, 19, 32); }
+    </style>
+  </head>
+  <body>
+    <!-- Driven by test/preview.mjs: loads the built cards and the fake Home Assistant, then window.preview.* -->
+    <script type="module">
+      import '/dist/house-cards.js';
+      import { buildHass, scenarios, screensOf } from '/test/lib/fake-hass.mjs';
+
+      const TAGS = { v5: 'house-v5-card', wall: 'house-wall-card' };
+      let el, card;
+      window.preview = {
+        /** Mounts a card with this config and fake Home Assistant state; returns the screen names. */
+        async mount(cardName, config, fixture, scenario) {
+          if (el) el.remove();
+          card = cardName;
+          el = document.createElement(TAGS[card]);
+          el.setConfig(config);
+          document.body.append(el);
+          const over = (scenarios(fixture).find((s) => s.name === scenario) || {}).over || {};
+          el.hass = buildHass(fixture, over);
+          await new Promise((r) => setTimeout(r, 100)); // let the fake backend answer the first fetches
+          return screensOf(card, el._hass).map(([name]) => name);
+        },
+        scenarioNames: (fixture) => scenarios(fixture).map((s) => s.name),
+        /** Switches the mounted card to one screen. */
+        async show(name) {
+          const [, show] = screensOf(card, el._hass).find(([n]) => n === name);
+          show(el);
+          await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        },
+      };
+      window.previewReady = true;
+    </script>
+  </body>
+</html>

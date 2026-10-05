@@ -20,11 +20,14 @@
     "snapshot:update": "node test/snapshot.mjs --update",
     "equiv": "node test/equiv.mjs",
     "test:render": "node test/render-equivalence.mjs",
+    "prepreview": "node scripts/build.mjs",
+    "preview": "node test/preview.mjs",
     "verify": "npm run lint && npm run typecheck && npm test && npm run check"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
     "esbuild": "0.28.2",
+    "playwright-core": "1.56.1",
     "typescript": "7.0.2"
   }
 }

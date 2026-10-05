@@ -12,3 +12,5 @@ script.room_scene
 # public hosts
 host:fonts.googleapis.com
 host:localhost
+# SVG namespace in the preview's placeholder image
+host:www.w3.org

@@ -31,9 +31,12 @@ npm run build                         # dist/house-cards.js (+ source map)
 npm run format                        # apply Biome formatting and safe lint fixes
 npm run snapshot:update               # after an intended visual change; review the snapshot diff
 npm run equiv -- --ref main           # render equivalence: a git commit vs the working tree
+npm run preview                       # screenshots of every screen in headless Chromium, .private/preview/index.html
 ```
 
 `npm test` builds and renders both cards against a fake Home Assistant built from the placeholder configs in `test/fixtures/`, and compares the HTML of every screen with `test/snapshots/`. It needs no real config, so CI runs it on every push. `npm run equiv` compares two builds screen by screen; pass `--v5 <json> --wall <json>` to use real card configs, and keep those outside the repo.
+
+`npm run preview` renders every screen in a real browser against the same fake Home Assistant and saves PNGs plus an `index.html` gallery in `.private/preview/` (git-ignored). Add `--all` for every scenario (alarm armed, entry delay, door open, ...). It uses playwright-core: in Claude Code cloud sessions Chromium is pre-installed; elsewhere run `npx playwright-core install chromium` once or set `CHROME_PATH`.
 
 ## Release
 

@@ -52,6 +52,7 @@ npm run equiv -- --ref <commit> --v5 v5.json --wall wall.json
 - Types: `tsconfig.json` checks `src/` as JavaScript with JSDoc (not strict). `src/types.d.ts` holds globals; `src/<card>/views.d.ts` tells the checker which methods the views add to the card.
 - CI (`.github/workflows/ci.yml`) runs the leak check, lint, types and snapshots on every push and PR; HACS validation runs on `main` only (a branch has no committed `dist/`, and GitHub detects the license on the default branch). The optional repository secret `SCRUB_DENYLIST_TERMS` (the denylist file's content) adds the private denylist; CI runs the check with `--quiet`, which prints only `file:line`, never a term.
 - Cloud sessions run `.claude/hooks/session-start.sh` (npm install, git hooks) on start.
+- To *see* a change: `npm run preview` (add `--all` for every scenario, `--card v5|wall` for one card) writes a PNG per screen to `.private/preview/<card>/<scenario>/<screen>.png` (git-ignored); open the PNGs with the Read tool. It renders in headless Chromium against the fake Home Assistant in `test/lib/fake-hass.mjs` (the same one the snapshots use), with the clock fixed and the internet blocked (fallback font instead of Manrope, grey placeholders for camera and map images). With `--v5/--wall <real config>` the screenshots show real names: keep them local.
 
 ## Delivery: releases through HACS
 
@@ -74,6 +75,6 @@ Goal: smaller edits, fewer tokens per change, checks that run without the real c
 1. Tooling: done (esbuild, Biome, `tsc` checkJs, `npm run verify`, SessionStart hook, MIT license).
 2. Mechanical split into `src/v5/` and `src/wall/`: done (see the code map).
 3. Delivery: done in the repo (one bundle, release workflow, release skill); the Home Assistant migration above is still to do.
-4. Quality: done for shared helpers (`mergeConfig`, `areaOf`; `esc`, `svg`, the time format and the weather texts differ between the cards on purpose and stay separate) and config validation in `setConfig` (both real configs: no errors, no warnings).
+4. Quality: done, including the browser preview (`npm run preview`). Shared helpers (`mergeConfig`, `areaOf`; `esc`, `svg`, the time format and the weather texts differ between the cards on purpose and stay separate) and config validation in `setConfig` (both real configs: no errors, no warnings).
 
 Not now: Lit (needs a DOM-level comparison in the harness first; later, one screen at a time) and a visual card editor (the configs are too large for one).

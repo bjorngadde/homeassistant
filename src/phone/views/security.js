@@ -114,7 +114,7 @@ export const securityView = {
       .map((x) => {
         const cam = this._aiCam(x.camera);
         const color = x.level >= 2 ? COLOR.red : COLOR.orangeBar;
-        const body = `<span class="s13 b7 mute num" style="width:44px;flex-shrink:0">${P.hm(x.start * 1000)}</span><span class="dot" style="background:${color}"></span><span class="col grow" style="gap:2px"><span class="s14 b7">${P.esc(x.title || 'Activity')}</span><span class="s12" style="color:${COLOR.sub}">${P.esc(x.summary || '')}</span><span class="s12 mute">${P.esc(cam ? cam.name : x.camera)}${x.armed ? ' · alarm on' : ''}</span></span>`;
+        const body = `<span class="s13 b7 mute num" style="width:44px;flex-shrink:0">${P.hm(x.start * 1000)}</span><span class="dot" style="background:${color};margin-top:4px"></span><span class="col grow" style="gap:2px"><span class="s14 b7">${P.esc(x.title || 'Activity')}</span><span class="s12" style="color:${COLOR.sub}">${P.esc(x.summary || '')}</span><span class="s12 mute">${P.esc(cam ? cam.name : x.camera)}${x.armed ? ' · alarm on' : ''}</span></span>`;
         return cam
           ? `<button class="li" data-a="goto-cam" data-v="${cam.entity}" style="align-items:flex-start">${body}</button>`
           : `<div class="li" style="align-items:flex-start">${body}</div>`;

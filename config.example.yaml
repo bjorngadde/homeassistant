@@ -38,6 +38,11 @@ security_toggles:
   - { entity: input_boolean.example_passive_alarm, name: Passive alarm system }
 camera_alerts:
   - { entity: input_boolean.example_driveway_alerts, name: Driveway }
+camera_ai: # Frigate GenAI review descriptions: list on the Security tab, banner on Home (see README)
+  feed: sensor.example_camera_ai_feed # attribute `items`: [{ id, camera, start, title, summary, level, armed }]
+  seen: input_datetime.example_camera_ai_seen # "Seen" sets it to now; older findings leave the banner
+  hours: 12 # how far back the list goes
+  min_level: 1 # lowest threat level shown (0 normal, 1 suspicious, 2 critical)
 recent: # "last 24 h" list on the Security tab
   - { entity: binary_sensor.example_driveway_person, on: Person, where: Driveway }
   - entity: alarm_control_panel.example_alarm

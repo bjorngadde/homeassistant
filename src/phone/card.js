@@ -480,6 +480,12 @@ export class HousePhoneCard extends HTMLElement {
         this._top();
         this._refreshCams();
         break;
+      case 'ai-seen': {
+        const id = this._config.camera_ai.seen;
+        if (id)
+          this._call('input_datetime', 'set_datetime', { entity_id: id, timestamp: Math.floor(Date.now() / 1000) });
+        break;
+      }
       case 'base': {
         const cur = this._n(this._config.climate.base);
         const s = h.states[this._config.climate.base];
@@ -752,7 +758,9 @@ export class HousePhoneCard extends HTMLElement {
 
   _tabsHtml() {
     const alert =
-      this._openDoors().length > 0 || ['triggered', 'pending'].includes((this._s(this._config.alarm) || {}).state);
+      this._openDoors().length > 0 ||
+      ['triggered', 'pending'].includes((this._s(this._config.alarm) || {}).state) ||
+      this._aiAlerts().length > 0;
     const tabs = [
       ['home', 'Home', ICON.home],
       ['security', 'Security', ICON.shieldOk],

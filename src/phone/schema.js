@@ -36,6 +36,7 @@ export const PHONE_SCHEMA = {
   cameras: [{ entity: S, name: S, person: S }],
   security_toggles: [{ entity: S, name: S, on: S }],
   camera_alerts: [{ entity: S, name: S, on: S }],
+  camera_ai: { feed: S, seen: S, hours: N, min_level: N },
   energy: { power: S, today_kwh: S, today_cost: S, month_kwh: S, month_cost: S, peak: S, peak_time: S },
   car: {
     name: S,

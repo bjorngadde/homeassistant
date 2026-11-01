@@ -80,6 +80,52 @@ export const securityView = {
       <div class="row" style="gap:10px">${buttons}</div></div>`;
   },
 
+  /* CAMERA AI: Frigate's GenAI review descriptions, collected by an automation into one sensor whose `items`
+   * attribute is a list of { id, camera, start (unix s), title, summary, level (0-2), armed } (see README). */
+
+  /** Items of the last `hours` with at least `min_level`, newest first. */
+  _aiItems() {
+    const c = this._config.camera_ai;
+    const s = this._s(c.feed);
+    const items = s && Array.isArray(s.attributes.items) ? s.attributes.items : [];
+    const since = Date.now() / 1000 - c.hours * 3600;
+    return items
+      .filter((x) => x && Number(x.start) > since && (Number(x.level) || 0) >= c.min_level)
+      .sort((a, b) => b.start - a.start);
+  },
+
+  /** Items that earn the Home banner: a critical one, or a suspicious one while the alarm was on, not yet seen. */
+  _aiAlerts() {
+    const seen = this._s(this._config.camera_ai.seen);
+    const ts = seen ? Number(seen.attributes.timestamp) || 0 : 0;
+    return this._aiItems().filter((x) => (x.level >= 2 || (x.level >= 1 && x.armed)) && x.start > ts);
+  },
+
+  /** The configured camera for a Frigate camera name (camera.<name>), or null. */
+  _aiCam(name) {
+    return this._config.cameras.find((c) => c.entity === `camera.${name}`) || null;
+  },
+
+  _aiSection() {
+    const items = this._aiItems();
+    if (!items.length) return '';
+    const unseen = this._aiAlerts().length > 0;
+    const rows = items
+      .map((x) => {
+        const cam = this._aiCam(x.camera);
+        const color = x.level >= 2 ? COLOR.red : COLOR.orangeBar;
+        const body = `<span class="s13 b7 mute num" style="width:44px;flex-shrink:0">${P.hm(x.start * 1000)}</span><span class="dot" style="background:${color}"></span><span class="col grow" style="gap:2px"><span class="s14 b7">${P.esc(x.title || 'Activity')}</span><span class="s12" style="color:${COLOR.sub}">${P.esc(x.summary || '')}</span><span class="s12 mute">${P.esc(cam ? cam.name : x.camera)}${x.armed ? ' · alarm on' : ''}</span></span>`;
+        return cam
+          ? `<button class="li" data-a="goto-cam" data-v="${cam.entity}" style="align-items:flex-start">${body}</button>`
+          : `<div class="li" style="align-items:flex-start">${body}</div>`;
+      })
+      .join('');
+    const seenBtn = unseen
+      ? `<button class="s12 b7" data-a="ai-seen" style="color:${COLOR.teal};padding:4px 2px">Mark as seen</button>`
+      : '';
+    return `<div class="sect"><div class="lbl">Camera AI · last ${this._config.camera_ai.hours} h</div>${seenBtn}</div><div class="card list" style="overflow:hidden">${rows}</div>`;
+  },
+
   /* SECURITY */
   _securityView() {
     const h = this._hass;
@@ -150,6 +196,7 @@ export const securityView = {
       this._header('Security', people),
       this._alarmBlock(),
       camHtml,
+      this._aiSection(),
       doors.length
         ? `<div class="sect"><div class="lbl">Doors &amp; smoke</div></div><div class="card list" style="overflow:hidden">${doors.join('')}</div>`
         : '',

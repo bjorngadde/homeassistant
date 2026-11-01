@@ -14,6 +14,7 @@ Rooms and lights are discovered from Home Assistant's floors, areas and entity r
 
 - Optional room scenes: an `input_select.<area_id>_scene` helper per room (options in order) and a `script.room_scene` script that takes `room` and `scene`. Rooms that have the helper get a scene button row.
 - Optional "Clean, then arm": a script and a boolean helper, set in `clean_then_arm`.
+- Optional camera AI (`camera_ai`): Frigate's GenAI review descriptions in one sensor, plus an `input_datetime` helper. An automation listens to Frigate's `frigate/reviews` MQTT topic, keeps the messages of type `genai` with a threat level of at least 1 and writes them to the sensor's `items` attribute as `{ id, camera, start, title, summary, level, armed }` (`camera` is Frigate's camera name, `start` a Unix time in seconds, `armed` whether the alarm was on when the description arrived). The Security tab lists the items of the last `hours`; Home shows a banner for a critical item (level 2), or a suspicious one (level 1) while the alarm was on, until "Seen" sets the helper to now.
 - Alarmo for the alarm panel, Tibber for prices, SMHI for weather, a Roborock vacuum with the Xiaomi map extractor for the vacuum screen. Every section that has no configured entity is simply left empty.
 
 ## Install

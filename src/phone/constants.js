@@ -37,6 +37,8 @@ export const PHONE_DEFAULTS = {
   cameras: [],
   security_toggles: [],
   camera_alerts: [],
+  // Frigate GenAI review descriptions collected by an automation into one sensor (attribute `items`), see README
+  camera_ai: { feed: '', seen: '', hours: 12, min_level: 1 },
   energy: {},
   car: { name: 'Car' },
   climate: {},
@@ -89,6 +91,7 @@ export const ICON = {
   vacuum: ['M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z', 'M12 7a2 2 0 1 0 0 4a2 2 0 1 0 0-4z', 'M8 16h8'],
   target: ['M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z', 'M12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8z'],
   check: ['M5 12l5 5L20 7'],
+  eye: ['M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z', 'M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z'],
   sparkle: [
     'M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z',
     'M19 17l.6 1.4L21 19l-1.4.6L19 21l-.6-1.4L17 19l1.4-.6z',

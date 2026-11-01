@@ -35,6 +35,11 @@
   ],
   "security_toggles": [{ "entity": "input_boolean.example_passive_alarm", "name": "Passive alarm system" }],
   "camera_alerts": [{ "entity": "input_boolean.example_driveway_alerts", "name": "Driveway" }],
+  "camera_ai": {
+    "feed": "sensor.example_camera_ai_feed",
+    "seen": "input_datetime.example_camera_ai_seen",
+    "hours": 12
+  },
   "recent": [
     { "entity": "binary_sensor.example_driveway_person", "on": "Person", "where": "Driveway" },
     {

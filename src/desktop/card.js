@@ -22,7 +22,7 @@ export class HouseDesktopCard extends HousePhoneCard {
     const [greet, date] = this._greeting();
     return `<div class="ov">
       <div class="ov-head">${this._header(greet, date)}</div>
-      <div class="ov-a">${this._alarmBanner()}${this._todayCard()}${this._activeNow()}</div>
+      <div class="ov-a">${this._alarmBanner()}${this._aiBanner()}${this._todayCard()}${this._activeNow()}</div>
       <div class="ov-b">${this._floorsHtml()}</div>
       <div class="ov-c">${this._energyGlance()}${this._weatherCard()}${this._alarmBlock()}</div>
     </div>`;

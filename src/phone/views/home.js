@@ -13,6 +13,7 @@ export const homeView = {
     return [
       this._header(greet, date),
       this._alarmBanner(),
+      this._aiBanner(),
       this._todayCard(),
       this._energyGlance(),
       this._floorsHtml(),
@@ -73,6 +74,23 @@ export const homeView = {
       <span class="ic" style="background:${hot ? COLOR.bg : warn ? COLOR.orangeBar : COLOR.red};color:${hot ? COLOR.red : COLOR.bg}">${P.svg(ICON.shield)}</span>
       <span class="col grow" style="gap:1px;text-align:left"><span style="font-size:17px;font-weight:800">${P.esc(label)}</span><span class="s12" style="color:${hot ? COLOR.bg : COLOR.sub}">${P.esc(sub)}</span></span>
       <span class="s12 b7" style="color:${fg}">Manage</span><span style="color:${fg};display:flex">${P.svg(ICON.chevR, { size: 14, width: 2.5 })}</span></button>`;
+  },
+
+  /** Banner for camera AI findings that need a look (see _aiAlerts in security.js); "Seen" dismisses it. */
+  _aiBanner() {
+    const alerts = this._aiAlerts();
+    if (!alerts.length) return '';
+    const x = alerts[0];
+    const critical = alerts.some((a) => a.level >= 2);
+    const cam = this._aiCam(x.camera);
+    const more = alerts.length > 1 ? ` · +${alerts.length - 1} more` : '';
+    const sub = `${cam ? cam.name : x.camera} ${P.hm(x.start * 1000)} · ${x.title || 'Activity'}${more}`;
+    const fg = critical ? COLOR.redSoft : COLOR.orange;
+    return `<div class="card row" style="gap:12px;padding:14px 16px;background:${critical ? COLOR.redBg : COLOR.orangeSoft};border-color:${critical ? 'rgba(255,107,107,0.5)' : 'rgba(255,159,67,0.4)'}">
+      <button class="row grow" data-a="tab" data-v="security" style="gap:12px">
+        <span class="ic" style="background:${critical ? COLOR.red : COLOR.orangeBar};color:${COLOR.bg}">${P.svg(ICON.eye)}</span>
+        <span class="col grow" style="gap:1px;text-align:left"><span style="font-size:17px;font-weight:800">${critical ? 'Threat on camera' : 'Suspicious activity'}</span><span class="s12 ell" style="color:${COLOR.sub}">${P.esc(sub)}</span></span></button>
+      <button class="s12 b7" data-a="ai-seen" style="color:${fg};padding:6px 2px;flex-shrink:0">Seen</button></div>`;
   },
 
   _cleaningPending() {

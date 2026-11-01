@@ -9,7 +9,7 @@ export const FIXED = Date.parse('2026-10-05T12:00:00Z');
 
 // ---------------------------------------------------------------- fake Home Assistant
 const ENTITY =
-  /^(light|switch|sensor|binary_sensor|vacuum|camera|image|button|input_boolean|input_select|input_text|input_number|script|alarm_control_panel|person|weather|media_player|climate|calendar|water_heater|number|select|lock|cover|fan)\.[a-z0-9_]+$/;
+  /^(light|switch|sensor|binary_sensor|vacuum|camera|image|button|input_boolean|input_select|input_text|input_number|input_datetime|script|alarm_control_panel|person|weather|media_player|climate|calendar|water_heater|number|select|lock|cover|fan)\.[a-z0-9_]+$/;
 function collect(o, out = new Set()) {
   if (typeof o === 'string') {
     if (ENTITY.test(o)) out.add(o);
@@ -221,6 +221,29 @@ export function scenarios(fixture) {
       });
   }
   if (vac) list.push({ name: 'vacuum cleaning', over: { [vac]: 'cleaning' } });
+  const feed = get('camera_ai.feed'),
+    seen = get('camera_ai.seen');
+  if (feed) {
+    // Frigate camera names are the camera entities' object ids; the second finding is from a camera not on the card
+    const cam = ((get('cameras') || [])[0] || { entity: 'camera.example' }).entity.split('.')[1];
+    const t = FIXED / 1000;
+    const it = (id, camera, hoursAgo, title, summary, level, armed) => {
+      return { id, camera, start: t - hoursAgo * 3600, title, summary, level, armed };
+    };
+    const items = [
+      it('a', cam, 2, 'Person at the car', 'A person tries the car door handle and walks off.', 1, true),
+      it('b', 'example_garden', 5, 'Person by the shed', 'Someone stands by the shed for several minutes.', 1, false),
+      it('c', cam, 3, 'Delivery', 'A courier leaves a parcel.', 0, false),
+      it('d', cam, 20, 'Old finding', 'Older than the window.', 2, true),
+    ];
+    list.push({
+      name: 'camera AI finding',
+      over: {
+        [feed]: { state: String(items.length), attributes: { friendly_name: 'Camera AI feed', items } },
+        ...(seen ? { [seen]: { state: '2026-10-04 00:00:00', attributes: { timestamp: t - 86400 } } } : {}),
+      },
+    });
+  }
   const door = (get('doors') || [])[0];
   if (door) list.push({ name: 'door open', over: { [door]: 'on' } });
   return list;

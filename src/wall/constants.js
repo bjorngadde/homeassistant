@@ -17,6 +17,7 @@ export const WALL_DEFAULTS = {
   vacuum: '',
   people: [], // [{ entity, short, name }]
   doors: [], // [{ entity, name }]
+  locks: [], // [{ entity, name }] read-only: an unlocked lock is flagged on "Leaving?"
   // 8 room tiles on Day (4 columns x 3 rows together with "Leaving?" and "More rooms", each 2 wide)
   // [{ name, entity, area, icon, door? }]
   tiles: [],

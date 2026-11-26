@@ -32,6 +32,10 @@ exclude: [light.example_group_without_member_list]
 media: [media_player.example_tv]
 doors: [binary_sensor.example_front_door, binary_sensor.example_back_door]
 smoke: [binary_sensor.example_smoke_detector]
+locks: # read-only on the Security tab (no unlock button by design)
+  - entity: lock.example_front_door
+    name: Front door
+    activity: sensor.example_front_door_last_activity # optional: text like "Alex unlocked with code"
 cameras:
   - { entity: camera.example_driveway, name: Driveway, person: binary_sensor.example_driveway_person }
 security_toggles:
@@ -115,6 +119,8 @@ people:
   - { entity: person.example_one, short: A, name: Alex }
 doors:
   - { entity: binary_sensor.example_front_door, name: Front door }
+locks: # read-only: an unlocked lock is flagged on "Leaving?"
+  - { entity: lock.example_front_door, name: Front door }
 tiles: # exactly 8: they fill a 4x3 grid together with the two wide "Leaving?" and "More rooms" tiles
   - { name: Entrance, entity: light.example_entrance, icon: sconce }
   - { name: Kitchen, entity: light.example_kitchen_group, area: kitchen, icon: food }

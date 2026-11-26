@@ -33,6 +33,7 @@ export const PHONE_SCHEMA = {
   },
   doors: [S],
   smoke: [S],
+  locks: [{ entity: S, activity: S, name: S }],
   cameras: [{ entity: S, name: S, person: S }],
   security_toggles: [{ entity: S, name: S, on: S }],
   camera_alerts: [{ entity: S, name: S, on: S }],

@@ -16,6 +16,7 @@
     { "entity": "binary_sensor.example_front_door", "name": "Front door" },
     { "entity": "binary_sensor.example_back_door", "name": "Back door" }
   ],
+  "locks": [{ "entity": "lock.example_front_door", "name": "Front door" }],
   "tiles": [
     {
       "name": "Entrance",

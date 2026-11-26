@@ -85,11 +85,20 @@ export function buildHass(fixture, over = {}) {
     else if (dom === 'input_text') put(id, 'Example headline: a calm day, rain later');
     else if (dom === 'calendar') put(id, 'off', { message: '' });
     else if (dom === 'light') put(id, hash(id) % 2 ? 'on' : 'off', { brightness: 150 });
+    else if (dom === 'lock') put(id, 'locked');
     else put(id, hash(id) % 3 ? 'off' : 'on');
     if (dom === 'light' && (fixture.exclude || []).includes(id))
       states[id].attributes.entity_id = [`light.${Object.keys(areas)[0] || 'x'}_lamp`];
     if (!entities[id]) entities[id] = { entity_id: id, labels: [] };
   }
+  // lock activity sensors hold a text, not a number
+  for (const l of fixture.locks || [])
+    if (l.activity && states[l.activity])
+      put(l.activity, 'Alex unlocked with code', {
+        user_name: 'Alex',
+        source: 'keypad',
+        timestamp: '2026-10-05T07:42:00Z',
+      });
   for (const [id, s] of Object.entries(over))
     if (states[id]) Object.assign(states[id], typeof s === 'string' ? { state: s } : s);
   return {
@@ -244,6 +253,12 @@ export function scenarios(fixture) {
       },
     });
   }
+  const firstLock = (get('locks') || [])[0];
+  if (firstLock)
+    list.push({
+      name: 'lock unlocked',
+      over: { [firstLock.entity]: { state: 'unlocked', last_changed: '2026-10-05T11:48:00Z' } },
+    });
   const door = (get('doors') || [])[0];
   if (door) list.push({ name: 'door open', over: { [door]: 'on' } });
   return list;

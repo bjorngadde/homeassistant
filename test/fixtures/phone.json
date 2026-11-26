@@ -30,6 +30,13 @@
   "media": ["media_player.example_tv"],
   "doors": ["binary_sensor.example_front_door", "binary_sensor.example_back_door"],
   "smoke": ["binary_sensor.example_smoke_detector"],
+  "locks": [
+    {
+      "entity": "lock.example_front_door",
+      "name": "Front door",
+      "activity": "sensor.example_front_door_last_activity"
+    }
+  ],
   "cameras": [
     { "entity": "camera.example_driveway", "name": "Driveway", "person": "binary_sensor.example_driveway_person" }
   ],

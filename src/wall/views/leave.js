@@ -14,6 +14,11 @@ export const leaveView = {
   _leaveView() {
     const c = this._config;
     const doors = this._openDoors();
+    // read-only lock status, folded into the Doors row so the list keeps its height on the 480 px screen
+    const unlocked = c.locks
+      .map((l) => ({ l, s: this._s(l.entity) }))
+      .filter((x) => x.s && x.s.state !== 'locked' && x.s.state !== 'unavailable')
+      .map((x) => x.l.name || x.s.attributes.friendly_name || x.l.entity);
     const lit = this._litRooms();
     const people = this._people();
     const vac = this._s(c.vacuum);
@@ -21,11 +26,16 @@ export const leaveView = {
     const rows = [];
     rows.push(
       this._row(
-        !doors.length,
+        !doors.length && !unlocked.length,
         'Doors',
-        doors.length
-          ? doors.map((d) => d.name).join(', ') + (doors.length === 1 ? ' is open' : ' are open')
-          : 'All closed',
+        [
+          doors.length
+            ? doors.map((d) => d.name).join(', ') + (doors.length === 1 ? ' is open' : ' are open')
+            : 'All closed',
+          unlocked.length ? unlocked.join(', ') + ' unlocked' : '',
+        ]
+          .filter(Boolean)
+          .join(' · '),
       ),
     );
     rows.push(

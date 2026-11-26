@@ -18,6 +18,7 @@ export const WALL_SCHEMA = {
   vacuum: S,
   people: [{ entity: S, short: S, name: S }],
   doors: [{ entity: S, name: S }],
+  locks: [{ entity: S, name: S }],
   tiles: [{ name: S, entity: S, area: S, icon: S, door: S }],
   more_exclude: [S],
   more_order: [S],

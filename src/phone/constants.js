@@ -34,6 +34,7 @@ export const PHONE_DEFAULTS = {
   },
   doors: [],
   smoke: [],
+  locks: [], // [{ entity: <lock>, activity: <sensor with the last activity text>, name }] read-only, no unlock button
   cameras: [],
   security_toggles: [],
   camera_alerts: [],

@@ -126,6 +126,43 @@ export const securityView = {
     return `<div class="sect"><div class="lbl">Camera AI · last ${this._config.camera_ai.hours} h</div>${seenBtn}</div><div class="card list" style="overflow:hidden">${rows}</div>`;
   },
 
+  /* LOCKS: status only. There is deliberately no unlock button: unlocking from the phone is not wanted. */
+  _locksSection() {
+    const h = this._hass;
+    const rows = this._config.locks
+      .filter((l) => this._s(l.entity))
+      .map((l) => {
+        const s = h.states[l.entity];
+        const st = s.state;
+        const mins = Math.round((Date.now() - new Date(s.last_changed).getTime()) / 60000);
+        const since =
+          mins < 60 ? `${mins} min` : mins < 1440 ? `${Math.round(mins / 60)} h` : `${Math.round(mins / 1440)} d`;
+        const bad = ['jammed', 'unavailable', 'unknown', 'open'].includes(st);
+        const color = st === 'locked' ? COLOR.teal : bad ? COLOR.red : COLOR.orangeBar;
+        const text =
+          {
+            locked: 'Locked',
+            unlocked: 'Unlocked · ' + since,
+            locking: 'Locking…',
+            unlocking: 'Unlocking…',
+            open: 'Open · ' + since,
+            opening: 'Opening…',
+            jammed: 'Jammed',
+            unavailable: 'Unavailable',
+            unknown: 'Unknown',
+          }[st] || st;
+        // optional activity sensor: "<who> unlocked with code", stamped by its `timestamp` attribute
+        const a = l.activity ? this._s(l.activity) : null;
+        const aOk = a && !['unknown', 'unavailable', ''].includes(a.state);
+        const at = aOk ? new Date(a.attributes.timestamp || a.last_changed) : null;
+        const sub = aOk ? `${P.esc(a.state)}${at && !Number.isNaN(at.getTime()) ? ' · ' + P.hm(at) : ''}` : '';
+        return `<div class="li"><span class="dot" style="background:${color}"></span><span class="col grow" style="gap:1px;min-width:0"><span class="s15 b7 ell">${P.esc(l.name || s.attributes.friendly_name || l.entity)}</span>${sub ? `<span class="s12 mute ell">${sub}</span>` : ''}</span><span class="s13 b7" style="color:${st === 'locked' ? COLOR.mute : bad ? COLOR.redSoft : COLOR.orange};flex-shrink:0">${P.esc(text)}</span></div>`;
+      });
+    return rows.length
+      ? `<div class="sect"><div class="lbl">Locks</div></div><div class="card list" style="overflow:hidden">${rows.join('')}</div>`
+      : '';
+  },
+
   /* SECURITY */
   _securityView() {
     const h = this._hass;
@@ -197,6 +234,7 @@ export const securityView = {
       this._alarmBlock(),
       camHtml,
       this._aiSection(),
+      this._locksSection(),
       doors.length
         ? `<div class="sect"><div class="lbl">Doors &amp; smoke</div></div><div class="card list" style="overflow:hidden">${doors.join('')}</div>`
         : '',
